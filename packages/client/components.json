@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/index.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "@gryffindor/client/components",
+    "utils": "@gryffindor/client/lib/utils",
+    "ui": "@gryffindor/client/components/ui",
+    "lib": "@gryffindor/client/lib",
+    "hooks": "@gryffindor/client/hooks"
+  },
+  "iconLibrary": "lucide"
+}
