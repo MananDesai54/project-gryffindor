@@ -4,10 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
-import { CreateUserDto } from './dto/user.dto';
 import { EncryptionUtil } from 'src/utils/encryptionUtil';
+import { CreateUserDto } from './dto/user.dto';
+import { User } from './schema/user.schema';
 
 @Injectable()
 export class UserService {
@@ -26,6 +26,32 @@ export class UserService {
   async getUserById(id: string): Promise<User> {
     try {
       const user = await this.userModel.findById(id).exec();
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async getUserByEmail(email: string): Promise<User> {
+    try {
+      const user = await this.userModel.findOne({ email });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async getUserForAuthentication(email: string): Promise<User> {
+    try {
+      const user = await this.userModel
+        .findOne({ email })
+        .select({ email: true, password: true });
       if (!user) {
         throw new NotFoundException('User not found');
       }
