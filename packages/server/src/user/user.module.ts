@@ -12,6 +12,6 @@ const UserSchemaModule = MongooseModule.forFeature([
   imports: [UserSchemaModule],
   providers: [UserService],
   controllers: [UserController],
-  exports: [UserSchemaModule, UserService],
+  exports: [UserService, UserSchemaModule],
 })
 export class UserModule {}
