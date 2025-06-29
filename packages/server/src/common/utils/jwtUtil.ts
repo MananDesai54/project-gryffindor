@@ -6,10 +6,10 @@ export class JWTUtils {
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
   }
 
-  static async verifyToken(token: string): Promise<any> {
+  static async verifyToken<T>(token: string): Promise<T> {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      return decoded;
+      return decoded as T;
     } catch (error) {
       throw new UnauthorizedException('Invalid token');
     }

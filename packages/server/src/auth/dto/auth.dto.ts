@@ -8,7 +8,11 @@ export class LoginUserDto {
   password: string;
 }
 
-export class LoginSuccessDto {
-  token: string;
+export class AuthContextType {
   email: string;
+  userId: string;
+}
+
+export class LoginSuccessDto extends AuthContextType {
+  token: string;
 }
