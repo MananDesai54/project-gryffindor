@@ -1,13 +1,14 @@
 import {
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { LoginSuccessDto, LoginUserDto } from './dto/auth.dto';
-import { EncryptionUtil } from 'src/utils/encryptionUtil';
-import { JWTUtils } from 'src/utils/jwtUtil';
+import { EncryptionUtil } from 'src/common/utils/encryptionUtil';
+import { JWTUtils } from 'src/common/utils/jwtUtil';
 
 @Injectable()
 export class AuthService {
@@ -27,10 +28,14 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    const userJwtToken = await JWTUtils.generateToken({ email: user.email });
+    const userJwtToken = await JWTUtils.generateToken({
+      email: user.email,
+      userId: user._id,
+    });
     return {
       token: userJwtToken,
       email: user.email,
+      userId: user._id,
     };
   }
 }
