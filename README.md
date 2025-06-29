@@ -17,3 +17,4 @@ Agentic Framework for creating, maintaining, and collaborating with agents
 - rag and vector db
 - Ai inference api
 - Ai inference screen
+- LLM monitoring
