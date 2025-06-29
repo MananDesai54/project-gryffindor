@@ -11,6 +11,7 @@ import { Model } from 'mongoose';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
 import { CreateLLMDto, UpdateLLMDto } from '../dto/llm.dto';
 import { LLMType } from '../types/ai';
+import { merge } from 'lodash';
 
 @Injectable()
 export class LlmService {
@@ -61,20 +62,21 @@ export class LlmService {
     authContext: AuthContextType,
   ) {
     try {
-      const llm = await this.llm
-        .findByIdAndUpdate(
-          { _id: id, type: LLMType.CUSTOM, creator: authContext.userId },
-          data,
-          { new: true, runValidators: true },
-        )
-        .exec();
+      const llm = await this.llm.findOne({
+        _id: id,
+        type: LLMType.CUSTOM,
+        creator: authContext.userId,
+      });
+
       if (!llm) {
         throw new BadRequestException(
           'You cannot update this LLM. Either it does not exist or you do not have permission.',
         );
       }
 
-      return llm;
+      merge(llm, data);
+
+      return llm.save();
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

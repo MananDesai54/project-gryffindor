@@ -18,6 +18,7 @@ import {
   UpdateKnowledgeBaseDto,
 } from '../dto/knowledgeBase.dto';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
+import { merge } from 'lodash';
 
 @Injectable()
 export class KnowledgeBaseService {
@@ -74,17 +75,17 @@ export class KnowledgeBaseService {
     authContext: AuthContextType,
   ) {
     try {
-      const knowledgeBase = await this.knowledgeBaseModel.findOneAndUpdate(
-        { _id: id, creator: authContext.userId },
-        data,
-        { new: true },
-      );
+      const knowledgeBase = await this.knowledgeBaseModel.findOne({
+        _id: id,
+        creator: authContext.userId,
+      });
       if (!knowledgeBase) {
         throw new NotFoundException(
           'You cannot update knowledge base. Either it does not exist or you are not the creator.',
         );
       }
-      return knowledgeBase;
+      merge(knowledgeBase, data);
+      return knowledgeBase.save();
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

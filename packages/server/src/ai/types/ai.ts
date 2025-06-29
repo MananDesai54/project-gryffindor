@@ -4,11 +4,6 @@ export enum KnowledgeBaseType {
   FILE = 'FILE',
 }
 
-export enum AiToolType {
-  WEB_HOOK = 'WEB_HOOK',
-  AGENT = 'AGENT',
-}
-
 export enum AiBuiltInToolType {
   WEB_SEARCH = 'WEB_SEARCH',
   DEEP_RESEARCH = 'DEEP_RESEARCH',
@@ -26,4 +21,28 @@ export enum StandardLLMProvider {
   OPENAI = 'OPENAI',
   GOOGLE = 'GOOGLE',
   ANTHROPIC = 'ANTHROPIC',
+}
+
+export enum AiToolType {
+  WEB_HOOK = 'WEB_HOOK',
+  AGENT = 'AGENT',
+}
+
+export enum AiToolRequestMethod {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
+}
+
+export enum AiToolParamDataType {
+  STRING = 'STRING',
+  NUMBER = 'NUMBER',
+  BOOLEAN = 'BOOLEAN',
+}
+
+export enum AiToolParamValueType {
+  DYNAMIC_VARIABLE = 'DYNAMIC_VARIABLE',
+  LLM_PROMPT = 'LLM_PROMPT',
+  CONSTANT = 'CONSTANT',
 }

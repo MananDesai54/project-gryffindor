@@ -24,6 +24,7 @@ import {
   CreateKnowledgeBaseDto,
   UpdateKnowledgeBaseDto,
 } from './dto/knowledgeBase.dto';
+import { CreateAiToolDto, UpdateAiToolDto } from './dto/aiTool.dto';
 
 @UseGuards(AuthGuard)
 @Controller('ai')
@@ -126,5 +127,37 @@ export class AiController {
     @AuthContext() ctx: AuthContextType,
   ) {
     return this.knowledgeBaseService.updateKnowledgeBase(id, data, ctx);
+  }
+
+  // ================== AiTool ====================
+
+  @Post('/tool/create')
+  async createAiTool(
+    @Body(ValidationPipe) data: CreateAiToolDto,
+    @AuthContext() ctx: AuthContextType,
+  ) {
+    return this.aiToolService.createAiTool(data, ctx);
+  }
+
+  @Get('/tool/:id')
+  async getAiTool(@Param('id') id: string) {
+    return this.aiToolService.getAiTool(id);
+  }
+
+  @Delete('/tool/:id')
+  async deleteAiTool(
+    @Param('id') id: string,
+    @AuthContext() ctx: AuthContextType,
+  ) {
+    return this.aiToolService.deleteAiTool(id, ctx);
+  }
+
+  @Put('/tool/:id')
+  async updateAiTool(
+    @Param('id') id: string,
+    @Body(ValidationPipe) data: Partial<UpdateAiToolDto>,
+    @AuthContext() ctx: AuthContextType,
+  ) {
+    return this.aiToolService.updateAiTool(id, data, ctx);
   }
 }
