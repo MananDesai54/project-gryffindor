@@ -37,6 +37,13 @@ export class ApiParamsValueSchema {
   value: string;
 }
 
+export class WebhookBodySchema {
+  @Prop({ required: true })
+  description: string;
+  @Prop({ required: true, type: [ApiParamsValueSchema] })
+  payloadParams: ApiParamsValueSchema[];
+}
+
 export class WebhookApiSchema {
   @Prop({ required: true })
   url: string;
@@ -49,7 +56,7 @@ export class WebhookApiSchema {
   @Prop()
   queryParams: ApiParamsValueSchema[];
   @Prop()
-  body: ApiParamsValueSchema[];
+  body: WebhookBodySchema;
 }
 
 @Schema()
@@ -64,7 +71,11 @@ export class WebhookAiTool extends AiTool {
 
 @Schema()
 export class AgentAiTool extends AiTool {
-  @Prop({ required: true })
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'AiAgent',
+  })
   agentId: string;
 }
 

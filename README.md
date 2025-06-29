@@ -7,3 +7,5 @@ Agentic Framework for creating, maintaining, and collaborating with agents
 - NestJS best practices
 - Separate internal app
 - CORS, req logging, security
+- better way for update request
+- pagination

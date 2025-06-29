@@ -11,6 +11,7 @@ import { Model } from 'mongoose';
 import { AiAgent } from '../schema/aiAgent.schema';
 import { CreateAiAgentDto, UpdateAiAgentDto } from '../dto/ai.dto';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
+import { merge } from 'lodash';
 
 @Injectable()
 export class AiAgentService {
@@ -49,21 +50,17 @@ export class AiAgentService {
     authContext: AuthContextType,
   ) {
     try {
-      const updatedAgent = await this.aiAgent
-        .findOneAndUpdate(
-          { _id: id, creator: authContext.userId },
-          updateAiAgentDto,
-          {
-            new: true,
-            runValidators: true,
-          },
-        )
-        .exec();
-      if (!updatedAgent)
+      const agent = await this.aiAgent.findOne({
+        _id: id,
+        creator: authContext.userId,
+      });
+
+      if (!agent)
         throw new NotFoundException(
           'You cannot update this agent. Either you do not own it or it does not exist.',
         );
-      return updatedAgent;
+      merge(agent, updateAiAgentDto);
+      return agent.save();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
