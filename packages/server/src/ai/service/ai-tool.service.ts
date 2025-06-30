@@ -29,7 +29,7 @@ export class AiToolService {
         ...data,
         creator: authContext.userId,
       };
-      switch (type) {
+      switch (type as AiToolType) {
         case AiToolType.WEB_HOOK:
           return this.webHookModel.create(updatedData);
         case AiToolType.AGENT:
