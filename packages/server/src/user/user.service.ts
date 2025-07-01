@@ -31,7 +31,7 @@ export class UserService {
       }
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -43,7 +43,7 @@ export class UserService {
       }
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -57,7 +57,7 @@ export class UserService {
       }
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 }

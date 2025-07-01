@@ -10,21 +10,20 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { AiAgentService } from './service/aiAgent.service';
-import { AiAgent } from './schema/aiAgent.schema';
-import { CreateAiAgentDto, UpdateAiAgentDto } from './dto/ai.dto';
-import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { AuthContext } from 'src/auth/decorators/authContext';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
-import { AiToolService } from './service/ai-tool.service';
-import { LlmService } from './service/llm.service';
-import { KnowledgeBaseService } from './service/knowledge-base.service';
-import { CreateLLMDto, UpdateLLMDto } from './dto/llm.dto';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { CreateAiAgentDto, UpdateAiAgentDto } from './dto/ai.dto';
+import { CreateAiToolDto, UpdateAiToolDto } from './dto/aiTool.dto';
 import {
   CreateKnowledgeBaseDto,
   UpdateKnowledgeBaseDto,
 } from './dto/knowledgeBase.dto';
-import { CreateAiToolDto, UpdateAiToolDto } from './dto/aiTool.dto';
+import { CreateLLMDto, UpdateLLMDto } from './dto/llm.dto';
+import { AiToolService } from './service/ai-tool.service';
+import { AiAgentService } from './service/aiAgent.service';
+import { KnowledgeBaseService } from './service/knowledge-base.service';
+import { LlmService } from './service/llm.service';
 
 @UseGuards(AuthGuard)
 @Controller('ai')

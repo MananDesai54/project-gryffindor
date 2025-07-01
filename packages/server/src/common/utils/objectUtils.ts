@@ -8,8 +8,10 @@ export class ObjectUtils {
           !Array.isArray(obj[key]) &&
           obj[key] !== null
         ) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           this.flattenObject(obj[key], newKey, result);
         } else {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           result[newKey] = obj[key];
         }
       }

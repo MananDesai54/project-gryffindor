@@ -2,17 +2,16 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { JWTUtils } from 'src/common/utils/jwtUtil';
 import { AuthConstant } from '../constant/auth.constant';
 import { AuthContextType } from '../dto/auth.dto';
-import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  canActivate(context: ExecutionContext): boolean {
     try {
       const httpContext = context.switchToHttp();
       const request = httpContext.getRequest<Request>();
@@ -20,14 +19,14 @@ export class AuthGuard implements CanActivate {
       if (!authToken) {
         throw new UnauthorizedException('Auth token is required');
       }
-      const decodedJwt = await JWTUtils.verifyToken<AuthContextType>(authToken);
+      const decodedJwt = JWTUtils.verifyToken<AuthContextType>(authToken);
       request.context = {
         ...request.context,
         authContext: decodedJwt,
       };
       return true;
     } catch (error) {
-      throw new UnauthorizedException(`Unauthorized: ${error.message}`);
+      throw new UnauthorizedException(error);
     }
   }
 }

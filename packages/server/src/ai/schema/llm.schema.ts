@@ -2,7 +2,6 @@ import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { User } from 'src/user/schema/user.schema';
 import { LLMType } from '../types/ai';
-import { values } from 'lodash';
 
 export type LLMDocument = HydratedDocument<LLM>;
 

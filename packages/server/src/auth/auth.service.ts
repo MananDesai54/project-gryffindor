@@ -29,7 +29,7 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid credentials');
       }
-      const userJwtToken = await JWTUtils.generateToken({
+      const userJwtToken = JWTUtils.generateToken({
         email: user.email,
         userId: user._id,
       });

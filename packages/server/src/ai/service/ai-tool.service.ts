@@ -38,7 +38,7 @@ export class AiToolService {
           throw new InternalServerErrorException('Invalid AI tool type');
       }
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -59,7 +59,7 @@ export class AiToolService {
       const updatedTool = await tool.save();
       return updatedTool;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -74,7 +74,7 @@ export class AiToolService {
       }
       return tool;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -86,7 +86,7 @@ export class AiToolService {
       }
       return tool;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 }

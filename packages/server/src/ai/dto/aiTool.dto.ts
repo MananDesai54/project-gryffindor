@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
   IsArray,
@@ -5,7 +6,6 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNotEmptyObject,
-  IsNumber,
   IsObject,
   IsOptional,
   IsPositive,
@@ -15,12 +15,11 @@ import {
   ValidateNested,
 } from 'class-validator';
 import {
-  AiToolRequestMethod,
-  AiToolType,
   AiToolParamDataType,
   AiToolParamValueType,
+  AiToolRequestMethod,
+  AiToolType,
 } from '../types/ai';
-import { Type } from 'class-transformer';
 
 export class ApiParamsValueSchema {
   @IsString()
@@ -102,17 +101,23 @@ export class CreateAiToolDto {
   description: string;
 
   // webhook
-  @ValidateIf((t) => t.type === AiToolType.WEB_HOOK)
+  @ValidateIf(
+    (t: CreateAiToolDto) => (t.type as AiToolType) === AiToolType.WEB_HOOK,
+  )
   @IsOptional()
   @IsObject()
   dynamicVariables?: Record<string, string>;
 
-  @ValidateIf((t) => t.type === AiToolType.WEB_HOOK)
+  @ValidateIf(
+    (t: CreateAiToolDto) => (t.type as AiToolType) === AiToolType.WEB_HOOK,
+  )
   @IsOptional()
   @IsPositive()
   reqTimeout: number;
 
-  @ValidateIf((t) => t.type === AiToolType.WEB_HOOK)
+  @ValidateIf(
+    (t: CreateAiToolDto) => (t.type as AiToolType) === AiToolType.WEB_HOOK,
+  )
   @ValidateNested()
   @IsDefined()
   @IsNotEmptyObject()
@@ -120,7 +125,9 @@ export class CreateAiToolDto {
   apiSchema: WebhookApiSchema;
 
   // agent
-  @ValidateIf((t) => t.type === AiToolType.AGENT)
+  @ValidateIf(
+    (t: CreateAiToolDto) => (t.type as AiToolType) === AiToolType.AGENT,
+  )
   @IsString()
   @IsNotEmpty()
   agentId: string;
