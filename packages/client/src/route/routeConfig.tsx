@@ -8,6 +8,9 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Routes } from "@gryffindor/client/route/routes";
 import React from "react";
+import Layout from "../common/components/app/layout";
+import ReactQueryProvider from "../common/api/common/reactQueryProvider";
+import { Toaster } from "../common/components/shadcn/components/ui/sonner";
 
 const Login = React.lazy(
   () => import("@gryffindor/client/modules/login/login"),
@@ -18,10 +21,13 @@ const HomeDashboard = React.lazy(
 
 const rootRoute = createRootRoute({
   component: () => (
-    <>
-      <Outlet />
-      <TanStackRouterDevtools position="bottom-right" />
-    </>
+    <Layout>
+      <ReactQueryProvider>
+        <Outlet />
+        <TanStackRouterDevtools position="bottom-right" />
+        <Toaster />
+      </ReactQueryProvider>
+    </Layout>
   ),
 });
 
@@ -40,7 +46,7 @@ const loginRoute = createRoute({
 const agentRoute = createRoute({
   path: Routes.AGENT,
   component: () => <div>Agent</div>,
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => homeRoute,
 });
 
 const agentWorkflowRoute = createRoute({

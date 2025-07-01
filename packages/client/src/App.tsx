@@ -1,13 +1,15 @@
-import { Toaster } from "@gryffindor/client/components/ui/sonner";
 import AppRouterProvider from "@gryffindor/client/route/routeConfig";
-import Layout from "./components/app/layout";
+import { useState } from "react";
+import AuthContextProvider from "./common/api/decorators/hoc/authContextProvider";
+import { AuthUtils } from "./common/utils/authUtils";
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(AuthUtils.isLoggedIn());
+
   return (
-    <Layout>
+    <AuthContextProvider isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}>
       <AppRouterProvider />
-      <Toaster />
-    </Layout>
+    </AuthContextProvider>
   );
 }
 
