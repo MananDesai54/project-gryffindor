@@ -7,13 +7,21 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@gryffindor/client/components/ui/sidebar";
+} from "@gryffindor/client/common/components/shadcn/components/ui/sidebar";
+import { useContext } from "react";
+import { AuthContext } from "../../api/decorators/hoc/authContextProvider";
 
 export default function Layout(props: { children: React.ReactNode }) {
+  const { isLoggedIn } = useContext(AuthContext);
+
+  if (!isLoggedIn) {
+    return <div className="h-screen bg-secondary flex">{props.children}</div>;
+  }
+
   return (
     <div className="h-screen bg-secondary flex">
       <SidebarProvider>
-        <Sidebar collapsible="offcanvas" variant="inset" defaultChecked={true}>
+        <Sidebar collapsible="offcanvas" variant="inset">
           <SidebarHeader>Gryffindor</SidebarHeader>
           <SidebarContent>
             <SidebarGroup />

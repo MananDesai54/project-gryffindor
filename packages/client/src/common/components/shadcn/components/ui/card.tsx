@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "@gryffindor/client/lib/utils";
+import { cn } from "@gryffindor/client/common/components/shadcn/lib/utils";
 
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (

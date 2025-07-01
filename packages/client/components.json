@@ -11,11 +11,11 @@
     "prefix": ""
   },
   "aliases": {
-    "components": "@gryffindor/client/components",
-    "utils": "@gryffindor/client/lib/utils",
-    "ui": "@gryffindor/client/components/ui",
-    "lib": "@gryffindor/client/lib",
-    "hooks": "@gryffindor/client/hooks"
+    "components": "@gryffindor/client/common/components/shadcn/components",
+    "utils": "@gryffindor/client/common/components/shadcn/lib/utils",
+    "ui": "@gryffindor/client/common/components/shadcn/components/ui",
+    "lib": "@gryffindor/client/common/components/shadcn/lib",
+    "hooks": "@gryffindor/client/common/components/shadcn/hooks"
   },
   "iconLibrary": "lucide"
 }

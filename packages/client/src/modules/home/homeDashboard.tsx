@@ -1,7 +1,16 @@
-import { Card, CardContent } from "@gryffindor/client/components/ui/card";
-import { BrainCircuit, Workflow, Zap } from "lucide-react";
+import {
+  Card,
+  CardContent,
+} from "@gryffindor/client/common/components/shadcn/components/ui/card";
+import { BrainCircuit, LoaderIcon, Workflow, Zap } from "lucide-react";
 import { map } from "lodash";
 import { Routes } from "@gryffindor/client/route/routes";
+import { useContext, useEffect } from "react";
+import { authServiceInstance } from "@gryffindor/client/common/api/services/user/authService";
+import { AuthContext } from "@gryffindor/client/common/api/decorators/hoc/authContextProvider";
+import { useNavigate } from "@tanstack/react-router";
+import useBoolean from "@gryffindor/client/common/api/decorators/hooks/useBoolean";
+import { useQuery } from "@tanstack/react-query";
 
 type Action = {
   icon: React.ReactNode;
@@ -28,6 +37,32 @@ const ACTIONS: Action[] = [
 ];
 
 const HomeDashboard = () => {
+  const { toggle: toggleLoading, value: isLoading } = useBoolean(false);
+  const { setIsLoggedIn } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    (async function () {
+      try {
+        toggleLoading();
+        await authServiceInstance.me();
+        setIsLoggedIn(true);
+      } catch (error) {
+        setIsLoggedIn(false);
+        navigate({
+          to: Routes.LOGIN,
+          replace: true,
+        });
+      } finally {
+        toggleLoading();
+      }
+    })();
+  }, [navigate, setIsLoggedIn, toggleLoading]);
+
+  if (isLoading) {
+    return <LoaderIcon />;
+  }
+
   return (
     <div className="flex flex-col items-center p-4">
       <div className="flex flex-col items-start">

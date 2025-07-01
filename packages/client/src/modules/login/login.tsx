@@ -1,17 +1,18 @@
-import { Button } from "@gryffindor/client/components/ui/button";
+import { AuthContext } from "@gryffindor/client/common/api/decorators/hoc/authContextProvider";
+import { NotifyError } from "@gryffindor/client/common/components/app/toast";
+import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@gryffindor/client/components/ui/card";
-import { Input } from "@gryffindor/client/components/ui/input";
-import { Label } from "@gryffindor/client/components/ui/label";
+} from "@gryffindor/client/common/components/shadcn/components/ui/card";
+import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
+import { Label } from "@gryffindor/client/common/components/shadcn/components/ui/label";
 import { Routes } from "@gryffindor/client/route/routes";
 import { useNavigate } from "@tanstack/react-router";
-import { useCallback, useState } from "react";
-import { toast } from "sonner";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -19,14 +20,15 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { setIsLoggedIn } = useContext(AuthContext);
+
+  useEffect(() => {
+    setIsLoggedIn(false);
+  }, [setIsLoggedIn]);
+
   const onLogin = useCallback(() => {
     if (!email || !password) {
-      toast("Login error", {
-        description: "Email and password are required",
-        position: "bottom-center",
-        duration: 3000,
-        dismissible: true,
-      });
+      NotifyError("Login error", "Email and password are required");
       return;
     }
     if (email === "mdesai@ontic.co" && password === "password") {
@@ -34,12 +36,7 @@ export default function Login() {
         to: Routes.HOME,
       });
     } else {
-      toast("Login error", {
-        description: "Invalid email or password",
-        position: "bottom-center",
-        duration: 3000,
-        dismissible: true,
-      });
+      NotifyError("Login error", "Invalid email or password");
     }
   }, [email, navigate, password]);
 
