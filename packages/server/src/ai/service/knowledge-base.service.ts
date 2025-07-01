@@ -1,24 +1,23 @@
 import {
-  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { KnowledgeBaseType } from '../types/ai';
+import { merge } from 'lodash';
 import { Model } from 'mongoose';
+import { AuthContextType } from 'src/auth/dto/auth.dto';
+import {
+  CreateKnowledgeBaseDto,
+  UpdateKnowledgeBaseDto,
+} from '../dto/knowledgeBase.dto';
 import {
   FileKnowledgeBase,
   KnowledgeBase,
   LinkKnowledgeBase,
   TextKnowledgeBase,
 } from '../schema/knowledgeBase.schema';
-import {
-  CreateKnowledgeBaseDto,
-  UpdateKnowledgeBaseDto,
-} from '../dto/knowledgeBase.dto';
-import { AuthContextType } from 'src/auth/dto/auth.dto';
-import { merge } from 'lodash';
+import { KnowledgeBaseType } from '../types/ai';
 
 @Injectable()
 export class KnowledgeBaseService {
@@ -42,7 +41,7 @@ export class KnowledgeBaseService {
         ...data,
         creator: authContext.userId,
       };
-      switch (data.type) {
+      switch (data.type as KnowledgeBaseType) {
         case KnowledgeBaseType.FILE:
           return await this.fileKnowledgeBaseModel.create(updatedData);
         case KnowledgeBaseType.LINK:
@@ -53,7 +52,7 @@ export class KnowledgeBaseService {
           throw new Error('Invalid knowledge base type');
       }
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -65,7 +64,7 @@ export class KnowledgeBaseService {
       }
       return knowledgeBase;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -87,7 +86,7 @@ export class KnowledgeBaseService {
       merge(knowledgeBase, data);
       return knowledgeBase.save();
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -105,7 +104,7 @@ export class KnowledgeBaseService {
 
       return knowledgeBase;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 }

@@ -1,17 +1,15 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   InternalServerErrorException,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { AiAgent } from '../schema/aiAgent.schema';
-import { CreateAiAgentDto, UpdateAiAgentDto } from '../dto/ai.dto';
-import { AuthContextType } from 'src/auth/dto/auth.dto';
 import { merge } from 'lodash';
+import { Model } from 'mongoose';
+import { AuthContextType } from 'src/auth/dto/auth.dto';
+import { CreateAiAgentDto, UpdateAiAgentDto } from '../dto/ai.dto';
+import { AiAgent } from '../schema/aiAgent.schema';
 
 @Injectable()
 export class AiAgentService {
@@ -79,7 +77,7 @@ export class AiAgentService {
       }
       return this.aiAgent.deleteOne({ _id: id });
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 }

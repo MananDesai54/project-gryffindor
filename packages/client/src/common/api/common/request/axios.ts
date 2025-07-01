@@ -86,7 +86,7 @@ class ApiRequest {
 
   private _handleError(error: AxiosError) {
     NotifyError(
-      error.message,
+      error,
       JSON.stringify(error.response?.data) || "An error occurred",
     );
     throw error;

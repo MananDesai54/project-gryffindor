@@ -2,16 +2,17 @@ import { UnauthorizedException } from '@nestjs/common';
 import jwt from 'jsonwebtoken';
 
 export class JWTUtils {
-  static async generateToken(payload: any): Promise<string> {
+  static generateToken(payload: any): string {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
   }
 
-  static async verifyToken<T>(token: string): Promise<T> {
+  static verifyToken<T>(token: string): T {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       return decoded as T;
     } catch (error) {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException(error);
     }
   }
 }

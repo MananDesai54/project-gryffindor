@@ -1,4 +1,4 @@
-import { createParamDecorator, Logger } from '@nestjs/common';
+import { createParamDecorator } from '@nestjs/common';
 import { Request } from 'express';
 
 export const AuthContext = createParamDecorator((data, ctx) => {

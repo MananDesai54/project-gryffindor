@@ -15,16 +15,16 @@ export class CreateLLMDto {
   @IsNotEmpty()
   type: string;
 
-  @ValidateIf((l) => l.type === LLMType.STANDARD)
+  @ValidateIf((l: CreateLLMDto) => (l.type as LLMType) === LLMType.STANDARD)
   @IsNotEmpty()
   @IsEnum(StandardLLMProvider)
   provider: string;
 
-  @ValidateIf((l) => l.type === LLMType.CUSTOM)
+  @ValidateIf((l: CreateLLMDto) => (l.type as LLMType) === LLMType.CUSTOM)
   @IsUrl()
   @IsNotEmpty()
   serverUrl: string;
-  @ValidateIf((l) => l.type === LLMType.CUSTOM)
+  @ValidateIf((l: CreateLLMDto) => (l.type as LLMType) === LLMType.CUSTOM)
   @IsNotEmpty()
   @IsString()
   apiKey: string;

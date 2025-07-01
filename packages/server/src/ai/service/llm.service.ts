@@ -2,16 +2,15 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CustomLLM, LLM, StandardLLM } from '../schema/llm.schema';
+import { merge } from 'lodash';
 import { Model } from 'mongoose';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
 import { CreateLLMDto, UpdateLLMDto } from '../dto/llm.dto';
+import { CustomLLM, LLM, StandardLLM } from '../schema/llm.schema';
 import { LLMType } from '../types/ai';
-import { merge } from 'lodash';
 
 @Injectable()
 export class LlmService {
@@ -27,20 +26,16 @@ export class LlmService {
         ...data,
         creator: authContext.userId,
       };
-      switch (data.type) {
+      switch (data.type as LLMType) {
         case LLMType.STANDARD:
-          const stdLLM = new this.stdLLM(updatedData);
-          await stdLLM.save();
-          return stdLLM;
+          return this.stdLLM.create(updatedData);
         case LLMType.CUSTOM:
-          const customLLM = new this.customLLM(updatedData);
-          await customLLM.save();
-          return customLLM;
+          return this.customLLM.create(updatedData);
         default:
           throw new InternalServerErrorException('Invalid LLM type');
       }
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -52,7 +47,7 @@ export class LlmService {
       }
       return llm;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -78,7 +73,7 @@ export class LlmService {
 
       return llm.save();
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -96,7 +91,7 @@ export class LlmService {
       }
       return llm;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(error);
     }
   }
 }

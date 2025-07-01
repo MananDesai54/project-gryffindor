@@ -17,20 +17,27 @@ export class CreateKnowledgeBaseDto {
   @IsNotEmpty()
   name: string;
 
-  @ValidateIf((k) => k.type === KnowledgeBaseType.TEXT)
+  @ValidateIf(
+    (k: CreateKnowledgeBaseDto) =>
+      (k.type as KnowledgeBaseType) === KnowledgeBaseType.TEXT,
+  )
   @IsString()
   @IsNotEmpty()
   content: string;
 
   @ValidateIf(
-    (k) =>
-      k.type === KnowledgeBaseType.LINK || k.type === KnowledgeBaseType.FILE,
+    (k: CreateKnowledgeBaseDto) =>
+      (k.type as KnowledgeBaseType) === KnowledgeBaseType.LINK ||
+      (k.type as KnowledgeBaseType) === KnowledgeBaseType.FILE,
   )
   @IsUrl()
   @IsNotEmpty()
   url: string;
 
-  @ValidateIf((k) => k.type === KnowledgeBaseType.FILE)
+  @ValidateIf(
+    (k: CreateKnowledgeBaseDto) =>
+      (k.type as KnowledgeBaseType) === KnowledgeBaseType.FILE,
+  )
   @IsMimeType()
   @IsNotEmpty()
   mimeType: string;
