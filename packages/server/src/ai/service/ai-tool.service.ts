@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { merge } from 'lodash';
 import { Model } from 'mongoose';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
 import { CreateAiToolDto, UpdateAiToolDto } from '../dto/aiTool.dto';
@@ -48,16 +47,18 @@ export class AiToolService {
     authContext: AuthContextType,
   ) {
     try {
-      const tool = await this.aiToolModel.findOne({
-        _id: id,
-        creator: authContext.userId,
-      });
+      const tool = await this.aiToolModel.findOneAndUpdate(
+        {
+          _id: id,
+          creator: authContext.userId,
+        },
+        data,
+        { runValidators: true, new: true },
+      );
       if (!tool) {
         throw new ForbiddenException('Ai tool not found');
       }
-      merge(tool, data);
-      const updatedTool = await tool.save();
-      return updatedTool;
+      return tool;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { merge } from 'lodash';
 import { Model } from 'mongoose';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
 import { CreateLLMDto, UpdateLLMDto } from '../dto/llm.dto';
@@ -57,11 +56,15 @@ export class LlmService {
     authContext: AuthContextType,
   ) {
     try {
-      const llm = await this.llm.findOne({
-        _id: id,
-        type: LLMType.CUSTOM,
-        creator: authContext.userId,
-      });
+      const llm = await this.llm.findOneAndUpdate(
+        {
+          _id: id,
+          type: LLMType.CUSTOM,
+          creator: authContext.userId,
+        },
+        data,
+        { new: true, runValidators: true },
+      );
 
       if (!llm) {
         throw new BadRequestException(
@@ -69,9 +72,7 @@ export class LlmService {
         );
       }
 
-      merge(llm, data);
-
-      return llm.save();
+      return llm;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

@@ -1,3 +1,4 @@
+import { useUpdateAgentMutation } from "@gryffindor/client/common/api/serverQueries/agent/useAgentMutation";
 import { useAgentQuery } from "@gryffindor/client/common/api/serverQueries/agent/useAgentQuery";
 import AppBreadcrumb from "@gryffindor/client/common/components/app/appBreadcrumb/appBreadcrumb";
 import { BreadcrumbItemType } from "@gryffindor/client/common/components/app/appBreadcrumb/type";
@@ -5,11 +6,15 @@ import AppMenu from "@gryffindor/client/common/components/app/appMenu/appMenu";
 import { ActionMenuItem } from "@gryffindor/client/common/components/app/appMenu/type";
 import Loader from "@gryffindor/client/common/components/app/loader";
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
-import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
+import { Agent } from "@gryffindor/client/common/types/agent.type";
 import { Routes } from "@gryffindor/client/route/routes";
 import { useParams } from "@tanstack/react-router";
-import { BrainCircuit, Copy } from "lucide-react";
-import { useMemo } from "react";
+import { BrainCircuit, Copy, TriangleAlert } from "lucide-react";
+import { motion } from "motion/react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import AgentConfigurations from "./components/agentConfigurations";
+import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
+import { Textarea } from "@gryffindor/client/common/components/shadcn/components/ui/textarea";
 
 export default function AgentDetailScreen() {
   const params = useParams({
@@ -21,6 +26,8 @@ export default function AgentDetailScreen() {
       id: params.id,
     },
   });
+  const { mutate } = useUpdateAgentMutation();
+  const [tempAgent, setTempAgent] = useState<Agent | undefined>(data);
 
   const breadCrumbItems = useMemo(
     () =>
@@ -31,13 +38,54 @@ export default function AgentDetailScreen() {
     [data?.name],
   );
 
-  const actions = [
-    {
-      label: "Delete Agent",
-      variant: "danger",
-      onAction: () => {},
+  const isDirty = useMemo(() => {
+    if (!tempAgent || !data) return false;
+    return JSON.stringify(tempAgent) !== JSON.stringify(data);
+  }, [tempAgent, data]);
+
+  const actions = useMemo(
+    () =>
+      [
+        {
+          label: "Delete Agent",
+          variant: "danger",
+          onAction: () => {},
+        },
+      ] as ActionMenuItem[],
+    [],
+  );
+
+  const onUpdateAgent = useCallback((agent: Partial<Agent>) => {
+    setTempAgent((tempAgent) => ({ ...(tempAgent as Agent), ...agent }));
+  }, []);
+
+  const onUpdateAgentConfiguration = useCallback(
+    (config: Partial<Agent["configuration"]>) => {
+      onUpdateAgent({
+        configuration: {
+          ...tempAgent?.configuration,
+          ...config,
+        } as Agent["configuration"],
+      });
     },
-  ] as ActionMenuItem[];
+    [onUpdateAgent, tempAgent],
+  );
+
+  const onSaveAgent = useCallback(() => {
+    if (!data?._id || !tempAgent) return;
+    mutate({
+      agentId: data._id,
+      agent: tempAgent!,
+    });
+  }, [data?._id, mutate, tempAgent]);
+
+  const onCancelAgent = useCallback(() => {
+    setTempAgent(data);
+  }, [data]);
+
+  useEffect(() => {
+    setTempAgent(data);
+  }, [data]);
 
   if (isLoading) {
     return (
@@ -46,8 +94,8 @@ export default function AgentDetailScreen() {
   }
 
   return (
-    <div className="w-full">
-      <header className="p-2 border-y flex justify-between items-center">
+    <div className="w-full flex flex-col items-center relative overflow-auto">
+      <header className="p-2 border-y flex justify-between items-center w-full sticky top-0 z-10 bg-background">
         <AppBreadcrumb items={breadCrumbItems} />
         <div className="flex items-center">
           <Button>
@@ -59,9 +107,52 @@ export default function AgentDetailScreen() {
           <AppMenu actions={actions} />
         </div>
       </header>
-      <section>
-        <Input defaultValue={data?.name} onChange={} />
+      <section className="w-1/2 flex flex-col items-center flex-1">
+        <div className="my-4 w-full flex flex-col border-b">
+          <Input
+            required
+            value={tempAgent?.name}
+            className="!bg-transparent w-1/4 border-none p-1"
+            onChange={(e) => onUpdateAgent({ name: e.target.value })}
+            placeholder="Enter agent name..."
+          />
+          <Textarea
+            className="!bg-transparent border-none my-2 text-gray-500 w-1/2 p-1 resize-none"
+            value={tempAgent?.description}
+            onChange={(e) => onUpdateAgent({ description: e.target.value })}
+            placeholder="Enter agent description..."
+          />
+        </div>
+        <AgentConfigurations
+          onChange={onUpdateAgentConfiguration}
+          agent={tempAgent}
+        />
       </section>
+      {isDirty ? (
+        <motion.div
+          className="fixed w-1/2 z-10"
+          initial={{ opacity: 0, bottom: 0 }}
+          animate={{ opacity: 1, bottom: 50 }}
+          exit={{ opacity: 0, bottom: 0 }}
+        >
+          <div className="w-full mx-4 rounded-lg bg-background border p-2 flex justify-between items-center">
+            <div className="flex items-center">
+              <TriangleAlert size={18} />
+              <div className="mx-2">You have unsaved changes</div>
+            </div>
+            <div>
+              <Button
+                onClick={onCancelAgent}
+                variant="outline"
+                className="mx-2"
+              >
+                Clear
+              </Button>
+              <Button onClick={onSaveAgent}>Save</Button>
+            </div>
+          </div>
+        </motion.div>
+      ) : null}
     </div>
   );
 }

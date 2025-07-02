@@ -1,14 +1,8 @@
-import {
-  MongooseModule,
-  Prop,
-  raw,
-  Schema,
-  SchemaFactory,
-} from '@nestjs/mongoose';
+import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { User } from 'src/user/schema/user.schema';
-import { AiToolType } from '../types/ai';
 import { AiConstants } from '../constant/ai.constant';
+import { AiToolType } from '../types/ai';
 
 export type AiToolDocument = HydratedDocument<AiTool>;
 
@@ -61,7 +55,11 @@ export class WebhookApiSchema {
 
 @Schema()
 export class WebhookAiTool extends AiTool {
-  @Prop(raw({}))
+  @Prop({
+    type: mongoose.Schema.Types.Map,
+    of: String,
+    required: false,
+  })
   dynamicVariables: Record<string, string>;
   @Prop({ default: AiConstants.AI_WEB_HOOK_TOOL_DEFAULT_REQ_TIMEOUT })
   reqTimeout: number;

@@ -9,6 +9,7 @@ import { AiToolService } from './service/ai-tool.service';
 import { AiAgentService } from './service/aiAgent.service';
 import { KnowledgeBaseService } from './service/knowledge-base.service';
 import { LlmService } from './service/llm.service';
+import { InferenceModule } from './inference/inference.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { LlmService } from './service/llm.service';
     KnowledgeBaseSchemaModule,
     LLMSchemaModule,
     InternalModule,
+    InferenceModule,
   ],
   providers: [AiAgentService, AiToolService, LlmService, KnowledgeBaseService],
   controllers: [AiController],

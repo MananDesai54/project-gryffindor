@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { merge } from 'lodash';
 import { Model } from 'mongoose';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
 import { CreateAiAgentDto, UpdateAiAgentDto } from '../dto/ai.dto';
@@ -48,17 +47,22 @@ export class AiAgentService {
     authContext: AuthContextType,
   ) {
     try {
-      const agent = await this.aiAgent.findOne({
-        _id: id,
-        creator: authContext.userId,
-      });
+      const agent = await this.aiAgent
+        .findOneAndUpdate(
+          {
+            _id: id,
+            creator: authContext.userId,
+          },
+          updateAiAgentDto,
+          { runValidators: true, new: true },
+        )
+        .exec();
 
       if (!agent)
         throw new NotFoundException(
           'You cannot update this agent. Either you do not own it or it does not exist.',
         );
-      merge(agent, updateAiAgentDto);
-      return agent.save();
+      return agent;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
