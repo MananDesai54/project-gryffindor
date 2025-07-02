@@ -1,5 +1,5 @@
 import { ServerPrimaryKeys } from "@gryffindor/client/common/constants/serverQueries/primaryKeys";
-import { Agent } from "@gryffindor/client/common/types/agent.type";
+import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 import {
   ServerMutationParams,
   ServerQueryKey,

@@ -6,7 +6,7 @@ import {
 import { ServerQueryKeyBuilder } from "@gryffindor/client/common/utils/serverQueries/serverQueryKeyBuilder";
 import { useQuery } from "@tanstack/react-query";
 import { agentServiceInstance } from "../../services/agent/agentService";
-import { Agent } from "@gryffindor/client/common/types/agent.type";
+import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 
 type AgentQueryParam = {
   id: string;

@@ -6,7 +6,7 @@ import AppMenu from "@gryffindor/client/common/components/app/appMenu/appMenu";
 import { ActionMenuItem } from "@gryffindor/client/common/components/app/appMenu/type";
 import Loader from "@gryffindor/client/common/components/app/loader";
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
-import { Agent } from "@gryffindor/client/common/types/agent.type";
+import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 import { Routes } from "@gryffindor/client/route/routes";
 import { useParams } from "@tanstack/react-router";
 import { BrainCircuit, Copy, TriangleAlert } from "lucide-react";

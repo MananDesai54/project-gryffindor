@@ -1,4 +1,4 @@
-import { DbDocument } from "./dbDocument.type";
+import { DbDocument } from "../dbDocument.type";
 
 interface AiAgentConfiguration {
   firstMessage?: string;
@@ -15,6 +15,5 @@ interface AiAgentConfiguration {
 export interface Agent extends DbDocument {
   name: string;
   description?: string;
-  creator: string;
   configuration?: AiAgentConfiguration;
 }

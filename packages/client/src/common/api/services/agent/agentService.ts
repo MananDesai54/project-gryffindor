@@ -1,4 +1,4 @@
-import { Agent } from "@gryffindor/client/common/types/agent.type";
+import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 import { CRUDService } from "../crudService";
 
 class AgentService extends CRUDService<Agent> {

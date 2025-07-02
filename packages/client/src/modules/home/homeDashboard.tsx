@@ -1,12 +1,8 @@
-import { AuthContext } from "@gryffindor/client/common/api/decorators/hoc/authContextProvider";
-import { useMeQuery } from "@gryffindor/client/common/api/serverQueries/user/useAuthQuery";
 import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
-import Loader from "@gryffindor/client/common/components/app/loader";
 import { Routes } from "@gryffindor/client/route/routes";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { map } from "lodash";
 import { BrainCircuit, Zap } from "lucide-react";
-import { useContext, useEffect } from "react";
 
 type Action = {
   icon: React.ReactNode;
@@ -33,30 +29,6 @@ const ACTIONS: Action[] = [
 ];
 
 const HomeDashboard = () => {
-  const { setIsLoggedIn } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  const { data: user, isLoading, error } = useMeQuery();
-
-  useEffect(() => {
-    if (isLoading) return;
-    if (error) {
-      navigate({
-        to: Routes.LOGIN,
-        replace: true,
-      });
-      setIsLoggedIn(false);
-    } else if (user) {
-      setIsLoggedIn(true);
-    }
-  }, [error, isLoading, navigate, setIsLoggedIn, user]);
-
-  if (isLoading) {
-    return (
-      <Loader className="w-screen h-screen flex justify-center items-center" />
-    );
-  }
-
   return (
     <div className="flex flex-col items-center p-4">
       <div className="flex flex-col items-start">

@@ -2,6 +2,7 @@
 Agentic Framework for creating, maintaining, and collaborating with agents
 
 # Improve later
+- move to nest workspace
 - Better error handling, module specific error
 - Logging
 - NestJS best practices
@@ -9,6 +10,8 @@ Agentic Framework for creating, maintaining, and collaborating with agents
 - CORS, req logging, security
 - better way for update request
 - pagination
+- remove url like get-standard-llm and move to filters, fields, dimensions and common query
+- default model via property
 
 # next build
 - Ui for Agent creation
@@ -36,6 +39,15 @@ bun run dev:server
 ```
 - run following internal services to setup initial environment
 ```sh
-curl to create user
-curl to create standard LLMs
+# create user
+curl --location 'http://localhost:3000/user/create' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "manandesai54",
+    "email": "manan@gmail.com",
+    "password": "Manan@123"
+}'
+
+# create standard llms
+curl --location 'http://localhost:3000/ai/internal/llm/create-standard-llms'
 ```

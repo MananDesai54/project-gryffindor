@@ -3,7 +3,7 @@ import GenerateTextWithAi from "@gryffindor/client/common/components/app/generat
 import { Textarea } from "@gryffindor/client/common/components/shadcn/components/ui/textarea";
 import AddVariableDialog from "./addVariable/addVariableDialog";
 import { getVariableText } from "./addVariable/util/addVariable.util";
-import { Agent } from "@gryffindor/client/common/types/agent.type";
+import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 import { useCallback } from "react";
 
 type Props = {
@@ -28,7 +28,6 @@ export default function SystemPrompt({
 
   return (
     <AppCard
-      className="my-4"
       title="System Prompt"
       description={
         "The system prompt is used to determine the persona of the agent and the context of the conversation."

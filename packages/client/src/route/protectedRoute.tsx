@@ -6,7 +6,7 @@ import { Routes } from "./routes";
 import Loader from "../common/components/app/loader";
 
 export default function ProtectedRoute() {
-  const { setIsLoggedIn } = useContext(AuthContext);
+  const { setIsLoggedIn, setUserId } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const { data: user, isLoading, error } = useMeQuery();
@@ -21,8 +21,9 @@ export default function ProtectedRoute() {
       });
     } else if (user) {
       setIsLoggedIn(true);
+      setUserId(user._id);
     }
-  }, [error, isLoading, navigate, setIsLoggedIn, user]);
+  }, [error, isLoading, navigate, setIsLoggedIn, setUserId, user]);
 
   if (isLoading) {
     return (
