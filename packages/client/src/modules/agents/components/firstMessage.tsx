@@ -1,8 +1,18 @@
 import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
 import { Textarea } from "@gryffindor/client/common/components/shadcn/components/ui/textarea";
 import AddVariableDialog from "./addVariable/addVariableDialog";
+import { Agent } from "@gryffindor/client/common/types/agent.type";
+import { getVariableText } from "./addVariable/util/addVariable.util";
 
-export default function FirstMessage() {
+type Props = {
+  agent?: Agent;
+  onChange: (data: Partial<Agent["configuration"]>) => void;
+  addedVariables?: string[];
+};
+
+export default function FirstMessage(props: Props) {
+  const { agent, onChange, addedVariables } = props;
+
   return (
     <AppCard
       title="First message"
@@ -25,7 +35,7 @@ export default function FirstMessage() {
       }
       footer={
         <AddVariableDialog
-          addedVaribales={addedVaribales}
+          addedVaribales={addedVariables}
           onAddVariable={(v) => {
             onChange({
               firstMessage: `${agent?.configuration?.firstMessage || "Hello! How can I help you today?"} ${getVariableText({ label: v.label })}`,
