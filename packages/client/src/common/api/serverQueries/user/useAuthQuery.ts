@@ -21,7 +21,7 @@ export const useMeQuery = (options?: ServerQueryParams) => {
 
   return useQuery<TSAny, Error, User>({
     queryKey: [queryKey],
-    queryFn: allUserQueryFn,
+    queryFn: allUserQueryFn as TSAny,
     staleTime: SLOW_STALE,
     ...reactQueryOptions,
   });

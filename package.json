@@ -10,5 +10,9 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "dev:client": "bun run --cwd packages/client dev",
+    "dev:server": "docker-compose up --build"
   }
 }

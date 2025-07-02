@@ -4,10 +4,9 @@ const useBoolean = (initialState = false) => {
   const [value, setValue] = useState(initialState);
 
   const toggle = useCallback(() => setValue((value) => !value), []);
-  const set = useCallback(() => setValue(true), []);
-  const unset = useCallback(() => setValue(false), []);
+  const set = useCallback((val: boolean) => setValue(val), []);
 
-  return { value, set, unset, toggle, setValue };
+  return { value, set, toggle, setValue };
 };
 
 export default useBoolean;

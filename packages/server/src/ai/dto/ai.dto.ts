@@ -1,18 +1,16 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsDefined,
   IsIn,
   IsNotEmpty,
-  IsNotEmptyObject,
   IsNumber,
   IsObject,
   IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { AiBuiltInToolType } from '../types/ai';
 import { values } from 'lodash';
+import { AiBuiltInToolType } from '../types/ai';
 
 class AiAgentConfigurationDto {
   @IsString()
@@ -61,11 +59,11 @@ export class CreateAiAgentDto {
   @IsOptional()
   description?: string;
 
-  @IsDefined()
-  @IsNotEmptyObject()
+  @IsOptional()
+  @IsObject()
   @ValidateNested()
   @Type(() => AiAgentConfigurationDto)
-  configuration: AiAgentConfigurationDto;
+  configuration?: AiAgentConfigurationDto;
 }
 
 export class UpdateAiAgentDto extends CreateAiAgentDto {}
