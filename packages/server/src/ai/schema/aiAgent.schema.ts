@@ -1,10 +1,4 @@
-import {
-  MongooseModule,
-  Prop,
-  raw,
-  Schema,
-  SchemaFactory,
-} from '@nestjs/mongoose';
+import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { User } from 'src/user/schema/user.schema';
 import { AiTool } from './aiTool.schema';
@@ -18,7 +12,11 @@ class AiAgentConfiguration {
   firstMessage: string;
   @Prop()
   systemPrompt: string;
-  @Prop(raw({}))
+  @Prop({
+    type: mongoose.Schema.Types.Map,
+    of: String,
+    required: false,
+  })
   dynamicVariables: Record<string, string>;
   @Prop({ default: 0 })
   temperature: number;

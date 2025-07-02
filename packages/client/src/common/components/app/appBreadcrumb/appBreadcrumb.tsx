@@ -8,6 +8,7 @@ import {
   BreadcrumbSeparator,
 } from "../../shadcn/components/ui/breadcrumb";
 import { BreadcrumbItemType } from "./type";
+import { Fragment } from "react/jsx-runtime";
 
 type Props = {
   items: Array<BreadcrumbItemType>;
@@ -18,8 +19,8 @@ export default function AppBreadcrumb({ items }: Props) {
     <Breadcrumb>
       <BreadcrumbList>
         {map(items, (item, index) => (
-          <>
-            <BreadcrumbItem key={item.label}>
+          <Fragment key={item.label}>
+            <BreadcrumbItem>
               {item.link ? (
                 <Link to={item.link}>{item.label}</Link>
               ) : (
@@ -27,7 +28,7 @@ export default function AppBreadcrumb({ items }: Props) {
               )}
             </BreadcrumbItem>
             {index < items.length - 1 && <BreadcrumbSeparator />}
-          </>
+          </Fragment>
         ))}
       </BreadcrumbList>
     </Breadcrumb>

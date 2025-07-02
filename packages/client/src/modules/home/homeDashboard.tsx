@@ -2,10 +2,6 @@ import { AuthContext } from "@gryffindor/client/common/api/decorators/hoc/authCo
 import { useMeQuery } from "@gryffindor/client/common/api/serverQueries/user/useAuthQuery";
 import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
 import Loader from "@gryffindor/client/common/components/app/loader";
-import {
-  Card,
-  CardContent,
-} from "@gryffindor/client/common/components/shadcn/components/ui/card";
 import { Routes } from "@gryffindor/client/route/routes";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { map } from "lodash";

@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { merge } from 'lodash';
 import { Model } from 'mongoose';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
 import {
@@ -74,17 +73,20 @@ export class KnowledgeBaseService {
     authContext: AuthContextType,
   ) {
     try {
-      const knowledgeBase = await this.knowledgeBaseModel.findOne({
-        _id: id,
-        creator: authContext.userId,
-      });
+      const knowledgeBase = await this.knowledgeBaseModel.findOneAndUpdate(
+        {
+          _id: id,
+          creator: authContext.userId,
+        },
+        data,
+        { new: true, runValidators: true },
+      );
       if (!knowledgeBase) {
         throw new NotFoundException(
           'You cannot update knowledge base. Either it does not exist or you are not the creator.',
         );
       }
-      merge(knowledgeBase, data);
-      return knowledgeBase.save();
+      return knowledgeBase;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

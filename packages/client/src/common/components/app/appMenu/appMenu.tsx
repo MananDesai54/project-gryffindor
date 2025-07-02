@@ -15,15 +15,18 @@ import { Button } from "../../shadcn/components/ui/button";
 type Props = {
   title?: string;
   actions: ActionMenuItem[];
+  trigger?: React.ReactNode;
 };
 
-export default function AppMenu({ title, actions }: Props) {
+export default function AppMenu({ title, actions, trigger }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Button variant="outline">
-          <MoreHorizontal />
-        </Button>
+        {trigger || (
+          <Button variant="outline" size="icon">
+            <MoreHorizontal />
+          </Button>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {title ? (
@@ -35,6 +38,7 @@ export default function AppMenu({ title, actions }: Props) {
         {map(actions, (action) => {
           return (
             <DropdownMenuItem
+              onClick={action.onAction}
               key={action.label}
               className={cx("flex items-center cursor-pointer")}
             >
