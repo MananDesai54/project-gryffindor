@@ -1,4 +1,5 @@
 import { AuthContext } from "@gryffindor/client/common/api/decorators/hoc/authContextProvider";
+import { useLoginMutation } from "@gryffindor/client/common/api/serverQueries/user/useAuthMutation";
 import { NotifyError } from "@gryffindor/client/common/components/app/toast";
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
 import {
@@ -10,6 +11,8 @@ import {
 } from "@gryffindor/client/common/components/shadcn/components/ui/card";
 import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
 import { Label } from "@gryffindor/client/common/components/shadcn/components/ui/label";
+import { AuthResponse } from "@gryffindor/client/common/types/user.type";
+import { AuthUtils } from "@gryffindor/client/common/utils/authUtils";
 import { Routes } from "@gryffindor/client/route/routes";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback, useContext, useEffect, useState } from "react";
@@ -22,23 +25,37 @@ export default function Login() {
 
   const { setIsLoggedIn } = useContext(AuthContext);
 
+  const { mutate } = useLoginMutation({
+    onError: (error) => {
+      NotifyError("Login error", error.message || "Invalid email or password");
+    },
+    onSuccess: (data?: AuthResponse) => {
+      data?.token && AuthUtils.setAuthToken(data.token);
+      setIsLoggedIn(true);
+      navigate({
+        to: Routes.HOME,
+      });
+    },
+  });
+
   useEffect(() => {
     setIsLoggedIn(false);
   }, [setIsLoggedIn]);
 
-  const onLogin = useCallback(() => {
-    if (!email || !password) {
-      NotifyError("Login error", "Email and password are required");
-      return;
-    }
-    if (email === "mdesai@ontic.co" && password === "password") {
-      navigate({
-        to: Routes.HOME,
+  const onLogin = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (!email || !password) {
+        NotifyError("Login error", "Email and password are required");
+        return;
+      }
+      mutate({
+        email,
+        password,
       });
-    } else {
-      NotifyError("Login error", "Invalid email or password");
-    }
-  }, [email, navigate, password]);
+    },
+    [email, mutate, password],
+  );
 
   return (
     <div className="w-full h-full flex justify-center items-center">

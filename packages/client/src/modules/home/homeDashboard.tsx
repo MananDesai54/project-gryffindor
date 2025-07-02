@@ -1,16 +1,16 @@
+import { AuthContext } from "@gryffindor/client/common/api/decorators/hoc/authContextProvider";
+import { useMeQuery } from "@gryffindor/client/common/api/serverQueries/user/useAuthQuery";
+import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
+import Loader from "@gryffindor/client/common/components/app/loader";
 import {
   Card,
   CardContent,
 } from "@gryffindor/client/common/components/shadcn/components/ui/card";
-import { BrainCircuit, LoaderIcon, Workflow, Zap } from "lucide-react";
-import { map } from "lodash";
 import { Routes } from "@gryffindor/client/route/routes";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { map } from "lodash";
+import { BrainCircuit, Zap } from "lucide-react";
 import { useContext, useEffect } from "react";
-import { authServiceInstance } from "@gryffindor/client/common/api/services/user/authService";
-import { AuthContext } from "@gryffindor/client/common/api/decorators/hoc/authContextProvider";
-import { useNavigate } from "@tanstack/react-router";
-import useBoolean from "@gryffindor/client/common/api/decorators/hooks/useBoolean";
-import { useQuery } from "@tanstack/react-query";
 
 type Action = {
   icon: React.ReactNode;
@@ -24,11 +24,11 @@ const ACTIONS: Action[] = [
     title: "Build Agent",
     link: Routes.AGENT_CREATE,
   },
-  {
-    icon: <Workflow />,
-    title: "Create Agentic Workflow",
-    link: Routes.AGENT_WORKFLOW,
-  },
+  // {
+  //   icon: <Workflow />,
+  //   title: "Create Agentic Workflow",
+  //   link: Routes.AGENT_WORKFLOW,
+  // },
   {
     icon: <BrainCircuit />,
     title: "Interact with Agent",
@@ -37,30 +37,28 @@ const ACTIONS: Action[] = [
 ];
 
 const HomeDashboard = () => {
-  const { toggle: toggleLoading, value: isLoading } = useBoolean(false);
   const { setIsLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const { data: user, isLoading, error } = useMeQuery();
+
   useEffect(() => {
-    (async function () {
-      try {
-        toggleLoading();
-        await authServiceInstance.me();
-        setIsLoggedIn(true);
-      } catch (error) {
-        setIsLoggedIn(false);
-        navigate({
-          to: Routes.LOGIN,
-          replace: true,
-        });
-      } finally {
-        toggleLoading();
-      }
-    })();
-  }, [navigate, setIsLoggedIn, toggleLoading]);
+    if (isLoading) return;
+    if (error) {
+      navigate({
+        to: Routes.LOGIN,
+        replace: true,
+      });
+      setIsLoggedIn(false);
+    } else if (user) {
+      setIsLoggedIn(true);
+    }
+  }, [error, isLoading, navigate, setIsLoggedIn, user]);
 
   if (isLoading) {
-    return <LoaderIcon />;
+    return (
+      <Loader className="w-screen h-screen flex justify-center items-center" />
+    );
   }
 
   return (
@@ -72,15 +70,17 @@ const HomeDashboard = () => {
         <div className="grid grid-cols-3 gap-8">
           {map(ACTIONS, (action) => {
             return (
-              <Card
-                key={action.title}
-                className="cursor-pointer hover:scale-105 hover:border-gray-400 transition-all"
-              >
-                <CardContent className="flex flex-col items-center">
-                  <div>{action.icon}</div>
-                  <div className="mt-3">{action.title}</div>
-                </CardContent>
-              </Card>
+              <Link to={action.link} key={action.title}>
+                <AppCard
+                  className="cursor-pointer hover:scale-105 hover:border-gray-400 transition-all"
+                  content={
+                    <div className="flex flex-col items-center">
+                      <div>{action.icon}</div>
+                      <div className="mt-3">{action.title}</div>
+                    </div>
+                  }
+                />
+              </Link>
             );
           })}
         </div>

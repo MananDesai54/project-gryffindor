@@ -15,12 +15,14 @@ export type ServerQueryKey<TOther = TSAny, TSecondary = TSAny> = {
 export type ServerQueryParams<TParams = Record<string, TSAny>> = {
   queryParams?: TParams;
   queryKey?: ServerQueryKey;
-  reactQueryOptions?: Omit<
-    UseQueryOptions<TSAny, Error, TSAny, TSAny>,
-    "initialData"
-  > & {
-    initialData?: () => undefined;
-  };
+  reactQueryOptions?: Partial<
+    Omit<
+      UseQueryOptions<TSAny, Error, TSAny, TSAny>,
+      "initialData" | "queryFn"
+    > & {
+      initialData?: () => undefined;
+    }
+  >;
 };
 
 export type ServerInfiniteQueryParams<TParams = Record<string, TSAny>> = {
@@ -39,7 +41,15 @@ export type ServerMutationParams<TParams = Record<string, TSAny>> = {
     variables: TSAny,
     context: TSAny | undefined,
   ) => void;
-  reactQueryOptions?: Partial<UseMutationOptions>;
+  onMutate?: (
+    variables: TSAny,
+  ) => Promise<TSAny | undefined> | TSAny | undefined;
+  reactQueryOptions?: Partial<
+    Omit<
+      UseMutationOptions,
+      "mutationFn" | "onSuccess" | "onError" | "onSettled" | "onMutate"
+    >
+  >;
 };
 
 export type FetchQueryFunctionType<

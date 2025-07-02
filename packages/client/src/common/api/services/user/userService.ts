@@ -1,7 +1,7 @@
 import { User } from "@gryffindor/client/common/types/user.type";
 import { CRUDService } from "../crudService";
 
-export class UserService extends CRUDService<User> {
+class UserService extends CRUDService<User> {
   private static instance: UserService;
 
   private constructor() {

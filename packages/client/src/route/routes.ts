@@ -1,11 +1,13 @@
 export enum Routes {
-  HOME = "/",
+  APP = "/",
 
-  LOGIN = "/login",
+  AUTH = "/auth",
+  LOGIN = "/auth/login",
 
-  AGENT = "/agent",
+  HOME = "/home",
+
   AGENT_CREATE = "/agent/create",
   AGENT_LIST = "/agent/list",
-  AGENT_DETAIL = "/agent/:id",
-  AGENT_WORKFLOW = "/agent/workflow/:id",
+  AGENT_DETAIL = "/agent/$id",
+  AGENT_WORKFLOW = "/agent/workflow/$id",
 }

@@ -1,3 +1,4 @@
+import { Routes } from "@gryffindor/client/route/routes";
 import {
   createRootRoute,
   createRoute,
@@ -6,11 +7,12 @@ import {
   RouterProvider,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { Routes } from "@gryffindor/client/route/routes";
+import { AnimatePresence } from "motion/react";
 import React from "react";
-import Layout from "../common/components/app/layout";
 import ReactQueryProvider from "../common/api/common/reactQueryProvider";
+import Layout from "../common/components/app/layout";
 import { Toaster } from "../common/components/shadcn/components/ui/sonner";
+import ProtectedRoute from "./protectedRoute";
 
 const Login = React.lazy(
   () => import("@gryffindor/client/modules/login/login"),
@@ -18,23 +20,25 @@ const Login = React.lazy(
 const HomeDashboard = React.lazy(
   () => import("@gryffindor/client/modules/home/homeDashboard"),
 );
+const AgentCreateScreen = React.lazy(
+  () => import("@gryffindor/client/modules/agents/agentCreateScreen"),
+);
+const AgentDetailScreen = React.lazy(
+  () => import("@gryffindor/client/modules/agents/agentDetailsScreen"),
+);
 
 const rootRoute = createRootRoute({
   component: () => (
-    <Layout>
-      <ReactQueryProvider>
-        <Outlet />
-        <TanStackRouterDevtools position="bottom-right" />
-        <Toaster />
-      </ReactQueryProvider>
-    </Layout>
+    <AnimatePresence>
+      <Layout>
+        <ReactQueryProvider>
+          <Outlet />
+          <TanStackRouterDevtools position="bottom-right" />
+          <Toaster />
+        </ReactQueryProvider>
+      </Layout>
+    </AnimatePresence>
   ),
-});
-
-const homeRoute = createRoute({
-  path: Routes.HOME,
-  component: HomeDashboard,
-  getParentRoute: () => rootRoute,
 });
 
 const loginRoute = createRoute({
@@ -43,28 +47,46 @@ const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
 });
 
-const agentRoute = createRoute({
-  path: Routes.AGENT,
-  component: () => <div>Agent</div>,
-  getParentRoute: () => homeRoute,
+const protectedAppRoute = createRoute({
+  path: Routes.APP,
+  component: ProtectedRoute,
+  getParentRoute: () => rootRoute,
 });
-
+const homeRoute = createRoute({
+  path: Routes.HOME,
+  component: HomeDashboard,
+  getParentRoute: () => protectedAppRoute,
+});
+const agentCreate = createRoute({
+  path: Routes.AGENT_CREATE,
+  component: AgentCreateScreen,
+  getParentRoute: () => protectedAppRoute,
+});
+const agentDetail = createRoute({
+  path: Routes.AGENT_DETAIL,
+  component: AgentDetailScreen,
+  getParentRoute: () => protectedAppRoute,
+});
+const agentList = createRoute({
+  path: Routes.AGENT_LIST,
+  component: () => <div>Agent List</div>,
+  getParentRoute: () => protectedAppRoute,
+});
 const agentWorkflowRoute = createRoute({
   path: Routes.AGENT_WORKFLOW,
   component: () => <div>Agent Workflow</div>,
-  getParentRoute: () => agentRoute,
-});
-
-const agentCreate = createRoute({
-  path: Routes.AGENT_CREATE,
-  component: () => <div>Agent Create</div>,
-  getParentRoute: () => agentRoute,
+  getParentRoute: () => protectedAppRoute,
 });
 
 const routeTree = rootRoute.addChildren([
-  homeRoute,
   loginRoute,
-  agentRoute.addChildren([agentWorkflowRoute, agentCreate]),
+  protectedAppRoute.addChildren([
+    homeRoute,
+    agentCreate,
+    agentDetail,
+    agentList,
+    agentWorkflowRoute,
+  ]),
 ]);
 
 const router = createRouter({ routeTree });

@@ -20,9 +20,9 @@ export default function Layout(props: { children: React.ReactNode }) {
 
   return (
     <div className="h-screen bg-secondary flex">
-      <SidebarProvider>
-        <Sidebar collapsible="offcanvas" variant="inset">
-          <SidebarHeader>Gryffindor</SidebarHeader>
+      <SidebarProvider defaultOpen={false}>
+        <Sidebar collapsible="icon" variant="inset">
+          <SidebarHeader></SidebarHeader>
           <SidebarContent>
             <SidebarGroup />
             <SidebarGroup />

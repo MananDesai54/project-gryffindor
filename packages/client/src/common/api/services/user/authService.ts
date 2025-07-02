@@ -3,7 +3,7 @@ import { apiRequest } from "../../common/request/axios";
 import { ApiService } from "../apiService";
 import { AuthResponse, User } from "@gryffindor/client/common/types/user.type";
 
-export class AuthService extends ApiService {
+class AuthService extends ApiService {
   private static instance: AuthService;
 
   private constructor() {
