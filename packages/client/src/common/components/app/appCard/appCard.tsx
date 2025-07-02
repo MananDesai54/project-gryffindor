@@ -1,5 +1,6 @@
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -10,9 +11,10 @@ import {
 type Props = {
   title?: React.ReactNode;
   description?: React.ReactNode;
-  content: React.ReactNode;
+  content?: React.ReactNode;
   footer?: React.ReactNode;
   className?: string;
+  cardAction?: React.ReactNode;
 };
 
 export default function AppCard({
@@ -21,6 +23,7 @@ export default function AppCard({
   content,
   footer,
   className,
+  cardAction,
 }: Props) {
   return (
     <Card className={className}>
@@ -30,9 +33,10 @@ export default function AppCard({
           {description ? (
             <CardDescription>{description}</CardDescription>
           ) : null}
+          {cardAction ? <CardAction>{cardAction}</CardAction> : null}
         </CardHeader>
       ) : null}
-      <CardContent>{content}</CardContent>
+      {content ? <CardContent>{content}</CardContent> : null}
       {footer ? <CardFooter>{footer}</CardFooter> : null}
     </Card>
   );
