@@ -24,6 +24,7 @@ import { AiToolService } from './service/ai-tool.service';
 import { AiAgentService } from './service/aiAgent.service';
 import { KnowledgeBaseService } from './service/knowledge-base.service';
 import { LlmService } from './service/llm.service';
+import { SearchRequestDto } from 'src/common/request/request.dto';
 
 @UseGuards(AuthGuard)
 @Controller('ai')
@@ -75,6 +76,11 @@ export class AiController {
     @AuthContext() ctx: AuthContextType,
   ) {
     return this.llmService.createLLM(data, ctx);
+  }
+
+  @Post('/llm/list')
+  async list(@Body(ValidationPipe) request: SearchRequestDto) {
+    return this.llmService.list(request);
   }
 
   @Get('/llm/:id')

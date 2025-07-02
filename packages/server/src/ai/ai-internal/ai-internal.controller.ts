@@ -1,0 +1,12 @@
+import { Controller, Get } from '@nestjs/common';
+import { AiInternalService } from './ai-internal.service';
+
+@Controller('ai/internal')
+export class AiInternalController {
+  constructor(private readonly aiInternalService: AiInternalService) {}
+
+  @Get('/llm/create-standard-llms')
+  async createStandardLLMs() {
+    return this.aiInternalService.createStandardLLMs();
+  }
+}

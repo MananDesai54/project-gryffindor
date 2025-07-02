@@ -1,3 +1,7 @@
+import {
+  SearchRequest,
+  SearchResponse,
+} from "../../types/request/searchRequest";
 import { apiRequest } from "../common/request/axios";
 import { ApiService } from "./apiService";
 
@@ -20,5 +24,12 @@ export abstract class CRUDService<T> extends ApiService {
 
   async get(id: string): Promise<T> {
     return apiRequest.get<T>(this.createUrl(`${id}`));
+  }
+
+  async list(request: SearchRequest): Promise<SearchResponse<T>> {
+    return apiRequest.post<SearchRequest, SearchResponse<T>>(
+      this.createUrl("list"),
+      request,
+    );
   }
 }

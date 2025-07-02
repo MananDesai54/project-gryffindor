@@ -5,9 +5,15 @@ import { AuthUtils } from "./common/utils/authUtils";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(AuthUtils.isLoggedIn());
+  const [userId, setUserId] = useState<string>("");
 
   return (
-    <AuthContextProvider isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}>
+    <AuthContextProvider
+      isLoggedIn={isLoggedIn}
+      setIsLoggedIn={setIsLoggedIn}
+      setUserId={setUserId}
+      userId={userId}
+    >
       <AppRouterProvider />
     </AuthContextProvider>
   );

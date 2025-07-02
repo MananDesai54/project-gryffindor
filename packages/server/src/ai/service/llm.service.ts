@@ -10,6 +10,9 @@ import { AuthContextType } from 'src/auth/dto/auth.dto';
 import { CreateLLMDto, UpdateLLMDto } from '../dto/llm.dto';
 import { CustomLLM, LLM, StandardLLM } from '../schema/llm.schema';
 import { LLMType } from '../types/ai';
+import { SearchRequestDto } from 'src/common/request/request.dto';
+import { RequestUtil } from 'src/common/request/request.util';
+import { SearchResponse } from 'src/common/request/request.type';
 
 @Injectable()
 export class LlmService {
@@ -91,6 +94,26 @@ export class LlmService {
         );
       }
       return llm;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async list(request: SearchRequestDto): Promise<SearchResponse> {
+    try {
+      const { query, options } =
+        RequestUtil.getMongoQueryAndOptionsForRequest(request);
+
+      const [llm, count] = await Promise.all([
+        this.llm.find(query, null, options).exec(),
+        this.llm.countDocuments(query).exec(),
+      ]);
+
+      return {
+        pageInfo: request.pageInfo,
+        data: llm,
+        count: count,
+      };
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
