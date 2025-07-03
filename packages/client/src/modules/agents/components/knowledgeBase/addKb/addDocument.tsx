@@ -1,32 +1,35 @@
-import { fileServiceInstance } from "@gryffindor/client/common/api/services/fileService";
+import { useUploadFileMutation } from "@gryffindor/client/common/api/serverQueries/file/useFileMutation";
 import { FileInput } from "@gryffindor/client/common/components/app/fileInput";
+import { NotifySuccess } from "@gryffindor/client/common/components/app/toast";
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
-import { useState } from "react";
+import { UploadedFile } from "@gryffindor/client/common/types/file.type";
+import { useCallback, useState } from "react";
 
 type Props = {
-  onChange: (value: string) => void;
+  onChange: (value: UploadedFile) => void;
 };
 
 export default function AddFile(props: Props) {
   const { onChange } = props;
 
-  // The parent component manages the state
-  const [myFiles, setMyFiles] = useState<(File & { preview?: string })[]>([]);
+  const [myFiles, setMyFiles] = useState<File[]>([]);
 
-  const handleFilesChange = (newFiles: (File & { preview?: string })[]) => {
+  const handleFilesChange = useCallback((newFiles: File[]) => {
     setMyFiles(newFiles);
-  };
+  }, []);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const { mutateAsync: uploadFiles, isPending } = useUploadFileMutation();
 
-    const formData = new FormData();
-    myFiles.forEach((file) => {
-      formData.append("files", file);
-    });
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-    fileServiceInstance.upload(formData);
-  };
+      const files = await uploadFiles({ files: myFiles });
+      NotifySuccess("File uploaded successfully");
+      onChange(files[0]);
+    },
+    [myFiles, onChange, uploadFiles],
+  );
 
   return (
     <div>
@@ -36,10 +39,18 @@ export default function AddFile(props: Props) {
             Upload Your Agent's Knowledge Base
           </h1>
           <form onSubmit={handleSubmit}>
-            <FileInput files={myFiles} onFilesChange={handleFilesChange} />
+            <FileInput
+              files={myFiles}
+              onFilesChange={handleFilesChange}
+              maxFiles={1}
+            />
             <div className="mt-8 text-center">
-              <Button type="submit" disabled={myFiles.length === 0}>
-                Save Agent
+              <Button
+                type="submit"
+                variant="outline"
+                disabled={myFiles.length === 0 || isPending}
+              >
+                Upload knowledge base
               </Button>
             </div>
           </form>

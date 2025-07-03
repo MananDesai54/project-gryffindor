@@ -93,10 +93,10 @@ export function AddKnowledgeBase(props: Props) {
             ) : null}
             {activeKnowledgeBaseType === KnowledgeBaseType.FILE ? (
               <AddFile
-                onChange={(content) =>
+                onChange={(file) =>
                   setNewKnowledgeBase({
                     ...newKnowledgeBase,
-                    content,
+                    ...file,
                   } as KnowledgeBase)
                 }
               />

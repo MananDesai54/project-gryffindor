@@ -1,3 +1,4 @@
-export type File = {
+export type UploadedFile = {
   url: string;
+  mimeType: string;
 };

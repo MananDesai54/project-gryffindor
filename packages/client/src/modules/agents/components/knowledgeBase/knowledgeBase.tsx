@@ -36,7 +36,7 @@ export default function KnowledgeBaseConfig(props: Props) {
       cardAction={
         <AddKnowledgeBase onSaveKnowledgeBase={onSaveKnowledgeBase} />
       }
-      content={<AddedKnowledgeBase agent={agent} />}
+      content={<AddedKnowledgeBase agent={agent} onChange={onChange} />}
     />
   );
 }
