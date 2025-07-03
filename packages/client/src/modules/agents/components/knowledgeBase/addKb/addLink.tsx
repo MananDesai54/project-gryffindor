@@ -1,5 +1,4 @@
-import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
-import { Label } from "@gryffindor/client/common/components/shadcn/components/ui/label";
+import FormInput from "@gryffindor/client/common/components/app/formInput";
 
 type Props = {
   value?: string;
@@ -10,18 +9,14 @@ export default function AddLink(props: Props) {
   const { value, onChange } = props;
 
   return (
-    <div>
-      <Label htmlFor="url" className="my-2">
-        URL
-      </Label>
-      <Input
-        id="url"
-        type="url"
-        placeholder="https://example.com"
-        required
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </div>
+    <FormInput
+      label="URL"
+      id="url"
+      type="url"
+      placeholder="https://example.com"
+      required
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    />
   );
 }

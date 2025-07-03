@@ -1,5 +1,6 @@
 import { AuthContext } from "@gryffindor/client/common/api/decorators/hoc/authContextProvider";
 import { useLoginMutation } from "@gryffindor/client/common/api/serverQueries/user/useAuthMutation";
+import FormInput from "@gryffindor/client/common/components/app/formInput";
 import { NotifyError } from "@gryffindor/client/common/components/app/toast";
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
 import {
@@ -9,8 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@gryffindor/client/common/components/shadcn/components/ui/card";
-import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
-import { Label } from "@gryffindor/client/common/components/shadcn/components/ui/label";
 import { AuthResponse } from "@gryffindor/client/common/types/user.type";
 import { AuthUtils } from "@gryffindor/client/common/utils/authUtils";
 import { Routes } from "@gryffindor/client/route/routes";
@@ -70,8 +69,8 @@ export default function Login() {
           <form onSubmit={onLogin}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
+                <FormInput
+                  label="Email"
                   id="email"
                   type="email"
                   placeholder="m@example.com"
@@ -81,12 +80,11 @@ export default function Login() {
                 />
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input
+                <FormInput
+                  label="Password"
                   id="password"
                   type="password"
+                  placeholder="Enter password"
                   required
                   onChange={(e) => setPassword(e.target.value)}
                   value={password}

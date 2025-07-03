@@ -1,15 +1,16 @@
 import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
 import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
+import { Slider } from "@gryffindor/client/common/components/shadcn/components/ui/slider";
 import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 import { isUndefined, keys, reduce } from "lodash";
-import { useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import AddedVariables from "./addVariable/addedVariables";
 import { extractVariables } from "./addVariable/util/addVariable.util";
 import FirstMessage from "./firstMessage";
-import AddKnowledgeBase from "./knowledgeBase/knowledgeBase";
+import AddKnowledgeBase from "./knowledgeBase/knowledgeBaseConfig";
 import LlmSelection from "./llmSelection/llmSelection";
 import SystemPrompt from "./systemPrompt";
-import Tools from "./tools/tools";
+import ToolsConfig from "./tools/toolsConfig";
 
 type Props = {
   agent: Agent;
@@ -22,42 +23,62 @@ export default function AgentConfigurations({ agent, onChange }: Props) {
     [agent?.configuration?.dynamicVariables],
   );
 
-  useEffect(() => {
-    const allVariables = [
-      ...extractVariables(agent?.configuration?.firstMessage || ""),
-      ...extractVariables(agent?.configuration?.systemPrompt || ""),
-    ];
-    allVariables?.length &&
+  const getUpdatedDynamicVariables = useCallback(
+    (firstMessage: string, systemPrompt: string) => {
+      const allVariables = [
+        ...extractVariables(firstMessage || ""),
+        ...extractVariables(systemPrompt || ""),
+      ];
+      return reduce(
+        allVariables,
+        (acc, variable) => {
+          acc[variable.label] =
+            agent?.configuration?.dynamicVariables?.[variable.label] || "";
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
+    },
+    [agent?.configuration?.dynamicVariables],
+  );
+
+  const onChangeFirstMessage = useCallback(
+    (update: Partial<Agent["configuration"]>) => {
       onChange({
-        dynamicVariables: reduce(
-          allVariables,
-          (acc, variable) => {
-            acc[variable.label] =
-              agent?.configuration?.dynamicVariables?.[variable.label] || "";
-            return acc;
-          },
-          {} as Record<string, string>,
+        ...update,
+        dynamicVariables: getUpdatedDynamicVariables(
+          update?.firstMessage || "",
+          agent?.configuration?.systemPrompt || "",
         ),
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    agent?.configuration?.dynamicVariables,
-    agent?.configuration?.firstMessage,
-    agent?.configuration?.systemPrompt,
-    // onChange,
-  ]);
+    },
+    [agent?.configuration?.systemPrompt, onChange, getUpdatedDynamicVariables],
+  );
+
+  const onChangeSystemPrompt = useCallback(
+    (update: Partial<Agent["configuration"]>) => {
+      onChange({
+        ...update,
+        dynamicVariables: getUpdatedDynamicVariables(
+          agent.configuration?.firstMessage || "",
+          update?.systemPrompt || "",
+        ),
+      });
+    },
+    [onChange, getUpdatedDynamicVariables, agent.configuration?.firstMessage],
+  );
 
   return (
     <div className="w-full mb-32 flex flex-col gap-4">
       <FirstMessage
         addedVariables={addedVariables}
         agent={agent}
-        onChange={onChange}
+        onChange={onChangeFirstMessage}
       />
       <SystemPrompt
         addedVariables={addedVariables}
         agent={agent}
-        onChange={onChange}
+        onChange={onChangeSystemPrompt}
       />
       <AddedVariables
         addedVariables={addedVariables}
@@ -74,15 +95,12 @@ export default function AgentConfigurations({ agent, onChange }: Props) {
           </div>
         }
         content={
-          <Input
-            type="range"
+          <Slider
             min={0}
             max={1}
             step={0.01}
-            value={agent?.configuration?.temperature || 0}
-            onChange={(e) =>
-              onChange({ temperature: parseFloat(e.target.value) })
-            }
+            value={[agent?.configuration?.temperature || 0]}
+            onValueChange={(value) => onChange({ temperature: value[0] })}
           />
         }
       />
@@ -102,7 +120,7 @@ export default function AgentConfigurations({ agent, onChange }: Props) {
         }
       />
       <AddKnowledgeBase onChange={onChange} agent={agent} />
-      <Tools />
+      <ToolsConfig agent={agent} onChange={onChange} />
     </div>
   );
 }

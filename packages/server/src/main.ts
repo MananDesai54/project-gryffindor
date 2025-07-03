@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -8,4 +9,4 @@ async function bootstrap() {
   });
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap().catch(console.error);
+bootstrap().catch((error) => Logger.error('[Bootstrap Error]', error));

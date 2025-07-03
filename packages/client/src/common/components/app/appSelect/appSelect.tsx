@@ -13,17 +13,19 @@ type Props = {
   onChange: (value: string) => void;
   value?: string;
   placeholder?: string;
+  required?: boolean;
+  className?: string;
 };
 
 export default function AppSelect(props: Props) {
-  const { options, onChange, value, placeholder } = props;
+  const { options, onChange, value, placeholder, required } = props;
 
   return (
-    <Select onValueChange={onChange} value={value}>
+    <Select onValueChange={onChange} value={value} required={required}>
       <SelectTrigger className="w-[180px] cursor-pointer">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="">
         {map(options, (o) => (
           <SelectItem value={o.id} className="cursor-pointer">
             {o.label}

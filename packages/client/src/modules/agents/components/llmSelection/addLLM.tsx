@@ -1,4 +1,5 @@
 import { useCreateCustomLLMMutation } from "@gryffindor/client/common/api/serverQueries/agent/useLLMMutation";
+import FormInput from "@gryffindor/client/common/components/app/formInput";
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
 import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
 import { Label } from "@gryffindor/client/common/components/shadcn/components/ui/label";
@@ -35,8 +36,8 @@ export default function AddLLM({ onCreateLLM }: Props) {
     <form className="p-6 bg-background rounded-2xl" onSubmit={createLLM}>
       <div className="flex flex-col gap-6">
         <div className="grid gap-2">
-          <Label htmlFor="serverUrl">Server URL</Label>
-          <Input
+          <FormInput
+            label="Server URL"
             id="serverUrl"
             type="url"
             placeholder="https://example.com"
@@ -51,10 +52,8 @@ export default function AddLLM({ onCreateLLM }: Props) {
           </div>
         </div>
         <div className="grid gap-2">
-          <div className="flex items-center">
-            <Label htmlFor="modelId">Model ID</Label>
-          </div>
-          <Input
+          <FormInput
+            label="Model ID"
             id="modelId"
             type="text"
             required
@@ -63,10 +62,8 @@ export default function AddLLM({ onCreateLLM }: Props) {
           />
         </div>
         <div className="grid gap-2">
-          <div className="flex items-center">
-            <Label htmlFor="apiKey">API Key</Label>
-          </div>
-          <Input
+          <FormInput
+            label="API Key"
             id="apiKey"
             type="password"
             required
