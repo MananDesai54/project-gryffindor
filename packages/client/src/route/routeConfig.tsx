@@ -33,7 +33,7 @@ const rootRoute = createRootRoute({
       <Layout>
         <ReactQueryProvider>
           <Outlet />
-          <TanStackRouterDevtools position="bottom-right" />
+          <TanStackRouterDevtools position="bottom-left" />
           <Toaster />
         </ReactQueryProvider>
       </Layout>

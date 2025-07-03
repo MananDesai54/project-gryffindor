@@ -1,9 +1,8 @@
 import AppMenu from "@gryffindor/client/common/components/app/appMenu/appMenu";
 import { ActionMenuItem } from "@gryffindor/client/common/components/app/appMenu/type";
 import AppModal from "@gryffindor/client/common/components/app/appModal/appModal";
+import FormInput from "@gryffindor/client/common/components/app/formInput";
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
-import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
-import { Label } from "@gryffindor/client/common/components/shadcn/components/ui/label";
 import { KnowledgeBaseTypeLabel } from "@gryffindor/client/common/constants/agent/knowledgeBase.constant";
 import { KnowledgeBaseType } from "@gryffindor/client/common/types/agent/ai.type";
 import { KnowledgeBase } from "@gryffindor/client/common/types/agent/knowledgeBase.type";
@@ -63,10 +62,8 @@ export function AddKnowledgeBase(props: Props) {
         content={
           <div>
             <div className="my-4">
-              <Label htmlFor="name" className="my-2">
-                Name
-              </Label>
-              <Input
+              <FormInput
+                label="Name"
                 id="name"
                 type="name"
                 placeholder="Enter name"

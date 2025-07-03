@@ -10,6 +10,10 @@ import { AuthContextType } from 'src/auth/dto/auth.dto';
 import { CreateAiToolDto, UpdateAiToolDto } from '../dto/aiTool.dto';
 import { AgentAiTool, AiTool, WebhookAiTool } from '../schema/aiTool.schema';
 import { AiToolType } from '../types/ai';
+import { SearchRequestDto } from 'src/common/request/request.dto';
+import { SearchResponse } from 'src/common/request/request.type';
+import { FilterType } from 'src/common/request/filters/filter.type';
+import { RequestUtil } from 'src/common/request/request.util';
 
 @Injectable()
 export class AiToolService {
@@ -86,6 +90,40 @@ export class AiToolService {
         throw new NotFoundException('Ai tool not found');
       }
       return tool;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async list(
+    request: SearchRequestDto,
+    authContext: AuthContextType,
+  ): Promise<SearchResponse> {
+    try {
+      request = {
+        ...request,
+        filters: [
+          ...(request.filters || []),
+          {
+            field: 'creator',
+            value: [authContext.userId],
+            filterType: FilterType.IN,
+          },
+        ],
+      };
+      const { query, options } =
+        RequestUtil.getMongoQueryAndOptionsForRequest(request);
+
+      const [kb, count] = await Promise.all([
+        this.aiToolModel.find(query, null, options).exec(),
+        this.aiToolModel.countDocuments(query).exec(),
+      ]);
+
+      return {
+        pageInfo: request.pageInfo,
+        data: kb,
+        count: count,
+      };
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

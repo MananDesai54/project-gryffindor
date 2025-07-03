@@ -152,6 +152,14 @@ export class AiController {
     return this.aiToolService.createAiTool(data, ctx);
   }
 
+  @Post('/tool/list')
+  async listTool(
+    @Body(ValidationPipe) request: SearchRequestDto,
+    @AuthContext() ctx: AuthContextType,
+  ) {
+    return this.aiToolService.list(request, ctx);
+  }
+
   @Get('/tool/:id')
   async getAiTool(@Param('id') id: string) {
     return this.aiToolService.getAiTool(id);
