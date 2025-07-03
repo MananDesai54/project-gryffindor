@@ -114,14 +114,14 @@ export class AiToolService {
       const { query, options } =
         RequestUtil.getMongoQueryAndOptionsForRequest(request);
 
-      const [kb, count] = await Promise.all([
+      const [tool, count] = await Promise.all([
         this.aiToolModel.find(query, null, options).exec(),
         this.aiToolModel.countDocuments(query).exec(),
       ]);
 
       return {
         pageInfo: request.pageInfo,
-        data: kb,
+        data: tool,
         count: count,
       };
     } catch (error) {

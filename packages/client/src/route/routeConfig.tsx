@@ -26,6 +26,9 @@ const AgentCreateScreen = React.lazy(
 const AgentDetailScreen = React.lazy(
   () => import("@gryffindor/client/modules/agents/agentDetailsScreen"),
 );
+const AgentListScreen = React.lazy(
+  () => import("@gryffindor/client/modules/agents/agentListScreen"),
+);
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -69,7 +72,7 @@ const agentDetail = createRoute({
 });
 const agentList = createRoute({
   path: Routes.AGENT_LIST,
-  component: () => <div>Agent List</div>,
+  component: AgentListScreen,
   getParentRoute: () => protectedAppRoute,
 });
 const agentWorkflowRoute = createRoute({

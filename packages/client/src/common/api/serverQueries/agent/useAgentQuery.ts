@@ -7,6 +7,10 @@ import { ServerQueryKeyBuilder } from "@gryffindor/client/common/utils/serverQue
 import { useQuery } from "@tanstack/react-query";
 import { agentServiceInstance } from "../../services/agent/agentService";
 import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
+import {
+  SearchRequest,
+  SearchResponse,
+} from "@gryffindor/client/common/types/request/searchRequest";
 
 type AgentQueryParam = {
   id: string;
@@ -21,7 +25,9 @@ const fetchAgentFn: FetchQueryFunctionType<undefined, string> = async (ctx) => {
   return agentServiceInstance.get(id);
 };
 
-export const useAgentQuery = (options: ServerQueryParams<AgentQueryParam>) => {
+export const useAgentByIdQuery = (
+  options: ServerQueryParams<AgentQueryParam>,
+) => {
   const { queryParams, reactQueryOptions } = options;
   const { id } = queryParams || {};
 
@@ -34,6 +40,27 @@ export const useAgentQuery = (options: ServerQueryParams<AgentQueryParam>) => {
   return useQuery<TSAny, Error, Agent>({
     queryKey: [queryKey],
     queryFn: fetchAgentFn as TSAny,
+    ...reactQueryOptions,
+  });
+};
+
+const kbListFn: FetchQueryFunctionType<SearchRequest> = async (ctx) => {
+  const { queryKey } = ctx;
+  const { otherParams } = queryKey[0];
+
+  return agentServiceInstance.list(otherParams || {});
+};
+
+export const useAgentQuery = (options: ServerQueryParams<SearchRequest>) => {
+  const { reactQueryOptions, queryParams } = options;
+  const queryKey = ServerQueryKeyBuilder()
+    .primaryKey(ServerPrimaryKeys.AGENT)
+    .otherParams(queryParams)
+    .build();
+
+  return useQuery<TSAny, Error, SearchResponse<Agent>>({
+    queryKey: [queryKey],
+    queryFn: kbListFn as TSAny,
     ...reactQueryOptions,
   });
 };

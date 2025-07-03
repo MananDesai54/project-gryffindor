@@ -46,6 +46,14 @@ export class AiController {
     return this.aiAgentService.createAgent(data, ctx);
   }
 
+  @Post('/agent/list')
+  async listAgent(
+    @Body(ValidationPipe) request: SearchRequestDto,
+    @AuthContext() ctx: AuthContextType,
+  ) {
+    return this.aiAgentService.list(request, ctx);
+  }
+
   @Delete('/agent/:id')
   async deleteAgent(
     @Param('id') id: string,
