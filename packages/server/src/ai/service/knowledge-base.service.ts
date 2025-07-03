@@ -17,6 +17,10 @@ import {
   TextKnowledgeBase,
 } from '../schema/knowledgeBase.schema';
 import { KnowledgeBaseType } from '../types/ai';
+import { SearchRequestDto } from 'src/common/request/request.dto';
+import { SearchResponse } from 'src/common/request/request.type';
+import { RequestUtil } from 'src/common/request/request.util';
+import { FilterType } from 'src/common/request/filters/filter.type';
 
 @Injectable()
 export class KnowledgeBaseService {
@@ -105,6 +109,40 @@ export class KnowledgeBaseService {
       }
 
       return knowledgeBase;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async list(
+    request: SearchRequestDto,
+    authContext: AuthContextType,
+  ): Promise<SearchResponse> {
+    try {
+      request = {
+        ...request,
+        filters: [
+          ...(request.filters || []),
+          {
+            field: 'creator',
+            value: [authContext.userId],
+            filterType: FilterType.IN,
+          },
+        ],
+      };
+      const { query, options } =
+        RequestUtil.getMongoQueryAndOptionsForRequest(request);
+
+      const [kb, count] = await Promise.all([
+        this.knowledgeBaseModel.find(query, null, options).exec(),
+        this.knowledgeBaseModel.countDocuments(query).exec(),
+      ]);
+
+      return {
+        pageInfo: request.pageInfo,
+        data: kb,
+        count: count,
+      };
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
