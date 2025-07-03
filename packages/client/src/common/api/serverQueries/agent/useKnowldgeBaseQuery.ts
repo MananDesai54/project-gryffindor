@@ -1,5 +1,5 @@
 import { ServerPrimaryKeys } from "@gryffindor/client/common/constants/serverQueries/primaryKeys";
-import { LLM } from "@gryffindor/client/common/types/agent/llm.type";
+import { KnowledgeBase } from "@gryffindor/client/common/types/agent/knowledgeBase.type";
 import {
   SearchRequest,
   SearchResponse,
@@ -10,27 +10,29 @@ import {
 } from "@gryffindor/client/common/types/serverQueryKey.type";
 import { ServerQueryKeyBuilder } from "@gryffindor/client/common/utils/serverQueries/serverQueryKeyBuilder";
 import { useQuery } from "@tanstack/react-query";
-import { llmServiceInstance } from "../../services/agent/llmService";
+import { knowledgeBaseServiceInstance } from "../../services/agent/knowledgeBaseService";
 
 type QueryParam = SearchRequest;
 
-const llmListFn: FetchQueryFunctionType<QueryParam> = async (ctx) => {
+const kbListFn: FetchQueryFunctionType<QueryParam> = async (ctx) => {
   const { queryKey } = ctx;
   const { otherParams } = queryKey[0];
 
-  return llmServiceInstance.list(otherParams || {});
+  return knowledgeBaseServiceInstance.list(otherParams || {});
 };
 
-export const useLLMQuery = (options: ServerQueryParams<QueryParam>) => {
+export const useKnowledgeBaseQuery = (
+  options: ServerQueryParams<QueryParam>,
+) => {
   const { reactQueryOptions, queryParams } = options;
   const queryKey = ServerQueryKeyBuilder()
-    .primaryKey(ServerPrimaryKeys.LLM)
+    .primaryKey(ServerPrimaryKeys.KNOWLEDGE_BASE)
     .otherParams(queryParams)
     .build();
 
-  return useQuery<TSAny, Error, SearchResponse<LLM>>({
+  return useQuery<TSAny, Error, SearchResponse<KnowledgeBase>>({
     queryKey: [queryKey],
-    queryFn: llmListFn as TSAny,
+    queryFn: kbListFn as TSAny,
     ...reactQueryOptions,
   });
 };

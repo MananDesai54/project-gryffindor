@@ -12,6 +12,9 @@ Agentic Framework for creating, maintaining, and collaborating with agents
 - pagination
 - remove url like get-standard-llm and move to filters, fields, dimensions and common query
 - default model via property
+- @nestjs/config
+- better abstraction in CRUD APIs
+- better way for secrets, ignore in docker
 
 # next build
 - Ui for Agent creation

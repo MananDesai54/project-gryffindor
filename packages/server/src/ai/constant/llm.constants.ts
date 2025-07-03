@@ -61,4 +61,5 @@ const StandardLLMs: Partial<StandardLLM>[] = [
 
 export class LLMConstants {
   static STANDARD_MODELS = StandardLLMs;
+  static DEFAULT_MODEL = 'gemini-2.5-flash';
 }

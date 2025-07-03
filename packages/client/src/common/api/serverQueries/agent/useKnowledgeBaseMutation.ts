@@ -1,33 +1,31 @@
-import { LLM } from "@gryffindor/client/common/types/agent/llm.type";
+import { ServerPrimaryKeys } from "@gryffindor/client/common/constants/serverQueries/primaryKeys";
+import { KnowledgeBase } from "@gryffindor/client/common/types/agent/knowledgeBase.type";
 import {
   ServerMutationParams,
   ServerQueryKey,
 } from "@gryffindor/client/common/types/serverQueryKey.type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { llmServiceInstance } from "../../services/agent/llmService";
-import { LLMType } from "@gryffindor/client/common/types/agent/ai.type";
-import { ServerPrimaryKeys } from "@gryffindor/client/common/constants/serverQueries/primaryKeys";
+import { knowledgeBaseServiceInstance } from "../../services/agent/knowledgeBaseService";
 
-const createCustomLLMFn = async (mutationParams: { llm: Partial<LLM> }) => {
-  return llmServiceInstance.create({
-    ...mutationParams.llm,
-    type: LLMType.CUSTOM,
-  });
+const createKbFn = async (mutationParams: { kb: Partial<KnowledgeBase> }) => {
+  return knowledgeBaseServiceInstance.create(mutationParams.kb);
 };
 
-export const useCreateCustomLLMMutation = (options?: ServerMutationParams) => {
+export const useCreateKnowledgeBaseMutation = (
+  options?: ServerMutationParams,
+) => {
   const { reactQueryOptions, onSuccess, onError } = options || {};
 
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: createCustomLLMFn,
+    mutationFn: createKbFn,
     onSuccess(data, variables, context) {
       queryClient.invalidateQueries({
         predicate(query) {
           return (
             (query.queryKey?.[0] as ServerQueryKey)?.primaryKey ===
-            ServerPrimaryKeys.LLM
+            ServerPrimaryKeys.KNOWLEDGE_BASE
           );
         },
       });

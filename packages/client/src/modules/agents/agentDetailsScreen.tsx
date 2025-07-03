@@ -123,10 +123,12 @@ export default function AgentDetailScreen() {
             placeholder="Enter agent description..."
           />
         </div>
-        <AgentConfigurations
-          onChange={onUpdateAgentConfiguration}
-          agent={tempAgent}
-        />
+        {tempAgent ? (
+          <AgentConfigurations
+            onChange={onUpdateAgentConfiguration}
+            agent={tempAgent}
+          />
+        ) : undefined}
       </section>
       {isDirty ? (
         <motion.div

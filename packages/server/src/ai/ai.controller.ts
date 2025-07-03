@@ -79,7 +79,7 @@ export class AiController {
   }
 
   @Post('/llm/list')
-  async list(@Body(ValidationPipe) request: SearchRequestDto) {
+  async listLLM(@Body(ValidationPipe) request: SearchRequestDto) {
     return this.llmService.list(request);
   }
 
@@ -113,6 +113,14 @@ export class AiController {
     @AuthContext() ctx: AuthContextType,
   ) {
     return this.knowledgeBaseService.createKnowledgeBase(data, ctx);
+  }
+
+  @Post('/knowledge-base/list')
+  async listKb(
+    @Body(ValidationPipe) request: SearchRequestDto,
+    @AuthContext() ctx: AuthContextType,
+  ) {
+    return this.knowledgeBaseService.list(request, ctx);
   }
 
   @Get('/knowledge-base/:id')

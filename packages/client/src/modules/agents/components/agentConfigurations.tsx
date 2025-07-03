@@ -1,18 +1,18 @@
+import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
+import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
 import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 import { isUndefined, keys, reduce } from "lodash";
 import { useEffect, useMemo } from "react";
 import AddedVariables from "./addVariable/addedVariables";
 import { extractVariables } from "./addVariable/util/addVariable.util";
 import FirstMessage from "./firstMessage";
-import SystemPrompt from "./systemPrompt";
+import AddKnowledgeBase from "./knowledgeBase/knowledgeBase";
 import LlmSelection from "./llmSelection/llmSelection";
-import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
-import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
-import KnowledgeBase from "./knowledgeBase/knowledgeBase";
+import SystemPrompt from "./systemPrompt";
 import Tools from "./tools/tools";
 
 type Props = {
-  agent?: Agent;
+  agent: Agent;
   onChange: (agent: Partial<Agent["configuration"]>) => void;
 };
 
@@ -101,7 +101,7 @@ export default function AgentConfigurations({ agent, onChange }: Props) {
           />
         }
       />
-      <KnowledgeBase />
+      <AddKnowledgeBase onChange={onChange} agent={agent} />
       <Tools />
     </div>
   );
