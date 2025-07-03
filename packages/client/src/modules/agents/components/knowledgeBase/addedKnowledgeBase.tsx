@@ -1,17 +1,18 @@
-import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 import {
   FilterBuilder,
   SearchRequestBuilder,
 } from "@gryffindor/client/common/api/common/request/requestBuilder";
 import { useKnowledgeBaseQuery } from "@gryffindor/client/common/api/serverQueries/agent/useKnowldgeBaseQuery";
-import { useMemo } from "react";
-import { KnowledgeBaseType } from "@gryffindor/client/common/types/agent/ai.type";
-import { File, Globe, Text, Trash } from "lucide-react";
-import { map } from "lodash";
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
+import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
+import { KnowledgeBaseType } from "@gryffindor/client/common/types/agent/ai.type";
+import { map, reject } from "lodash";
+import { File, Globe, Text, Trash } from "lucide-react";
+import { useMemo } from "react";
 
 type Props = {
   agent: Agent;
+  onChange(config: Agent["configuration"]): void;
 };
 
 const KnowledgeBaseIcon = {
@@ -21,7 +22,7 @@ const KnowledgeBaseIcon = {
 };
 
 export default function AddedKnowledgeBase(props: Props) {
-  const { agent } = props;
+  const { agent, onChange } = props;
 
   const request = useMemo(
     () =>
@@ -57,7 +58,18 @@ export default function AddedKnowledgeBase(props: Props) {
               <div className="p-2 bg-accent rounded-lg">{Icon}</div>
               <span className="mx-2"> {kb.name}</span>
             </div>
-            <Button size="icon" variant="outline">
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={() => {
+                onChange({
+                  knowledgeBase: reject(
+                    agent.configuration?.knowledgeBase,
+                    (v) => v === kb._id,
+                  ),
+                });
+              }}
+            >
               <Trash />
             </Button>
           </div>

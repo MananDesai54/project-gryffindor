@@ -1,4 +1,4 @@
-import { File } from "../../types/file.type";
+import { UploadedFile } from "../../types/file.type";
 import { apiRequest } from "../common/request/axios";
 import { ApiService } from "./apiService";
 
@@ -10,7 +10,10 @@ class FileService extends ApiService {
   }
 
   upload(formData: FormData) {
-    return apiRequest.post<FormData, File>(this.createUrl("upload"), formData);
+    return apiRequest.post<FormData, UploadedFile[]>(
+      this.createUrl("upload"),
+      formData,
+    );
   }
 
   static getInstance() {

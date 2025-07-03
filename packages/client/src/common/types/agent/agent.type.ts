@@ -9,7 +9,7 @@ interface AiAgentConfiguration {
   knowledgeBase?: string[];
   builtInTools?: string[];
   customTools?: string[];
-  llm: string;
+  llm?: string;
 }
 
 export interface Agent extends DbDocument {

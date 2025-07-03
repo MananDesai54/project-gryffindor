@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
+import { UploadedFile } from 'src/file/type/file.type';
 
 @Injectable()
 export class StorageService {
@@ -12,19 +13,26 @@ export class StorageService {
 
   constructor() {
     this.storage = new Storage({
-      projectId: process.env.GCP_PROJECT_ID,
-      keyFilename: process.env.GCP_KEY_FILE_PATH,
+      projectId: process.env.GCS_PROJECT_ID,
+      credentials: {
+        type: process.env.GCS_CRED_TYPE,
+        project_id: process.env.GCS_PROJECT_ID,
+        private_key_id: process.env.GCS_PRIVATE_KEY_ID,
+        private_key: process.env.GCS_PRIVATE_KEY,
+        client_email: process.env.GCS_CLIENT_EMAIL,
+        client_id: process.env.GCS_CLIENT_ID,
+        universe_domain: process.env.GCS_UNIVERSE_DOMAIN,
+      },
     });
     this.bucketName = process.env.GCS_BUCKET_NAME;
   }
 
-  async uploadFiles(files: Express.Multer.File[]) {
+  async uploadFiles(files: Express.Multer.File[]): Promise<UploadedFile[]> {
     return Promise.all(files.map((file) => this.uploadFile(file)));
   }
 
-  async uploadFile(file: Express.Multer.File) {
+  async uploadFile(file: Express.Multer.File): Promise<UploadedFile> {
     const bucket = this.storage.bucket(this.bucketName);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const uniqueFileName = `${Date.now()}-${file.originalname}`;
 
     const blob = bucket.file(uniqueFileName);
@@ -32,7 +40,6 @@ export class StorageService {
     return new Promise((res, reject) => {
       const blobStream = blob.createWriteStream({
         resumable: true,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         contentType: file.mimetype,
       });
 
@@ -44,10 +51,10 @@ export class StorageService {
       blobStream.on('finish', () => {
         res({
           url: `https://storage.googleapis.com/${this.bucketName}/${uniqueFileName}`,
+          mimeType: file.mimetype,
         });
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       blobStream.end(file.buffer);
     });
   }
