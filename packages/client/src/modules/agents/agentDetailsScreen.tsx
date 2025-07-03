@@ -1,5 +1,5 @@
 import { useUpdateAgentMutation } from "@gryffindor/client/common/api/serverQueries/agent/useAgentMutation";
-import { useAgentQuery } from "@gryffindor/client/common/api/serverQueries/agent/useAgentQuery";
+import { useAgentByIdQuery } from "@gryffindor/client/common/api/serverQueries/agent/useAgentQuery";
 import AppBreadcrumb from "@gryffindor/client/common/components/app/appBreadcrumb/appBreadcrumb";
 import { BreadcrumbItemType } from "@gryffindor/client/common/components/app/appBreadcrumb/type";
 import AppMenu from "@gryffindor/client/common/components/app/appMenu/appMenu";
@@ -21,7 +21,7 @@ export default function AgentDetailScreen() {
     from: Routes.AGENT_DETAIL,
   });
 
-  const { data, isLoading } = useAgentQuery({
+  const { data, isLoading } = useAgentByIdQuery({
     queryParams: {
       id: params.id,
     },
