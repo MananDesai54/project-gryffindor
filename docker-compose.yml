@@ -9,8 +9,26 @@ services:
       - mongo_data:/data/db
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 60s
+      timeout: 10s
+      retries: 1
     ports:
       - "27017:27017"
+
+  chroma:
+    image: chromadb/chroma:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/data
+    environment:
+      - CHROMA_DB_IMPL=duckdb # Default in-memory or persistent DuckDB
+    healthcheck:
+      test:
+        ["CMD", "/bin/bash", "-c", "cat < /dev/null > /dev/tcp/localhost/8000"]
+      interval: 60s
+      timeout: 10s
+      retries: 1
 
   server:
     build:
@@ -20,6 +38,8 @@ services:
       - packages/server/env/.env
     depends_on:
       mongodb:
+        condition: service_healthy
+      chroma:
         condition: service_healthy
     ports:
       - "3000:3000"
@@ -45,3 +65,5 @@ services:
 
 volumes:
   mongo_data:
+  chroma_data:
+    driver: local
