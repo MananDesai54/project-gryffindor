@@ -1,0 +1,45 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { User } from 'src/user/schema/user.schema';
+
+export type AiAgentDocument = HydratedDocument<AiAgent>;
+
+class AiAgentConfiguration {
+  @Prop()
+  firstMessage: string;
+  @Prop()
+  systemPrompt: string;
+  @Prop({
+    type: mongoose.Schema.Types.Map,
+    of: String,
+    required: false,
+  })
+  dynamicVariables: Record<string, string>;
+  @Prop({ default: 0 })
+  temperature: number;
+  @Prop({ default: -1 })
+  maxTokens: number;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'KnowledgeBase' })
+  knowledgeBase: string[];
+  @Prop()
+  builtInTools: string[];
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'AiTool' })
+  customTools: string[];
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'LLM' })
+  llm: string;
+}
+
+@Schema({ timestamps: true })
+export class AiAgent {
+  _id: string;
+  @Prop({ required: true })
+  name: string;
+  @Prop()
+  description: string;
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  creator: User;
+  @Prop()
+  configuration: AiAgentConfiguration;
+}
+
+export const AiAgentSchema = SchemaFactory.createForClass(AiAgent);
