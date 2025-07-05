@@ -1,3 +1,10 @@
+# update to do
+- move text and extracted links to cloud
+- restructure code for modules dependency
+- refactor agent inference code
+- kafka flow for async task of Knowledge base
+- generic CRUD and update Framework
+
 # project-gryffindor
 Agentic Framework for creating, maintaining, and collaborating with agents
 
@@ -56,10 +63,6 @@ curl --location 'http://localhost:3000/ai/internal/llm/create-standard-llms'
 ```
 
 
-# Project Gryffindoor
-
-Agentic Framework for creating, maintaining, and collaborating agents.
-
 ## Top-level Requirements
 
 - Single agent creation
@@ -110,7 +113,3 @@ Agentic Framework for creating, maintaining, and collaborating agents.
 - MongoDB
 - CromaDB
 - Langfuse
-
-## Ui considerations
-
-- For Agent Creation

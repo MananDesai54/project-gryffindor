@@ -20,6 +20,7 @@ export default function AddText(props: Props) {
         required
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        className="max-h-[200px]"
       />
     </div>
   );

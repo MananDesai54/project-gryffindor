@@ -3,9 +3,9 @@ import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ChatOpenAI } from '@langchain/openai';
 import { Injectable } from '@nestjs/common';
-import { AiAgent } from 'src/ai/schema/aiAgent.schema';
-import { CustomLLM, LLM, StandardLLM } from 'src/ai/schema/llm.schema';
-import { LLMType, StandardLLMProvider } from 'src/ai/types/ai';
+import { AiAgent } from 'src/ai/ai-agent/schema/ai-agent.schema';
+import { CustomLLM, LLM, StandardLLM } from 'src/ai/llm/schema/llm.schema';
+import { LLMType, StandardLLMProvider } from 'src/ai/llm/types/llm.type';
 
 @Injectable()
 export class LlmFactoryService {

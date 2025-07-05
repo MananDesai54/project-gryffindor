@@ -10,8 +10,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { FileService } from './file.service';
+import { AuthGuard } from 'src/core/guard/auth.guard';
 
 @UseGuards(AuthGuard)
 @Controller('file')

@@ -17,6 +17,10 @@ export class LangfuseService {
     return this.langfuse;
   }
 
+  async shutdown() {
+    await this.langfuse.shutdownAsync();
+  }
+
   async onModuleDestroy() {
     await this.langfuse.shutdownAsync();
   }

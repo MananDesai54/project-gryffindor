@@ -3,5 +3,6 @@ import { ChromadbService } from './chromadb.service';
 
 @Module({
   providers: [ChromadbService],
+  exports: [ChromadbService],
 })
 export class ChromadbModule {}
