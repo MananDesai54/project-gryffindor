@@ -15,8 +15,8 @@ export interface MongoFindParameters {
   };
 }
 
-export interface SearchResponse {
-  data: any[];
+export interface SearchResponse<T = any> {
+  data: T[];
   count: number;
   pageInfo?: PageInfo;
 }

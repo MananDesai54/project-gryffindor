@@ -6,60 +6,39 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
-import { FilterType } from 'src/core/request/filters/filter.type';
-import {
-  FileKnowledgeBase,
-  KnowledgeBase,
-  LinkKnowledgeBase,
-  TextKnowledgeBase,
-} from './schema/knowledge-base.schema';
+import { CRUDService } from 'src/core/rest/crud.controller';
+import { SearchRequestDto } from 'src/core/rest/request/request.dto';
+import { SearchResponse } from 'src/core/rest/request/request.type';
+import { RequestUtil } from 'src/core/rest/request/request.util';
+import { SearchService } from 'src/core/rest/search.controller';
 import {
   CreateKnowledgeBaseDto,
   UpdateKnowledgeBaseDto,
 } from './dto/knowledge-base.dto';
-import { KnowledgeBaseType } from './types/knowledge-base.type';
-import { SearchRequestDto } from 'src/core/request/request.dto';
-import { SearchResponse } from 'src/core/request/request.type';
-import { RequestUtil } from 'src/core/request/request.util';
+import { KnowledgeBase } from './schema/knowledge-base.schema';
 
 @Injectable()
-export class KnowledgeBaseService {
+export class KnowledgeBaseService
+  implements CRUDService<KnowledgeBase>, SearchService<KnowledgeBase>
+{
   constructor(
-    @InjectModel(KnowledgeBaseType.FILE)
-    private readonly fileKnowledgeBaseModel: Model<FileKnowledgeBase>,
-    @InjectModel(KnowledgeBaseType.LINK)
-    private readonly linkKnowledgeBaseModel: Model<LinkKnowledgeBase>,
-    @InjectModel(KnowledgeBaseType.TEXT)
-    private readonly textKnowledgeBaseModel: Model<TextKnowledgeBase>,
     @InjectModel(KnowledgeBase.name)
     private readonly knowledgeBaseModel: Model<KnowledgeBase>,
   ) {}
 
-  async createKnowledgeBase(
-    data: CreateKnowledgeBaseDto,
-    authContext: AuthContextType,
-  ) {
+  async create(data: CreateKnowledgeBaseDto, authContext: AuthContextType) {
     try {
       const updatedData = {
         ...data,
         creator: authContext.userId,
       };
-      switch (data.type as KnowledgeBaseType) {
-        case KnowledgeBaseType.FILE:
-          return await this.fileKnowledgeBaseModel.create(updatedData);
-        case KnowledgeBaseType.LINK:
-          return await this.linkKnowledgeBaseModel.create(updatedData);
-        case KnowledgeBaseType.TEXT:
-          return await this.textKnowledgeBaseModel.create(updatedData);
-        default:
-          throw new Error('Invalid knowledge base type');
-      }
+      return this.knowledgeBaseModel.create(updatedData);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
   }
 
-  async findKnowledgeBaseById(id: string) {
+  async read(id: string) {
     try {
       const knowledgeBase = await this.knowledgeBaseModel.findById(id);
       if (!knowledgeBase) {
@@ -71,21 +50,7 @@ export class KnowledgeBaseService {
     }
   }
 
-  async findMany(ids: string[]) {
-    try {
-      const knowledgeBases = await this.knowledgeBaseModel.find({
-        _id: { $in: ids },
-      });
-      if (!knowledgeBases) {
-        throw new NotFoundException('Knowledge bases not found');
-      }
-      return knowledgeBases;
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
-  }
-
-  async updateKnowledgeBase(
+  async update(
     id: string,
     data: Partial<UpdateKnowledgeBaseDto>,
     authContext: AuthContextType,
@@ -110,7 +75,7 @@ export class KnowledgeBaseService {
     }
   }
 
-  async deleteKnowledgeBase(id: string, authContext: AuthContextType) {
+  async delete(id: string, authContext: AuthContextType) {
     try {
       const knowledgeBase = await this.knowledgeBaseModel.findOneAndDelete({
         _id: id,
@@ -128,24 +93,15 @@ export class KnowledgeBaseService {
     }
   }
 
-  async list(
+  async search(
     request: SearchRequestDto,
     authContext: AuthContextType,
   ): Promise<SearchResponse> {
     try {
-      request = {
-        ...request,
-        filters: [
-          ...(request.filters || []),
-          {
-            field: 'creator',
-            value: [authContext.userId],
-            filterType: FilterType.IN,
-          },
-        ],
-      };
-      const { query, options } =
-        RequestUtil.getMongoQueryAndOptionsForRequest(request);
+      const { query, options } = RequestUtil.getMongoQueryAndOptionsForRequest(
+        request,
+        authContext,
+      );
 
       const [kb, count] = await Promise.all([
         this.knowledgeBaseModel.find(query, null, options).exec(),
@@ -157,6 +113,36 @@ export class KnowledgeBaseService {
         data: kb,
         count: count,
       };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async count(
+    request: SearchRequestDto,
+    authContext: AuthContextType,
+  ): Promise<number> {
+    try {
+      const { query } = RequestUtil.getMongoQueryAndOptionsForRequest(
+        request,
+        authContext,
+      );
+
+      return await this.knowledgeBaseModel.countDocuments(query).exec();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async findMany(ids: string[]) {
+    try {
+      const knowledgeBases = await this.knowledgeBaseModel.find({
+        _id: { $in: ids },
+      });
+      if (!knowledgeBases) {
+        throw new NotFoundException('Knowledge bases not found');
+      }
+      return knowledgeBases;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

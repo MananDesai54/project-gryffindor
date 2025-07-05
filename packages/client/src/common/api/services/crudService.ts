@@ -26,9 +26,16 @@ export abstract class CRUDService<T> extends ApiService {
     return apiRequest.get<T>(this.createUrl(`${id}`));
   }
 
-  async list(request: SearchRequest): Promise<SearchResponse<T>> {
+  async search(request: SearchRequest): Promise<SearchResponse<T>> {
     return apiRequest.post<SearchRequest, SearchResponse<T>>(
-      this.createUrl("list"),
+      this.createUrl("search"),
+      request,
+    );
+  }
+
+  async count(request: SearchRequest): Promise<number> {
+    return apiRequest.post<SearchRequest, number>(
+      this.createUrl("search"),
       request,
     );
   }

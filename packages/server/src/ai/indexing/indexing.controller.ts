@@ -13,7 +13,7 @@ export class IndexingController {
 
   @Get('/index/add-document/:agentId')
   async addDocumentToAgentCollection(@Param('agentId') agentId: string) {
-    const aiAgent = await this.aiAgentService.findAgentById(agentId);
+    const aiAgent = await this.aiAgentService.read(agentId);
     const kbs = aiAgent.configuration?.knowledgeBase?.length
       ? await this.knowledgeBaseService.findMany(
           aiAgent.configuration?.knowledgeBase,

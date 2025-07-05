@@ -1,9 +1,7 @@
 # update to do
 - move text and extracted links to cloud
-- restructure code for modules dependency
 - refactor agent inference code
 - kafka flow for async task of Knowledge base
-- generic CRUD and update Framework
 
 # project-gryffindor
 Agentic Framework for creating, maintaining, and collaborating with agents
@@ -44,8 +42,8 @@ Agentic Framework for creating, maintaining, and collaborating with agents
 git clone https://github.com/manandesai54/project-gryffindor.git
 cd project-gryffindor
 bun install
-bun run dev:client
 bun run dev:server
+bun run dev:client
 ```
 - run following internal services to setup initial environment
 ```sh
