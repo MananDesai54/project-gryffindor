@@ -22,6 +22,12 @@ export default function ProtectedRoute() {
     } else if (user) {
       setIsLoggedIn(true);
       setUserId(user._id);
+      if (window.location.pathname === Routes.APP) {
+        navigate({
+          to: Routes.HOME,
+          replace: true,
+        });
+      }
     }
   }, [error, isLoading, navigate, setIsLoggedIn, setUserId, user]);
 

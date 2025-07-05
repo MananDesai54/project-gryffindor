@@ -35,13 +35,14 @@ export default function SystemPrompt({
       content={
         <div>
           <GenerateTextWithAi
+            generateSystemPrompt
             onGenerate={onGenerateSystemPrompt}
             inputClassName="!bg-background"
             className="mb-4"
             placeholder="Describe your agent (eg. You are a Mathemetics teacher, you ....)"
           />
           <Textarea
-            className="!bg-background"
+            className="!bg-background max-h-[300px]"
             placeholder="eg. You are a Mathemetics teacher, you ...."
             value={agent?.configuration?.systemPrompt}
             onChange={(e) =>

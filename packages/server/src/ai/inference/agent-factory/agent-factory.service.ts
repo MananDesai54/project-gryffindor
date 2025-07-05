@@ -13,6 +13,7 @@ import { AiAgent } from 'src/ai/ai-agent/schema/ai-agent.schema';
 import { LLM } from 'src/ai/llm/schema/llm.schema';
 import { AiTool, WebhookAiTool } from 'src/ai/ai-tool/schema/ai-tool.schema';
 import { AiToolType } from 'src/ai/ai-tool/types/ai-tool.type';
+import { LLMConstants } from 'src/ai/llm/constant/llm.constants';
 
 @Injectable()
 export class AgentFactoryService {
@@ -28,13 +29,16 @@ export class AgentFactoryService {
   }
 
   async create(
-    agentId: string,
     aiAgent: AiAgent,
     llmDetails: LLM,
     toolsDetails: AiTool[],
     runTimeVariables?: Record<string, string>,
   ): Promise<AgentExecutor> {
-    const llm = this.llmFactoryService.create(llmDetails, aiAgent);
+    const llm = this.llmFactoryService.create(
+      llmDetails,
+      aiAgent.configuration?.temperature,
+      aiAgent.configuration?.maxTokens,
+    );
 
     const tools: DynamicStructuredTool[] = [];
     if (aiAgent.configuration?.knowledgeBase?.length > 0) {
@@ -80,5 +84,25 @@ export class AgentFactoryService {
       tools,
       verbose: true,
     });
+  }
+
+  async createDefaultChatAgent(systemPrompt: string, input: string) {
+    const prompt = ChatPromptTemplate.fromMessages([
+      ['system', systemPrompt],
+      ['human', input],
+      new MessagesPlaceholder('agent_scratchpad'),
+    ]);
+
+    const llm = this.llmFactoryService.create(LLMConstants.DEFAULT_MODEL);
+
+    const agent = await createOpenAIFunctionsAgent({ llm, tools: [], prompt });
+
+    const executor = new AgentExecutor({
+      agent,
+      tools: [],
+      verbose: true,
+    });
+
+    return executor;
   }
 }

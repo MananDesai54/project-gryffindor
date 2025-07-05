@@ -19,8 +19,19 @@ export class InferenceService {
     // @Inject() private readonly langfuseService: LangfuseService,
   ) {}
 
-  generateText(text: string) {
-    return text;
+  async generateText(text: string, systemPrompt: string) {
+    try {
+      const chatAgent = await this.agentFactoryService.createDefaultChatAgent(
+        systemPrompt,
+        text,
+      );
+      const result = await chatAgent.invoke({});
+      return {
+        response: result.output,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error, 'Error generating text');
+    }
   }
 
   async chat(
@@ -40,7 +51,6 @@ export class InferenceService {
     try {
       // const chatHistory = await this.historyService.getHistory(chatId);
       const agentExecutor = await this.agentFactoryService.create(
-        agentId,
         agent,
         llm,
         tools,
