@@ -8,9 +8,19 @@ class InferenceService extends ApiService {
     super("ai/inference");
   }
 
-  generateText(text: string) {
-    return apiRequest.post<{ text: string }, string>(
-      this.createUrl("generate-text"),
+  generateText(text: string, systemPrompt: string) {
+    return apiRequest.post<
+      { text: string; systemPrompt: string },
+      { response: string }
+    >(this.createUrl("generate-text"), {
+      text,
+      systemPrompt,
+    });
+  }
+
+  generateSystemPrompt(text: string) {
+    return apiRequest.post<{ text: string }, { response: string }>(
+      this.createUrl("generate-text/system-prompt"),
       {
         text,
       },

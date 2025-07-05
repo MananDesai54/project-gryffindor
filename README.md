@@ -22,8 +22,7 @@ Agentic Framework for creating, maintaining, and collaborating with agents
 - better way for secrets, ignore in docker
 
 # next build
-- Ui for Agent creation
-- Agent list screen + api
+- Add tools Headers screen
 - upload service for kb
 - rag and vector db
 - Ai inference api
@@ -87,6 +86,7 @@ curl --location 'http://localhost:3000/ai/internal/llm/create-standard-llms'
             - Database
             - links
             - some data streams of data queues (like sqs, kafka)
+            - an api call to bring data from external sources
         - System prompt
 - Agent Inference screen
     - Single Agent inference screen

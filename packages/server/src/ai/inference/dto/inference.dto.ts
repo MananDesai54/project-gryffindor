@@ -4,6 +4,16 @@ export class GenerateTextDto {
   @IsNotEmpty()
   @IsString()
   text: string;
+
+  @IsNotEmpty()
+  @IsString()
+  systemPrompt: string;
+}
+
+export class GenerateSystemPromptDto {
+  @IsNotEmpty()
+  @IsString()
+  text: string;
 }
 
 export class ChatRequestDto {

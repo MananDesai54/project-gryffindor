@@ -6,7 +6,11 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { ChatRequestDto, GenerateTextDto } from './dto/inference.dto';
+import {
+  ChatRequestDto,
+  GenerateSystemPromptDto,
+  GenerateTextDto,
+} from './dto/inference.dto';
 import { AuthGuard } from 'src/core/guard/auth.guard';
 import { InferenceService } from './inference.service';
 import { AiAgentService } from '../ai-agent/ai-agent.service';
@@ -25,8 +29,18 @@ export class InferenceController {
   ) {}
 
   @Post('/generate-text')
-  generateText(@Body(ValidationPipe) body: GenerateTextDto) {
-    return this.inferenceService.generateText(body.text);
+  async generateText(@Body(ValidationPipe) body: GenerateTextDto) {
+    return this.inferenceService.generateText(body.text, body.systemPrompt);
+  }
+
+  @Post('/generate-text/system-prompt')
+  async generateTextSystemPrompt(
+    @Body(ValidationPipe) body: GenerateSystemPromptDto,
+  ) {
+    return this.inferenceService.generateText(
+      body.text,
+      LLMConstants.SYSTEM_PROMPT_FOR_SYSTEM_PROMPT_GENERATOR,
+    );
   }
 
   @Post('/chat/:agentId')
