@@ -1,10 +1,24 @@
+import { AuthContextType } from 'src/auth/dto/auth.dto';
 import { FilterUtil } from './filters/filter.util';
 import { MongoFindParameters, SearchRequest } from './request.type';
+import { FilterType } from './filters/filter.type';
 
 export class RequestUtil {
   static getMongoQueryAndOptionsForRequest(
     request: SearchRequest,
+    authContext?: AuthContextType,
   ): MongoFindParameters {
+    if (authContext?.userId) {
+      request.filters = [
+        ...(request.filters || []),
+        {
+          field: 'creator',
+          value: [authContext.userId],
+          filterType: FilterType.IN,
+        },
+      ];
+    }
+
     if (!request) {
       return {
         query: {},

@@ -48,7 +48,7 @@ const kbListFn: FetchQueryFunctionType<SearchRequest> = async (ctx) => {
   const { queryKey } = ctx;
   const { otherParams } = queryKey[0];
 
-  return agentServiceInstance.list(otherParams || {});
+  return agentServiceInstance.search(otherParams || {});
 };
 
 export const useAgentQuery = (options: ServerQueryParams<SearchRequest>) => {

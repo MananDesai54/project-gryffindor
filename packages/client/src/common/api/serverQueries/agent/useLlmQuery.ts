@@ -18,7 +18,7 @@ const llmListFn: FetchQueryFunctionType<QueryParam> = async (ctx) => {
   const { queryKey } = ctx;
   const { otherParams } = queryKey[0];
 
-  return llmServiceInstance.list(otherParams || {});
+  return llmServiceInstance.search(otherParams || {});
 };
 
 export const useLLMQuery = (options: ServerQueryParams<QueryParam>) => {

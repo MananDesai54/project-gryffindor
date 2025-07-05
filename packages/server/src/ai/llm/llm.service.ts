@@ -7,18 +7,20 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
-import { SearchRequestDto } from 'src/core/request/request.dto';
-import { SearchResponse } from 'src/core/request/request.type';
-import { RequestUtil } from 'src/core/request/request.util';
+import { SearchRequestDto } from 'src/core/rest/request/request.dto';
+import { SearchResponse } from 'src/core/rest/request/request.type';
+import { RequestUtil } from 'src/core/rest/request/request.util';
 import { CreateLLMDto, UpdateLLMDto } from './dto/llm.dto';
 import { LLM } from './schema/llm.schema';
 import { LLMType } from './types/llm.type';
+import { CRUDService } from 'src/core/rest/crud.controller';
+import { SearchService } from 'src/core/rest/search.controller';
 
 @Injectable()
-export class LlmService {
+export class LlmService implements CRUDService<LLM>, SearchService<LLM> {
   constructor(@InjectModel(LLM.name) private readonly llm: Model<LLM>) {}
 
-  async createLLM(data: CreateLLMDto, authContext: AuthContextType) {
+  async create(data: CreateLLMDto, authContext: AuthContextType) {
     try {
       const updatedData = {
         ...data,
@@ -30,24 +32,7 @@ export class LlmService {
     }
   }
 
-  async createManyLLMs(
-    data: Partial<CreateLLMDto>[],
-    authContext: AuthContextType,
-  ) {
-    try {
-      const models = await this.llm.insertMany(
-        data.map((item) => ({
-          ...item,
-          creator: authContext.userId,
-        })),
-      );
-      return models;
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
-  }
-
-  async findLLMById(id: string) {
+  async read(id: string) {
     try {
       const llm = await this.llm.findById(id);
       if (!llm) {
@@ -59,7 +44,7 @@ export class LlmService {
     }
   }
 
-  async updateLLM(
+  async update(
     id: string,
     data: Partial<UpdateLLMDto>,
     authContext: AuthContextType,
@@ -87,7 +72,7 @@ export class LlmService {
     }
   }
 
-  async deleteLLM(id: string, authContext: AuthContextType) {
+  async delete(id: string, authContext: AuthContextType) {
     try {
       const llm = await this.llm.findOneAndDelete({
         _id: id,
@@ -105,7 +90,7 @@ export class LlmService {
     }
   }
 
-  async list(request: SearchRequestDto): Promise<SearchResponse> {
+  async search(request: SearchRequestDto): Promise<SearchResponse> {
     try {
       const { query, options } =
         RequestUtil.getMongoQueryAndOptionsForRequest(request);
@@ -120,6 +105,32 @@ export class LlmService {
         data: llm,
         count: count,
       };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async count(request: SearchRequestDto): Promise<number> {
+    try {
+      const { query } = RequestUtil.getMongoQueryAndOptionsForRequest(request);
+      return this.llm.countDocuments(query).exec();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async createManyLLMs(
+    data: Partial<CreateLLMDto>[],
+    authContext: AuthContextType,
+  ) {
+    try {
+      const models = await this.llm.insertMany(
+        data.map((item) => ({
+          ...item,
+          creator: authContext.userId,
+        })),
+      );
+      return models;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

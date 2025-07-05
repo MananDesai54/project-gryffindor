@@ -7,45 +7,35 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
-import { SearchRequestDto } from 'src/core/request/request.dto';
-import { SearchResponse } from 'src/core/request/request.type';
-import { FilterType } from 'src/core/request/filters/filter.type';
-import { RequestUtil } from 'src/core/request/request.util';
-import { AiToolType } from './types/ai-tool.type';
-import { AgentAiTool, AiTool, WebhookAiTool } from './schema/ai-tool.schema';
+import { CRUDService } from 'src/core/rest/crud.controller';
+import { SearchRequestDto } from 'src/core/rest/request/request.dto';
+import { SearchResponse } from 'src/core/rest/request/request.type';
+import { RequestUtil } from 'src/core/rest/request/request.util';
+import { SearchService } from 'src/core/rest/search.controller';
 import { CreateAiToolDto, UpdateAiToolDto } from './dto/ai-tool.dto';
+import { AiTool } from './schema/ai-tool.schema';
 
 @Injectable()
-export class AiToolService {
+export class AiToolService
+  implements CRUDService<AiTool>, SearchService<AiTool>
+{
   constructor(
-    @InjectModel(AiToolType.WEB_HOOK)
-    private readonly webHookModel: Model<WebhookAiTool>,
-    @InjectModel(AiToolType.AGENT)
-    private readonly agentAiToolModel: Model<AgentAiTool>,
     @InjectModel(AiTool.name) private readonly aiToolModel: Model<AiTool>,
   ) {}
 
-  async createAiTool(data: CreateAiToolDto, authContext: AuthContextType) {
+  async create(data: CreateAiToolDto, authContext: AuthContextType) {
     try {
-      const { type } = data;
       const updatedData = {
         ...data,
         creator: authContext.userId,
       };
-      switch (type as AiToolType) {
-        case AiToolType.WEB_HOOK:
-          return this.webHookModel.create(updatedData);
-        case AiToolType.AGENT:
-          return this.agentAiToolModel.create(updatedData);
-        default:
-          throw new InternalServerErrorException('Invalid AI tool type');
-      }
+      return await this.aiToolModel.create(updatedData);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
   }
 
-  async updateAiTool(
+  async update(
     id: string,
     data: Partial<UpdateAiToolDto>,
     authContext: AuthContextType,
@@ -68,7 +58,7 @@ export class AiToolService {
     }
   }
 
-  async deleteAiTool(id: string, authContext: AuthContextType) {
+  async delete(id: string, authContext: AuthContextType) {
     try {
       const tool = await this.aiToolModel.findByIdAndDelete({
         _id: id,
@@ -83,13 +73,54 @@ export class AiToolService {
     }
   }
 
-  async getAiTool(id: string) {
+  async read(id: string) {
     try {
       const tool = await this.aiToolModel.findById(id);
       if (!tool) {
         throw new NotFoundException('Ai tool not found');
       }
       return tool;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async search(
+    request: SearchRequestDto,
+    authContext: AuthContextType,
+  ): Promise<SearchResponse> {
+    try {
+      const { query, options } = RequestUtil.getMongoQueryAndOptionsForRequest(
+        request,
+        authContext,
+      );
+
+      const [tool, count] = await Promise.all([
+        this.aiToolModel.find(query, null, options).exec(),
+        this.aiToolModel.countDocuments(query).exec(),
+      ]);
+
+      return {
+        pageInfo: request.pageInfo,
+        data: tool,
+        count: count,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async count(
+    request: SearchRequestDto,
+    authContext: AuthContextType,
+  ): Promise<number> {
+    try {
+      const { query } = RequestUtil.getMongoQueryAndOptionsForRequest(
+        request,
+        authContext,
+      );
+
+      return this.aiToolModel.countDocuments(query).exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -102,40 +133,6 @@ export class AiToolService {
         throw new NotFoundException('Ai tools not found');
       }
       return tools;
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
-  }
-
-  async list(
-    request: SearchRequestDto,
-    authContext: AuthContextType,
-  ): Promise<SearchResponse> {
-    try {
-      request = {
-        ...request,
-        filters: [
-          ...(request.filters || []),
-          {
-            field: 'creator',
-            value: [authContext.userId],
-            filterType: FilterType.IN,
-          },
-        ],
-      };
-      const { query, options } =
-        RequestUtil.getMongoQueryAndOptionsForRequest(request);
-
-      const [tool, count] = await Promise.all([
-        this.aiToolModel.find(query, null, options).exec(),
-        this.aiToolModel.countDocuments(query).exec(),
-      ]);
-
-      return {
-        pageInfo: request.pageInfo,
-        data: tool,
-        count: count,
-      };
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

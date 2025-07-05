@@ -53,7 +53,7 @@ class AiAgentConfigurationDto {
 
 export class CreateAiAgentDto {
   @IsString()
-  name: string;
+  name?: string;
 
   @IsString()
   @IsOptional()

@@ -35,9 +35,9 @@ export class InferenceController {
     @Body(ValidationPipe) body: ChatRequestDto,
     // @AuthContext() authContext: AuthContextType,
   ) {
-    const aiAgent = await this.aiAgentService.findAgentById(agentId);
+    const aiAgent = await this.aiAgentService.read(agentId);
     const llmDetails = aiAgent.configuration?.llm
-      ? await this.llmService.findLLMById(aiAgent.configuration?.llm)
+      ? await this.llmService.read(aiAgent.configuration?.llm)
       : LLMConstants.DEFAULT_MODEL;
     const toolsDetails = aiAgent.configuration?.customTools?.length
       ? await this.aiToolService.findMany(aiAgent.configuration?.customTools)

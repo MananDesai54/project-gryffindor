@@ -18,7 +18,7 @@ const kbListFn: FetchQueryFunctionType<QueryParam> = async (ctx) => {
   const { queryKey } = ctx;
   const { otherParams } = queryKey[0];
 
-  return aiToolServiceServiceInstance.list(otherParams || {});
+  return aiToolServiceServiceInstance.search(otherParams || {});
 };
 
 export const useAiToolQuery = (options: ServerQueryParams<QueryParam>) => {

@@ -18,7 +18,7 @@ const kbListFn: FetchQueryFunctionType<QueryParam> = async (ctx) => {
   const { queryKey } = ctx;
   const { otherParams } = queryKey[0];
 
-  return knowledgeBaseServiceInstance.list(otherParams || {});
+  return knowledgeBaseServiceInstance.search(otherParams || {});
 };
 
 export const useKnowledgeBaseQuery = (
