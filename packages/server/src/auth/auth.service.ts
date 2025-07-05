@@ -5,9 +5,9 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { EncryptionUtil } from 'src/core/utils/encryptionUtil';
-import { JWTUtils } from 'src/core/utils/jwtUtil';
-import { UserService } from 'src/user/user.service';
+import { EncryptionUtil } from '../core/utils/encryptionUtil';
+import { JWTUtils } from '../core/utils/jwtUtil';
+import { UserService } from '../user/user.service';
 import { AuthContextType, LoginSuccessDto, LoginUserDto } from './dto/auth.dto';
 
 @Injectable()

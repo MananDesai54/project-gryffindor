@@ -3,11 +3,11 @@ import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ChatOpenAI } from '@langchain/openai';
 import { Injectable, Logger } from '@nestjs/common';
-import { CustomLLM, LLM, StandardLLM } from 'src/ai/llm/schema/llm.schema';
-import { LLMType, StandardLLMProvider } from 'src/ai/llm/types/llm.type';
+import { CustomLLM, LLM, StandardLLM } from '../../llm/schema/llm.schema';
+import { LLMType, StandardLLMProvider } from '../../llm/types/llm.type';
 
 @Injectable()
-export class LlmFactoryService {
+export class LLMFactory {
   create(llm: LLM, temperature?: number, maxTokens?: number): BaseChatModel {
     if ((llm.type as LLMType) === LLMType.STANDARD) {
       switch ((llm as StandardLLM).provider as StandardLLMProvider) {

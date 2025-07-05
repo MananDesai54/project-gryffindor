@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { UploadedFile } from 'src/file/type/file.type';
+import { UploadedFile } from '../../file/type/file.type';
 
 @Injectable()
 export class StorageService {

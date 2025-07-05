@@ -6,15 +6,15 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { AuthContextType } from 'src/auth/dto/auth.dto';
-import { SearchRequestDto } from 'src/core/rest/request/request.dto';
-import { SearchResponse } from 'src/core/rest/request/request.type';
-import { RequestUtil } from 'src/core/rest/request/request.util';
+import { AuthContextType } from '../../auth/dto/auth.dto';
+import { SearchRequestDto } from '../../core/rest/request/request.dto';
+import { SearchResponse } from '../../core/rest/request/request.type';
+import { RequestUtil } from '../../core/rest/request/request.util';
 import { CreateLLMDto, UpdateLLMDto } from './dto/llm.dto';
 import { LLM } from './schema/llm.schema';
 import { LLMType } from './types/llm.type';
-import { CRUDService } from 'src/core/rest/crud.controller';
-import { SearchService } from 'src/core/rest/search.controller';
+import { CRUDService } from '../../core/rest/crud.controller';
+import { SearchService } from '../../core/rest/search.controller';
 
 @Injectable()
 export class LlmService implements CRUDService<LLM>, SearchService<LLM> {

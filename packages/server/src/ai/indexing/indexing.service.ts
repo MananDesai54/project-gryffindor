@@ -1,13 +1,14 @@
 import { Document } from '@langchain/core/documents';
 import { Inject, Injectable } from '@nestjs/common';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { ChromadbService } from 'src/infra/chromadb/chromadb.service';
+import { ChromadbService } from '../../infra/chromadb/chromadb.service';
 
 import {
   KnowledgeBase,
   TextKnowledgeBase,
-} from 'src/ai/knowledge-base/schema/knowledge-base.schema';
-import { KnowledgeBaseType } from 'src/ai/knowledge-base/types/knowledge-base.type';
+} from '../knowledge-base/schema/knowledge-base.schema';
+import { KnowledgeBaseType } from '../knowledge-base/types/knowledge-base.type';
+import { ChromaDBResourceType } from '../../infra/chromadb/type/chromadb.type';
 
 @Injectable()
 export class IndexingService {
@@ -25,13 +26,15 @@ export class IndexingService {
         });
         const chunks = await textSplitter.splitDocuments(documents);
 
-        await this.chromaDbService.addDocumentToAgentCollection(
+        await this.chromaDbService.addDocumentToCollection(
           agentId,
+          ChromaDBResourceType.Agent,
           chunks,
         );
 
-        return this.chromaDbService.queryAgentCollection(
+        return this.chromaDbService.queryCollection(
           agentId,
+          ChromaDBResourceType.Agent,
           'Shubhaman Gill',
         );
       }

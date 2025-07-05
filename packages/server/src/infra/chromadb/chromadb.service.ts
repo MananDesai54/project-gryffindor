@@ -4,6 +4,7 @@ import { OpenAIEmbeddings } from '@langchain/openai';
 import { Injectable } from '@nestjs/common';
 import { ChromaClient } from 'chromadb';
 import { createRetrieverTool } from 'langchain/tools/retriever';
+import { ChromaDBResourceType } from './type/chromadb.type';
 
 @Injectable()
 export class ChromadbService {
@@ -21,13 +22,14 @@ export class ChromadbService {
     });
   }
 
-  getRetrieverForAgent(
-    agentId: string,
-    agentName: string,
-    agentDescription: string,
+  getRetrieverTool(
+    resourceId: string,
+    resourceType: ChromaDBResourceType,
+    resourceName: string,
+    resourceDescription: string,
   ): ReturnType<typeof createRetrieverTool> {
     const vectorStore = new Chroma(this.embeddings, {
-      collectionName: `agent_${agentId}`,
+      collectionName: this._getCollectionName(resourceId, resourceType),
       url: process.env.CHROMA_URL,
     });
 
@@ -36,26 +38,42 @@ export class ChromadbService {
     });
 
     return createRetrieverTool(retriever, {
-      name: `${agentName} Agent`,
-      description: `Retrieves relevant information for ${agentName} agent based on the provided query. Agent is for ${agentDescription}`,
+      name: `${resourceName} Agent`,
+      description: `Retrieves relevant information for ${resourceName} agent based on the provided query. Agent is for ${resourceDescription}`,
     });
   }
 
-  async addDocumentToAgentCollection(agentId: string, documents: Document[]) {
+  async addDocumentToCollection(
+    resourceId: string,
+    resourceType: ChromaDBResourceType,
+    documents: Document[],
+  ) {
     const vectorStore = new Chroma(this.embeddings, {
-      collectionName: `agent_${agentId}`,
+      collectionName: this._getCollectionName(resourceId, resourceType),
       url: process.env.CHROMA_URL,
     });
     await vectorStore.addDocuments(documents);
   }
 
-  async queryAgentCollection(agentId: string, query: string) {
+  async queryCollection(
+    resourceId: string,
+    resourceType: ChromaDBResourceType,
+    query: string,
+  ) {
     const vectorStore = new Chroma(this.embeddings, {
-      collectionName: `agent_${agentId}`,
+      collectionName: this._getCollectionName(resourceId, resourceType),
       url: process.env.CHROMA_URL,
     });
 
     const results = await vectorStore.similaritySearch(query);
     return results;
+  }
+
+  // =================== private methods================
+  private _getCollectionName(
+    resourceId: string,
+    resourceType: ChromaDBResourceType,
+  ): string {
+    return `${resourceType}_${resourceId}`;
   }
 }

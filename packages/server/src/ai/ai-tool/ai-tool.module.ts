@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AiToolController } from './ai-tool.controller';
 import { AiToolService } from './ai-tool.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import {
   AgentAiToolSchema,
   AiTool,
@@ -9,6 +9,7 @@ import {
   WebhookAiToolSchema,
 } from './schema/ai-tool.schema';
 import { AiToolType } from './types/ai-tool.type';
+import { AiToolFactory } from './factory/ai-tool.factory';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { AiToolType } from './types/ai-tool.type';
     ]),
   ],
   controllers: [AiToolController],
-  providers: [AiToolService],
-  exports: [AiToolService],
+  providers: [AiToolService, AiToolFactory],
+  exports: [AiToolService, AiToolFactory],
 })
 export class AiToolModule {}

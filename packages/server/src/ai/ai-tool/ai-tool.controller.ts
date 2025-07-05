@@ -10,13 +10,13 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { CreateAiToolDto, UpdateAiToolDto } from './dto/ai-tool.dto';
-import { AuthContextType } from 'src/auth/dto/auth.dto';
-import { AuthContext } from 'src/core/decorators/authContext';
-import { SearchRequestDto } from 'src/core/rest/request/request.dto';
+import { AuthContextType } from '../../auth/dto/auth.dto';
+import { AuthContext } from '../../core/decorators/authContext';
+import { SearchRequestDto } from '../../core/rest/request/request.dto';
 import { AiToolService } from './ai-tool.service';
-import { AuthGuard } from 'src/core/guard/auth.guard';
-import { CRUDController } from 'src/core/rest/crud.controller';
-import { SearchController } from 'src/core/rest/search.controller';
+import { AuthGuard } from '../../core/guard/auth.guard';
+import { CRUDController } from '../../core/rest/crud.controller';
+import { SearchController } from '../../core/rest/search.controller';
 import { AiTool } from './schema/ai-tool.schema';
 
 @UseGuards(AuthGuard)

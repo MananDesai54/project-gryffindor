@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { Request, Response } from 'express';
-import { ErrorLoggingService } from 'src/infra/observability/error-logging/error-logging.service';
+import { ErrorLoggingService } from '../../infra/observability/error-logging/error-logging.service';
 
 @Catch()
 export class HttpExceptionFilter extends BaseExceptionFilter {

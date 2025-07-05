@@ -1,6 +1,6 @@
 # update to do
-- move text and extracted links to cloud
 - refactor agent inference code
+- move text and extracted links to cloud
 - kafka flow for async task of Knowledge base
 
 # project-gryffindor

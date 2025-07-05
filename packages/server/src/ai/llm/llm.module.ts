@@ -9,6 +9,7 @@ import {
   StandardLLMSchema,
 } from './schema/llm.schema';
 import { LLMType } from './types/llm.type';
+import { LLMFactory } from './factory/llm.factory';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { LLMType } from './types/llm.type';
     ]),
   ],
   controllers: [LlmController],
-  providers: [LlmService],
-  exports: [LlmService],
+  providers: [LlmService, LLMFactory],
+  exports: [LlmService, LLMFactory],
 })
 export class LlmModule {}

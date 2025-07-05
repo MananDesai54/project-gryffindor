@@ -1,7 +1,7 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { WebhookAiTool } from 'src/ai/ai-tool/schema/ai-tool.schema';
+import { WebhookAiTool } from '../../ai-tool/schema/ai-tool.schema';
 import { z } from 'zod';
 
 interface ToolInput {
@@ -11,7 +11,7 @@ interface ToolInput {
 }
 
 @Injectable()
-export class ToolFactoryService {
+export class AiToolFactory {
   createWebhookTool(tool: WebhookAiTool): DynamicStructuredTool {
     const inputSchema = z.object({
       queryParams: z

@@ -6,27 +6,19 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
+import { AuthGuard } from '../../core/guard/auth.guard';
+import { LLMConstants } from '../llm/constant/llm.constants';
 import {
   ChatRequestDto,
   GenerateSystemPromptDto,
   GenerateTextDto,
 } from './dto/inference.dto';
-import { AuthGuard } from 'src/core/guard/auth.guard';
 import { InferenceService } from './inference.service';
-import { AiAgentService } from '../ai-agent/ai-agent.service';
-import { LlmService } from '../llm/llm.service';
-import { AiToolService } from '../ai-tool/ai-tool.service';
-import { LLMConstants } from '../llm/constant/llm.constants';
 
 @UseGuards(AuthGuard)
 @Controller('ai/inference')
 export class InferenceController {
-  constructor(
-    private readonly inferenceService: InferenceService,
-    private readonly aiAgentService: AiAgentService,
-    private readonly llmService: LlmService,
-    private readonly aiToolService: AiToolService,
-  ) {}
+  constructor(private readonly inferenceService: InferenceService) {}
 
   @Post('/generate-text')
   async generateText(@Body(ValidationPipe) body: GenerateTextDto) {
@@ -49,21 +41,7 @@ export class InferenceController {
     @Body(ValidationPipe) body: ChatRequestDto,
     // @AuthContext() authContext: AuthContextType,
   ) {
-    const aiAgent = await this.aiAgentService.read(agentId);
-    const llmDetails = aiAgent.configuration?.llm
-      ? await this.llmService.read(aiAgent.configuration?.llm)
-      : LLMConstants.DEFAULT_MODEL;
-    const toolsDetails = aiAgent.configuration?.customTools?.length
-      ? await this.aiToolService.findMany(aiAgent.configuration?.customTools)
-      : [];
-
-    const output = await this.inferenceService.chat(
-      agentId,
-      body,
-      aiAgent,
-      llmDetails,
-      toolsDetails,
-    );
+    const output = await this.inferenceService.chat(agentId, body);
 
     return output;
   }

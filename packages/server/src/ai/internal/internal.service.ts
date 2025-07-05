@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { LlmService } from '../llm/llm.service';
 import { LLMConstants } from '../llm/constant/llm.constants';
-import { SystemUserConstant } from 'src/core/constant/systemUser.constant';
+import { SystemUserConstant } from '../../core/constant/systemUser.constant';
 
 @Injectable()
 export class InternalService {
