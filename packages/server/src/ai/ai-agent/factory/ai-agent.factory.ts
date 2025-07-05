@@ -6,35 +6,41 @@ import { DynamicStructuredTool } from '@langchain/core/tools';
 import { Inject, Injectable } from '@nestjs/common';
 import { AgentExecutor, createOpenAIFunctionsAgent } from 'langchain/agents';
 import { forEach } from 'lodash';
-import { ChromadbService } from 'src/infra/chromadb/chromadb.service';
-import { LlmFactoryService } from '../llm-factory/llm-factory.service';
-import { ToolFactoryService } from '../tool-factory/tool-factory.service';
-import { AiAgent } from 'src/ai/ai-agent/schema/ai-agent.schema';
-import { LLM } from 'src/ai/llm/schema/llm.schema';
-import { AiTool, WebhookAiTool } from 'src/ai/ai-tool/schema/ai-tool.schema';
-import { AiToolType } from 'src/ai/ai-tool/types/ai-tool.type';
-import { LLMConstants } from 'src/ai/llm/constant/llm.constants';
+import { AiToolService } from '../../ai-tool/ai-tool.service';
+import { WebhookAiTool } from '../../ai-tool/schema/ai-tool.schema';
+import { AiToolType } from '../../ai-tool/types/ai-tool.type';
+import { LLMConstants } from '../../llm/constant/llm.constants';
+import { LlmService } from '../../llm/llm.service';
+import { ChromaDBResourceType } from '../../../infra/chromadb/type/chromadb.type';
+import { ChromadbService } from '../../../infra/chromadb/chromadb.service';
+import { AiToolFactory } from '../../ai-tool/factory/ai-tool.factory';
+import { LLMFactory } from '../../llm/factory/llm.factory';
+import { AiAgentService } from '../ai-agent.service';
 
 @Injectable()
-export class AgentFactoryService {
+export class AiAgentFactory {
   constructor(
-    // @Inject() private readonly aiAgentService: AiAgentService,
-    @Inject() private readonly llmFactoryService: LlmFactoryService,
+    @Inject() private readonly aiAgentService: AiAgentService,
+    @Inject() private readonly aiToolService: AiToolService,
+    @Inject() private readonly llmService: LlmService,
+    @Inject() private readonly llmFactory: LLMFactory,
     @Inject() private readonly chromadbService: ChromadbService,
-    @Inject() private readonly toolFactoryService: ToolFactoryService,
-    // @Inject() private readonly llmService: LlmService,
-    // @Inject() private readonly aiToolService: AiToolService,
-  ) {
-    console.log('AgentFactoryService');
-  }
+    @Inject() private readonly aiToolFactory: AiToolFactory,
+  ) {}
 
   async create(
-    aiAgent: AiAgent,
-    llmDetails: LLM,
-    toolsDetails: AiTool[],
+    agentId: string,
     runTimeVariables?: Record<string, string>,
   ): Promise<AgentExecutor> {
-    const llm = this.llmFactoryService.create(
+    const aiAgent = await this.aiAgentService.read(agentId);
+    const llmDetails = aiAgent.configuration?.llm
+      ? await this.llmService.read(aiAgent.configuration?.llm)
+      : LLMConstants.DEFAULT_MODEL;
+    const toolsDetails = aiAgent.configuration?.customTools?.length
+      ? await this.aiToolService.findMany(aiAgent.configuration?.customTools)
+      : [];
+
+    const llm = this.llmFactory.create(
       llmDetails,
       aiAgent.configuration?.temperature,
       aiAgent.configuration?.maxTokens,
@@ -42,8 +48,9 @@ export class AgentFactoryService {
 
     const tools: DynamicStructuredTool[] = [];
     if (aiAgent.configuration?.knowledgeBase?.length > 0) {
-      const retrieverTool = this.chromadbService.getRetrieverForAgent(
+      const retrieverTool = this.chromadbService.getRetrieverTool(
         aiAgent._id,
+        ChromaDBResourceType.Agent,
         aiAgent.name,
         aiAgent.description,
       );
@@ -53,7 +60,7 @@ export class AgentFactoryService {
     forEach(toolsDetails, (tool) => {
       if ((tool.type as AiToolType) === AiToolType.WEB_HOOK) {
         tools.push(
-          this.toolFactoryService.createWebhookTool(
+          this.aiToolFactory.createWebhookTool(
             tool as unknown as WebhookAiTool,
           ),
         );
@@ -93,7 +100,7 @@ export class AgentFactoryService {
       new MessagesPlaceholder('agent_scratchpad'),
     ]);
 
-    const llm = this.llmFactoryService.create(LLMConstants.DEFAULT_MODEL);
+    const llm = this.llmFactory.create(LLMConstants.DEFAULT_MODEL);
 
     const agent = await createOpenAIFunctionsAgent({ llm, tools: [], prompt });
 

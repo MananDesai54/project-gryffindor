@@ -5,23 +5,20 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 
-import { AgentFactoryService } from './agent-factory/agent-factory.service';
+import { AiAgentFactory } from '../ai-agent/factory/ai-agent.factory';
 import { ChatRequestDto } from './dto/inference.dto';
-import { AiAgent } from 'src/ai/ai-agent/schema/ai-agent.schema';
-import { LLM } from 'src/ai/llm/schema/llm.schema';
-import { AiTool } from 'src/ai/ai-tool/schema/ai-tool.schema';
 
 @Injectable()
 export class InferenceService {
   constructor(
-    @Inject() private readonly agentFactoryService: AgentFactoryService,
+    @Inject() private readonly aiAgentFactory: AiAgentFactory,
     // @Inject() private readonly historyService: HistoryService,
     // @Inject() private readonly langfuseService: LangfuseService,
   ) {}
 
   async generateText(text: string, systemPrompt: string) {
     try {
-      const chatAgent = await this.agentFactoryService.createDefaultChatAgent(
+      const chatAgent = await this.aiAgentFactory.createDefaultChatAgent(
         systemPrompt,
         text,
       );
@@ -34,13 +31,7 @@ export class InferenceService {
     }
   }
 
-  async chat(
-    agentId: string,
-    chatRequest: ChatRequestDto,
-    agent: AiAgent,
-    llm: LLM,
-    tools: AiTool[],
-  ) {
+  async chat(agentId: string, chatRequest: ChatRequestDto) {
     const { message, runtimeVariables } = chatRequest;
 
     // const trace = this.langfuseService
@@ -50,10 +41,8 @@ export class InferenceService {
 
     try {
       // const chatHistory = await this.historyService.getHistory(chatId);
-      const agentExecutor = await this.agentFactoryService.create(
-        agent,
-        llm,
-        tools,
+      const agentExecutor = await this.aiAgentFactory.create(
+        agentId,
         runtimeVariables,
       );
       const result = await agentExecutor.invoke(

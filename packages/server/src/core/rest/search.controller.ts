@@ -1,4 +1,4 @@
-import { AuthContextType } from 'src/auth/dto/auth.dto';
+import { AuthContextType } from '../../auth/dto/auth.dto';
 import { SearchRequest, SearchResponse } from './request/request.type';
 
 export interface SearchController<T> {

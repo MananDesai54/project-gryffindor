@@ -13,13 +13,13 @@ import {
   CreateKnowledgeBaseDto,
   UpdateKnowledgeBaseDto,
 } from './dto/knowledge-base.dto';
-import { AuthContext } from 'src/core/decorators/authContext';
-import { AuthContextType } from 'src/auth/dto/auth.dto';
+import { AuthContext } from '../../core/decorators/authContext';
+import { AuthContextType } from '../../auth/dto/auth.dto';
 import { KnowledgeBaseService } from './knowledge-base.service';
-import { AuthGuard } from 'src/core/guard/auth.guard';
-import { SearchRequestDto } from 'src/core/rest/request/request.dto';
-import { CRUDController } from 'src/core/rest/crud.controller';
-import { SearchController } from 'src/core/rest/search.controller';
+import { AuthGuard } from '../../core/guard/auth.guard';
+import { SearchRequestDto } from '../../core/rest/request/request.dto';
+import { CRUDController } from '../../core/rest/crud.controller';
+import { SearchController } from '../../core/rest/search.controller';
 import { KnowledgeBase } from './schema/knowledge-base.schema';
 
 @UseGuards(AuthGuard)

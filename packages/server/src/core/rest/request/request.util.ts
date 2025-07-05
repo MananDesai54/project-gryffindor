@@ -1,4 +1,4 @@
-import { AuthContextType } from 'src/auth/dto/auth.dto';
+import { AuthContextType } from '../../../auth/dto/auth.dto';
 import { FilterUtil } from './filters/filter.util';
 import { MongoFindParameters, SearchRequest } from './request.type';
 import { FilterType } from './filters/filter.type';

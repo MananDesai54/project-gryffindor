@@ -6,12 +6,12 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { AuthContextType } from 'src/auth/dto/auth.dto';
-import { CRUDService } from 'src/core/rest/crud.controller';
-import { SearchRequestDto } from 'src/core/rest/request/request.dto';
-import { SearchResponse } from 'src/core/rest/request/request.type';
-import { RequestUtil } from 'src/core/rest/request/request.util';
-import { SearchService } from 'src/core/rest/search.controller';
+import { AuthContextType } from '../../auth/dto/auth.dto';
+import { CRUDService } from '../../core/rest/crud.controller';
+import { SearchRequestDto } from '../../core/rest/request/request.dto';
+import { SearchResponse } from '../../core/rest/request/request.type';
+import { RequestUtil } from '../../core/rest/request/request.util';
+import { SearchService } from '../../core/rest/search.controller';
 import { CreateAiToolDto, UpdateAiToolDto } from './dto/ai-tool.dto';
 import { AiTool } from './schema/ai-tool.schema';
 

@@ -1,4 +1,4 @@
-import { AuthContextType } from 'src/auth/dto/auth.dto';
+import { AuthContextType } from '../../auth/dto/auth.dto';
 
 export interface CRUDController<T> {
   create(data: Partial<T>, ctx: AuthContextType): Promise<T>;

@@ -10,7 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { values } from 'lodash';
-import { AiBuiltInToolType } from 'src/ai/ai-tool/types/ai-tool.type';
+import { AiBuiltInToolType } from '../../ai-tool/types/ai-tool.type';
 
 class AiAgentConfigurationDto {
   @IsString()
