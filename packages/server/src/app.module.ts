@@ -14,6 +14,7 @@ import { CoreModule } from './core/core.module';
 import { FileModule } from './file/file.module';
 import { InfraModule } from './infra/infra.module';
 import { UserModule } from './user/user.module';
+import { DummyApiModule } from './dummy-api/dummy-api.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { UserModule } from './user/user.module';
     LlmModule,
     IndexingModule,
     InternalModule,
+    DummyApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

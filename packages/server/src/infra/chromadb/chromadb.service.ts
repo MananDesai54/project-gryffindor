@@ -3,7 +3,6 @@ import { Document } from '@langchain/core/documents';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { Injectable } from '@nestjs/common';
 import { ChromaClient } from 'chromadb';
-import { createRetrieverTool } from 'langchain/tools/retriever';
 import { ChromaDBResourceType } from './type/chromadb.type';
 
 @Injectable()
@@ -22,27 +21,6 @@ export class ChromadbService {
     });
   }
 
-  getRetrieverTool(
-    resourceId: string,
-    resourceType: ChromaDBResourceType,
-    resourceName: string,
-    resourceDescription: string,
-  ): ReturnType<typeof createRetrieverTool> {
-    const vectorStore = new Chroma(this.embeddings, {
-      collectionName: this._getCollectionName(resourceId, resourceType),
-      url: process.env.CHROMA_URL,
-    });
-
-    const retriever = vectorStore.asRetriever({
-      k: 5,
-    });
-
-    return createRetrieverTool(retriever, {
-      name: `${resourceName} Agent`,
-      description: `Retrieves relevant information for ${resourceName} agent based on the provided query. Agent is for ${resourceDescription}`,
-    });
-  }
-
   async addDocumentToCollection(
     resourceId: string,
     resourceType: ChromaDBResourceType,
@@ -52,7 +30,29 @@ export class ChromadbService {
       collectionName: this._getCollectionName(resourceId, resourceType),
       url: process.env.CHROMA_URL,
     });
-    await vectorStore.addDocuments(documents);
+    const result = await vectorStore.addDocuments(documents);
+    return result;
+  }
+
+  async deleteAllDocuments(
+    resourceId: string,
+    resourceType: ChromaDBResourceType,
+  ) {
+    const vectorStore = new Chroma(this.embeddings, {
+      collectionName: this._getCollectionName(resourceId, resourceType),
+      url: process.env.CHROMA_URL,
+    });
+    const result = await vectorStore.delete({ ids: [resourceId] });
+    return result;
+  }
+
+  async deleteAllCollections() {
+    const collections = await this.chromaClient.listCollections();
+    await Promise.all(
+      collections.map((collection) =>
+        this.chromaClient.deleteCollection({ name: collection.id }),
+      ),
+    );
   }
 
   async queryCollection(
@@ -60,12 +60,33 @@ export class ChromadbService {
     resourceType: ChromaDBResourceType,
     query: string,
   ) {
-    const vectorStore = new Chroma(this.embeddings, {
-      collectionName: this._getCollectionName(resourceId, resourceType),
-      url: process.env.CHROMA_URL,
+    // const queryVector = await this.embeddings.embedQuery(query);
+
+    // const vectorStore = new Chroma(this.embeddings, {
+    //   collectionName: this._getCollectionName(resourceId, resourceType),
+    //   url: process.env.CHROMA_URL,
+    // });
+
+    // const results = await vectorStore.similaritySearchVectorWithScore(
+    //   queryVector,
+    //   5,
+    // );
+    // return results;
+
+    const collection = await this.chromaClient.getCollection({
+      name: this._getCollectionName(resourceId, resourceType),
+      embeddingFunction: {
+        generate: (query) => {
+          return this.embeddings.embedDocuments(query);
+        },
+      },
     });
 
-    const results = await vectorStore.similaritySearch(query);
+    const results = collection.query({
+      queryTexts: [query],
+      nResults: 5,
+    });
+
     return results;
   }
 

@@ -1,7 +1,7 @@
 declare namespace Express {
   export interface Request {
     context?: {
-      authContext?: import('../auth/dto/auth.dto').AuthContextType;
+      authContext?: import('src/auth/dto/auth.dto').AuthContextType;
     };
   }
 }

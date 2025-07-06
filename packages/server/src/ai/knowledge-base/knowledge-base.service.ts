@@ -16,6 +16,8 @@ import {
   UpdateKnowledgeBaseDto,
 } from './dto/knowledge-base.dto';
 import { KnowledgeBase } from './schema/knowledge-base.schema';
+import { KnowledgeBaseType } from './types/knowledge-base.type';
+import { Status } from '../../core/types/status';
 
 @Injectable()
 export class KnowledgeBaseService
@@ -31,6 +33,10 @@ export class KnowledgeBaseService
       const updatedData = {
         ...data,
         creator: authContext.userId,
+        sourceContentStatus:
+          (data.type as KnowledgeBaseType) === KnowledgeBaseType.TEXT
+            ? Status.Completed
+            : Status.Pending,
       };
       return this.knowledgeBaseModel.create(updatedData);
     } catch (error) {

@@ -7,6 +7,7 @@ import { AiAgentFactory } from './factory/ai-agent.factory';
 import { ChromadbModule } from '../../infra/chromadb/chromadb.module';
 import { LlmModule } from '../llm/llm.module';
 import { AiToolModule } from '../ai-tool/ai-tool.module';
+import { KnowledgeBaseModule } from '../knowledge-base/knowledge-base.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AiToolModule } from '../ai-tool/ai-tool.module';
     ChromadbModule,
     LlmModule,
     AiToolModule,
+    KnowledgeBaseModule,
   ],
   controllers: [AiAgentController],
   providers: [AiAgentService, AiAgentFactory],

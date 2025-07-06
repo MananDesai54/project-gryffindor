@@ -59,10 +59,10 @@ export class WebhookAiTool extends AiTool {
     of: String,
     required: false,
   })
-  dynamicVariables: Record<string, string>;
+  dynamicVariables?: Record<string, string>;
   @Prop({ default: AiToolConstants.AI_WEB_HOOK_TOOL_DEFAULT_REQ_TIMEOUT })
-  reqTimeout: number;
-  @Prop()
+  reqTimeout?: number;
+  @Prop({ required: true })
   apiSchema: WebhookApiSchema;
 }
 

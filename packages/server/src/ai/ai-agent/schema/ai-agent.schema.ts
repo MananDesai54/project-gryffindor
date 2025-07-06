@@ -6,7 +6,7 @@ export type AiAgentDocument = HydratedDocument<AiAgent>;
 
 class AiAgentConfiguration {
   @Prop()
-  firstMessage: string;
+  firstMessage?: string;
   @Prop()
   systemPrompt: string;
   @Prop({
@@ -14,17 +14,17 @@ class AiAgentConfiguration {
     of: String,
     required: false,
   })
-  dynamicVariables: Record<string, string>;
+  dynamicVariables?: Record<string, string>;
   @Prop({ default: 0 })
-  temperature: number;
+  temperature?: number;
   @Prop({ default: -1 })
-  maxTokens: number;
+  maxTokens?: number;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'KnowledgeBase' })
-  knowledgeBase: string[];
+  knowledgeBase?: string[];
   @Prop()
-  builtInTools: string[];
+  builtInTools?: string[];
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'AiTool' })
-  customTools: string[];
+  customTools?: string[];
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'LLM' })
   llm: string;
 }
@@ -34,7 +34,7 @@ export class AiAgent {
   _id: string;
   @Prop({ required: true })
   name: string;
-  @Prop()
+  @Prop({ required: true })
   description: string;
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   creator: User;

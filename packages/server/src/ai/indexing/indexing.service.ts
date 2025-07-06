@@ -3,12 +3,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { ChromadbService } from '../../infra/chromadb/chromadb.service';
 
-import {
-  KnowledgeBase,
-  TextKnowledgeBase,
-} from '../knowledge-base/schema/knowledge-base.schema';
-import { KnowledgeBaseType } from '../knowledge-base/types/knowledge-base.type';
 import { ChromaDBResourceType } from '../../infra/chromadb/type/chromadb.type';
+import { KnowledgeBase } from '../knowledge-base/schema/knowledge-base.schema';
+import { KnowledgeBaseType } from '../knowledge-base/types/knowledge-base.type';
 
 @Injectable()
 export class IndexingService {
@@ -32,11 +29,11 @@ export class IndexingService {
           chunks,
         );
 
-        return this.chromaDbService.queryCollection(
-          agentId,
-          ChromaDBResourceType.Agent,
-          'Shubhaman Gill',
-        );
+        // return this.chromaDbService.queryCollection(
+        //   agentId,
+        //   ChromaDBResourceType.Agent,
+        //   "Shubman Gill first in 148 years of Test history to do the unthinkable, also shatters Gavaskar's 54-year-old India record",
+        // );
       }
     } catch (error) {
       throw new Error(error);
@@ -49,9 +46,7 @@ export class IndexingService {
     switch (kb.type as KnowledgeBaseType) {
       case KnowledgeBaseType.TEXT:
         return new Promise((res) => {
-          res([
-            new Document({ pageContent: (kb as TextKnowledgeBase).content }),
-          ]);
+          res([new Document({ pageContent: kb.content })]);
         });
       case KnowledgeBaseType.FILE:
       case KnowledgeBaseType.LINK:
