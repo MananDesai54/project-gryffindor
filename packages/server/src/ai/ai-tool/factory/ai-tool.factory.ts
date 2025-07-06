@@ -1,8 +1,8 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { WebhookAiTool } from '../../ai-tool/schema/ai-tool.schema';
 import { z } from 'zod';
+import { WebhookAiTool } from '../../ai-tool/schema/ai-tool.schema';
 
 interface ToolInput {
   queryParams?: Record<string, string>;

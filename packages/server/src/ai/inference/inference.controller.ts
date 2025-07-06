@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
   UseGuards,
@@ -14,11 +15,17 @@ import {
   GenerateTextDto,
 } from './dto/inference.dto';
 import { InferenceService } from './inference.service';
+import { AuthContextType } from 'src/auth/dto/auth.dto';
+import { AuthContext } from 'src/core/decorators/authContext';
+import { HistoryService } from './history/history.service';
 
 @UseGuards(AuthGuard)
 @Controller('ai/inference')
 export class InferenceController {
-  constructor(private readonly inferenceService: InferenceService) {}
+  constructor(
+    private readonly inferenceService: InferenceService,
+    private readonly historyService: HistoryService,
+  ) {}
 
   @Post('/generate-text')
   async generateText(@Body(ValidationPipe) body: GenerateTextDto) {
@@ -39,10 +46,15 @@ export class InferenceController {
   async chat(
     @Param('agentId') agentId: string,
     @Body(ValidationPipe) body: ChatRequestDto,
-    // @AuthContext() authContext: AuthContextType,
+    @AuthContext() authContext: AuthContextType,
   ) {
-    const output = await this.inferenceService.chat(agentId, body);
+    const output = await this.inferenceService.chat(agentId, body, authContext);
 
     return output;
+  }
+
+  @Get('/history/:agentId')
+  async getHistory(@Param('agentId') agentId: string) {
+    return this.historyService.getHistoryForUser(agentId);
   }
 }

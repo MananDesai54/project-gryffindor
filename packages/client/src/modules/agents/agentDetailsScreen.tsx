@@ -8,18 +8,20 @@ import Loader from "@gryffindor/client/common/components/app/loader";
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
 import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 import { Routes } from "@gryffindor/client/route/routes";
-import { useParams } from "@tanstack/react-router";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { BrainCircuit, Copy, TriangleAlert } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import AgentConfigurations from "./components/agentConfigurations";
 import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
 import { Textarea } from "@gryffindor/client/common/components/shadcn/components/ui/textarea";
+import { NotifySuccess } from "@gryffindor/client/common/components/app/toast";
 
 export default function AgentDetailScreen() {
   const params = useParams({
     from: Routes.AGENT_DETAIL,
   });
+  const navigate = useNavigate();
 
   const { data, isLoading } = useAgentByIdQuery({
     queryParams: {
@@ -98,10 +100,32 @@ export default function AgentDetailScreen() {
       <header className="p-2 border-y flex justify-between items-center w-full sticky top-0 z-10 bg-background">
         <AppBreadcrumb items={breadCrumbItems} />
         <div className="flex items-center">
-          <Button>
+          <Button
+            onClick={() => {
+              navigate({
+                to: Routes.AGENT_INFERENCE,
+                params: { id: tempAgent?._id },
+              });
+            }}
+          >
             <BrainCircuit /> Test Agent
           </Button>
-          <Button className="mx-4" variant="outline">
+          <Button
+            className="mx-4"
+            variant="outline"
+            onClick={() => {
+              navigator.clipboard
+                .writeText(
+                  `${window.location.origin}${Routes.AGENT_INFERENCE}`.replace(
+                    "$id",
+                    tempAgent?._id || "",
+                  ),
+                )
+                .then(() => {
+                  NotifySuccess("Agent's URL Copied to clipboard");
+                });
+            }}
+          >
             <Copy /> Copy Url
           </Button>
           <AppMenu actions={actions} />

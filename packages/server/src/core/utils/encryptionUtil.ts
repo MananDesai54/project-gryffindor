@@ -10,6 +10,6 @@ export class EncryptionUtil {
     password: string,
     hashedPassword: string,
   ): Promise<boolean> {
-    return await bcrypt.compare(password, hashedPassword);
+    return bcrypt.compare(password, hashedPassword);
   }
 }

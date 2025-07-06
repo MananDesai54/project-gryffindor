@@ -5,15 +5,19 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 
+import { LangfuseCallbackHandler } from '../../infra/observability/langfuse/langfuse.callback';
+import { AuthContextType } from '../../auth/dto/auth.dto';
+import { LangfuseService } from '../../infra/observability/langfuse/langfuse.service';
 import { AiAgentFactory } from '../ai-agent/factory/ai-agent.factory';
 import { ChatRequestDto } from './dto/inference.dto';
+import { HistoryService } from './history/history.service';
 
 @Injectable()
 export class InferenceService {
   constructor(
     @Inject() private readonly aiAgentFactory: AiAgentFactory,
-    // @Inject() private readonly historyService: HistoryService,
-    // @Inject() private readonly langfuseService: LangfuseService,
+    @Inject() private readonly historyService: HistoryService,
+    @Inject() private readonly langfuseService: LangfuseService,
   ) {}
 
   async generateText(text: string, systemPrompt: string) {
@@ -31,37 +35,65 @@ export class InferenceService {
     }
   }
 
-  async chat(agentId: string, chatRequest: ChatRequestDto) {
-    const { message, runtimeVariables } = chatRequest;
+  async chat(
+    agentId: string,
+    chatRequest: ChatRequestDto,
+    authContext: AuthContextType,
+  ) {
+    const { message, runtimeVariables, chatId } = chatRequest;
 
-    // const trace = this.langfuseService
-    //   .getLangFuseClient()
-    //   .trace({ name: 'agent-chat', sessionId: chatId });
-    // const langfuseCallBack = new LangfuseCallbackHandler('trace');
+    const trace = this.langfuseService.getLangFuseClient().trace({
+      name: `chat_${agentId}_${chatId}_${authContext.userId}_${Date.now()}`,
+      input: message,
+      userId: authContext.userId,
+      sessionId: chatId,
+      timestamp: new Date(),
+      tags: ['agent_chat'],
+      metadata: {
+        agentId,
+      },
+    });
+
+    const langfuseCallBack = new LangfuseCallbackHandler(
+      trace,
+      this.langfuseService.getLangFuseClient(),
+      authContext,
+    );
 
     try {
-      // const chatHistory = await this.historyService.getHistory(chatId);
+      const chatHistory = await this.historyService.getHistoryForAgent(chatId);
       const agentExecutor = await this.aiAgentFactory.create(
         agentId,
         runtimeVariables,
       );
       const result = await agentExecutor.invoke(
-        { input: message },
-        // { message, chat_history: chatHistory },
-        // { callbacks: [langfuseCallBack] },
+        { input: message, chat_history: chatHistory },
+        { callbacks: [langfuseCallBack] },
       );
-      const output = result.output;
-      // await this.historyService.addTurn(chatId, message, output);
-      // trace.update({ output });
+      await this.historyService.addTurn(chatId, message, result.output);
+      trace
+        .span({
+          level: 'ERROR',
+          output: result.output,
+          input: message,
+          endTime: new Date(),
+        })
+        .end();
 
-      return {
-        response: output,
-      };
+      return result;
     } catch (error) {
-      // trace.update({ level: 'ERROR', statusMessage: error.message });
+      trace.span({
+        level: 'ERROR',
+        input: message,
+        endTime: new Date(),
+        statusMessage: (error as Error).message,
+        metadata: {
+          fullError: error,
+        },
+      });
       throw new InternalServerErrorException(error);
     } finally {
-      // await this.langfuseService.shutdown();
+      await this.langfuseService.shutdown();
     }
   }
 }

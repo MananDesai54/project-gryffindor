@@ -29,6 +29,9 @@ const AgentDetailScreen = React.lazy(
 const AgentListScreen = React.lazy(
   () => import("@gryffindor/client/modules/agents/agentListScreen"),
 );
+const AgentInferenceScreen = React.lazy(
+  () => import("@gryffindor/client/modules/agents/agentInferenceScreen"),
+);
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -80,6 +83,11 @@ const agentWorkflowRoute = createRoute({
   component: () => <div>Agent Workflow</div>,
   getParentRoute: () => protectedAppRoute,
 });
+const agentInferenceRoute = createRoute({
+  path: Routes.AGENT_INFERENCE,
+  component: AgentInferenceScreen,
+  getParentRoute: () => protectedAppRoute,
+});
 
 const routeTree = rootRoute.addChildren([
   loginRoute,
@@ -89,6 +97,7 @@ const routeTree = rootRoute.addChildren([
     agentDetail,
     agentList,
     agentWorkflowRoute,
+    agentInferenceRoute,
   ]),
 ]);
 

@@ -2,7 +2,7 @@ import { ChatAnthropic } from '@langchain/anthropic';
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ChatOpenAI } from '@langchain/openai';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CustomLLM, LLM, StandardLLM } from '../../llm/schema/llm.schema';
 import { LLMType, StandardLLMProvider } from '../../llm/types/llm.type';
 
@@ -17,14 +17,17 @@ export class LLMFactory {
             model: llm.modelId || 'gpt-4.1',
             temperature: temperature,
             maxTokens: maxTokens,
+            // streamUsage: true,
+            // streaming: true,
           });
         case StandardLLMProvider.GOOGLE:
-          Logger.log(process.env.GEMINI_API_KEY);
           return new ChatGoogleGenerativeAI({
             apiKey: process.env.GEMINI_API_KEY,
             model: llm.modelId || 'gemini-2.5-flash',
             temperature: temperature,
             maxOutputTokens: maxTokens,
+            // streamUsage: true,
+            // streaming: true,
           });
         case StandardLLMProvider.ANTHROPIC:
           return new ChatAnthropic({
@@ -32,6 +35,8 @@ export class LLMFactory {
             model: llm.modelId || 'claude-3-7-sonnet-latest',
             temperature: temperature,
             maxTokens: maxTokens,
+            // streamUsage: true,
+            // streaming: true,
           });
       }
     } else {

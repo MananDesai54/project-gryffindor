@@ -8,6 +8,7 @@ import {
 } from './history/schema/history.schema';
 import { InferenceController } from './inference.controller';
 import { InferenceService } from './inference.service';
+import { LangfuseModule } from '../../infra/observability/langfuse/langfuse.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { InferenceService } from './inference.service';
       { name: ChatMessageHistory.name, schema: ChatMessageHistorySchema },
     ]),
     AiAgentModule,
+    LangfuseModule,
   ],
   providers: [InferenceService, HistoryService],
   controllers: [InferenceController],

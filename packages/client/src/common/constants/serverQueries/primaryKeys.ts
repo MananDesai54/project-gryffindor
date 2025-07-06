@@ -5,4 +5,5 @@ export enum ServerPrimaryKeys {
   LLM = "LLM",
   KNOWLEDGE_BASE = "KNOWLEDGE_BASE",
   AI_TOOL = "AI_TOOL",
+  AGENT_HISTORY = "AGENT_HISTORY",
 }

@@ -1,7 +1,10 @@
 # update to do
-- refactor agent inference code
+- refactor agent inference code, add support for other LLM
 - move text and extracted links to cloud
-- kafka flow for async task of Knowledge base
+- kafka flow for async task of Knowledge base indexing
+- Backup System prompt for agent
+- stream response
+- no file upload needed
 
 # project-gryffindor
 Agentic Framework for creating, maintaining, and collaborating with agents
@@ -20,6 +23,8 @@ Agentic Framework for creating, maintaining, and collaborating with agents
 - @nestjs/config
 - better abstraction in CRUD APIs
 - better way for secrets, ignore in docker
+- never return mongo doc from service, always return js object
+- think on rag index at agent level vs agent level
 
 # next build
 - Add tools Headers screen
@@ -32,6 +37,8 @@ Agentic Framework for creating, maintaining, and collaborating with agents
 
 # Agent should be able to build
 - Gmail RAG
+- Weather app
+- Travel Agent
 - HR Workflow automation
 
 # How to run?
