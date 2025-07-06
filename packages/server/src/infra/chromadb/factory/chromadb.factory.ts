@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ChromadbService } from '../chromadb.service';
 import { ChromaDBResourceType } from '../type/chromadb.type';
 import { DynamicStructuredTool } from '@langchain/core/tools';
@@ -29,6 +29,7 @@ export class ChromaDbFactory {
       description: `This tool allows you to query your Vector database for more information. ${toolDescription}`,
       schema: schema,
       func: async ({ query }: { query: string }) => {
+        Logger.log('Ai rag tool call');
         try {
           const response = await this.chromaDbService.queryCollection(
             resourceId,

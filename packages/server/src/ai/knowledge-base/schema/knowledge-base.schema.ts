@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { User } from '../../../user/schema/user.schema';
 import { Status } from 'src/core/types/status';
 
 export type KnowledgeBaseDocument = HydratedDocument<KnowledgeBase>;
@@ -13,7 +12,7 @@ export class KnowledgeBase {
   @Prop({ required: true })
   name: string;
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  creator: User;
+  creator: string;
   @Prop()
   content: string;
   @Prop()

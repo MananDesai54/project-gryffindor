@@ -18,6 +18,7 @@ type Props = {
   open: boolean;
   submitLabel?: string;
   cancelLabel?: string;
+  saveDisabled?: boolean;
 };
 
 export default function AppModal(props: Props) {
@@ -30,6 +31,7 @@ export default function AppModal(props: Props) {
     open,
     submitLabel,
     cancelLabel,
+    saveDisabled,
   } = props;
 
   return (
@@ -52,7 +54,7 @@ export default function AppModal(props: Props) {
               </DialogClose>
             ) : null}
             {onSave ? (
-              <Button type="submit" onClick={onSave}>
+              <Button type="submit" onClick={onSave} disabled={saveDisabled}>
                 {submitLabel || "Save"}
               </Button>
             ) : null}

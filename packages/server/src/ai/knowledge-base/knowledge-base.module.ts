@@ -8,6 +8,8 @@ import {
 } from './schema/knowledge-base.schema';
 import { KnowledgeBaseFactory } from './factory/knowledge-base.factory';
 import { ChromadbModule } from '../../infra/chromadb/chromadb.module';
+import { FileModule } from '../../file/file.module';
+import { KnowbaseContentExtractorService } from './knowbase-content-extractor.service';
 
 @Module({
   imports: [
@@ -18,9 +20,18 @@ import { ChromadbModule } from '../../infra/chromadb/chromadb.module';
       },
     ]),
     ChromadbModule,
+    FileModule,
   ],
   controllers: [KnowledgeBaseController],
-  providers: [KnowledgeBaseService, KnowledgeBaseFactory],
-  exports: [KnowledgeBaseService, KnowledgeBaseFactory],
+  providers: [
+    KnowledgeBaseService,
+    KnowledgeBaseFactory,
+    KnowbaseContentExtractorService,
+  ],
+  exports: [
+    KnowledgeBaseService,
+    KnowledgeBaseFactory,
+    KnowbaseContentExtractorService,
+  ],
 })
 export class KnowledgeBaseModule {}

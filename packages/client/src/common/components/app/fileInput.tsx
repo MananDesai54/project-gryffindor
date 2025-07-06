@@ -153,7 +153,7 @@ export function FileInput({
                     <FileIcon className="w-8 h-8 " />
                   </div>
                 )}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 max-w-[200px]">
                   <p className="text-sm font-medium truncate">{file.name}</p>
                   <p className="text-xs ">{formatBytes(file.size)}</p>
                 </div>

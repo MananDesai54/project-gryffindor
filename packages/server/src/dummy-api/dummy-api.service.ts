@@ -19,4 +19,137 @@ export class DummyApiService {
       City_Not_Available: 'Weather information not available',
     };
   }
+
+  getCricketSchedule() {
+    return {
+      'India Tour of England Test 2025': [
+        {
+          venue: 'Leeds',
+          date: '2025-09-15',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Edgebaston',
+          date: '2025-09-16',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'London - Lords',
+          date: '2025-09-17',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'London - Oval',
+          date: '2025-09-18',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Manchester - Old Trafford',
+          date: '2025-09-19',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+      ],
+      'England Tour of India Test 2025': [
+        {
+          venue: 'Mumbai',
+          date: '2025-09-20',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Delhi',
+          date: '2025-09-21',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Chennai',
+          date: '2025-09-22',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Bangalore',
+          date: '2025-09-23',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Hyderabad',
+          date: '2025-09-24',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+      ],
+      'India Tour of Australia Test 2025': [
+        {
+          venue: 'Sydney',
+          date: '2025-09-25',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Melbourne',
+          date: '2025-09-26',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Adelaide',
+          date: '2025-09-27',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Perth',
+          date: '2025-09-28',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Brisbane',
+          date: '2025-09-29',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+      ],
+      'Australia Tour of India Test 2026': [
+        {
+          venue: 'Mumbai',
+          date: '2026-09-30',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Delhi',
+          date: '2026-10-01',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Chennai',
+          date: '2026-10-02',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Bangalore',
+          date: '2026-10-03',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+        {
+          venue: 'Hyderabad',
+          date: '2026-10-04',
+          time: '10:00 AM',
+          status: 'Scheduled',
+        },
+      ],
+    };
+  }
 }

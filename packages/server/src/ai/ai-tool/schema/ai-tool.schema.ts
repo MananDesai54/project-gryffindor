@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { AiToolConstants } from '../../ai-tool/constant/ai.constant';
-import { User } from '../../../user/schema/user.schema';
 
 export type AiToolDocument = HydratedDocument<AiTool>;
 
@@ -14,7 +13,7 @@ export class AiTool {
   @Prop()
   description: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  creator: User;
+  creator: string;
 }
 
 export class ApiParamsValueSchema {

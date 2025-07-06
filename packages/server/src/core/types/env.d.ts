@@ -31,5 +31,7 @@ declare namespace NodeJS {
     OPENAI_API_KEY: string;
     GEMINI_API_KEY: string;
     ANTHROPIC_API_KEY: string;
+
+    FIRE_CRAWL_API_KEY: string;
   }
 }

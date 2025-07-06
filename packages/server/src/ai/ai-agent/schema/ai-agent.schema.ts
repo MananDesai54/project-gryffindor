@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { User } from '../../../user/schema/user.schema';
 
 export type AiAgentDocument = HydratedDocument<AiAgent>;
 
@@ -37,7 +36,7 @@ export class AiAgent {
   @Prop({ required: true })
   description: string;
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  creator: User;
+  creator: string;
   @Prop()
   configuration: AiAgentConfiguration;
 }

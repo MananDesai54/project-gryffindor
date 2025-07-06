@@ -52,11 +52,11 @@ export default function AddedKnowledgeBase(props: Props) {
         return (
           <div
             key={kb._id}
-            className="flex items-center justify-between p-3 rounded-xl hover:bg-secondary cursor-pointer"
+            className="flex items-center justify-between p-3 rounded-xl hover:bg-secondary cursor-pointer w-full"
           >
             <div className="flex items-center">
               <div className="p-2 bg-accent rounded-lg">{Icon}</div>
-              <span className="mx-2"> {kb.name}</span>
+              <div className="mx-2 truncate max-w-[500px]"> {kb.name}</div>
             </div>
             <Button
               size="icon"
