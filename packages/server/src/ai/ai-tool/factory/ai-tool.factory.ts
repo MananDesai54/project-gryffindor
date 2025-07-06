@@ -1,5 +1,5 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { z } from 'zod';
 import { WebhookAiTool } from '../../ai-tool/schema/ai-tool.schema';
@@ -48,6 +48,8 @@ export class AiToolFactory {
       schema: inputSchema,
       func: async (input: ToolInput) => {
         const { queryParams, body, headers } = input;
+
+        Logger.log('Ai webhook tool call');
 
         try {
           const response = await axios({

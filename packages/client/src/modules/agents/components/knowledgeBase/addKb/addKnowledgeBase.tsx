@@ -10,9 +10,11 @@ import { useCallback, useMemo, useState } from "react";
 import AddFile from "./addDocument";
 import AddLink from "./addLink";
 import AddText from "./addText";
+import useBoolean from "@gryffindor/client/common/api/decorators/hooks/useBoolean";
+import { NotifyError } from "@gryffindor/client/common/components/app/toast";
 
 type Props = {
-  onSaveKnowledgeBase: (knowledgeBase: KnowledgeBase) => void;
+  onSaveKnowledgeBase: (knowledgeBase: KnowledgeBase) => Promise<void>;
 };
 
 export function AddKnowledgeBase(props: Props) {
@@ -21,15 +23,29 @@ export function AddKnowledgeBase(props: Props) {
   const [newKnowledgeBase, setNewKnowledgeBase] = useState<KnowledgeBase>();
   const [activeKnowledgeBaseType, setActiveKnowledgeBaseType] =
     useState<KnowledgeBaseType>();
+  const { setValue: setLoading, value: loading } = useBoolean();
 
-  const onSave = useCallback(() => {
+  const onSave = useCallback(async () => {
     if (!newKnowledgeBase || !activeKnowledgeBaseType) return;
-    onSaveKnowledgeBase({
-      ...newKnowledgeBase,
-      type: activeKnowledgeBaseType,
-    });
-    setActiveKnowledgeBaseType(undefined);
-  }, [activeKnowledgeBaseType, newKnowledgeBase, onSaveKnowledgeBase]);
+    try {
+      setLoading(true);
+      await onSaveKnowledgeBase({
+        ...newKnowledgeBase,
+        type: activeKnowledgeBaseType,
+      });
+      setActiveKnowledgeBaseType(undefined);
+      setNewKnowledgeBase(undefined);
+    } catch (error) {
+      NotifyError((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }, [
+    activeKnowledgeBaseType,
+    newKnowledgeBase,
+    onSaveKnowledgeBase,
+    setLoading,
+  ]);
 
   const actions = useMemo(
     () =>
@@ -113,6 +129,7 @@ export function AddKnowledgeBase(props: Props) {
         }
         onClose={() => setActiveKnowledgeBaseType(undefined)}
         onSave={onSave}
+        saveDisabled={loading || !newKnowledgeBase?.name}
         submitLabel={`Add ${KnowledgeBaseTypeLabel[activeKnowledgeBaseType!]}`}
       />
     </>

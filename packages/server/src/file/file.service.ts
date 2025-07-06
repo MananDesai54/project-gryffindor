@@ -8,4 +8,8 @@ export class FileService {
   async uploadFiles(files: Express.Multer.File[]) {
     return this.storageService.uploadFiles(files);
   }
+
+  async downloadFile(fileId: string) {
+    return this.storageService.downloadFile(fileId);
+  }
 }

@@ -33,7 +33,9 @@ export class StorageService {
 
   async uploadFile(file: Express.Multer.File): Promise<UploadedFile> {
     const bucket = this.storage.bucket(this.bucketName);
-    const uniqueFileName = `${Date.now()}-${file.originalname}`;
+    const uniqueFileName = encodeURIComponent(
+      `${Date.now()}-${file.originalname}`,
+    );
 
     const blob = bucket.file(uniqueFileName);
 
@@ -50,12 +52,37 @@ export class StorageService {
 
       blobStream.on('finish', () => {
         res({
+          name: uniqueFileName,
           url: `https://storage.googleapis.com/${this.bucketName}/${uniqueFileName}`,
           mimeType: file.mimetype,
         });
       });
 
       blobStream.end(file.buffer);
+    });
+  }
+
+  async downloadFile(fileId: string): Promise<Buffer> {
+    const bucket = this.storage.bucket(this.bucketName);
+    const file = bucket.file(fileId);
+
+    return new Promise((res, reject) => {
+      const fileStream = file.createReadStream();
+
+      const buffer: Buffer[] = [];
+
+      fileStream.on('error', (error) => {
+        Logger.error('[Cloud Storage Download Error]', error);
+        reject(new InternalServerErrorException(error));
+      });
+
+      fileStream.on('finish', () => {
+        res(Buffer.concat(buffer));
+      });
+
+      fileStream.on('data', (chunk) => {
+        buffer.push(chunk);
+      });
     });
   }
 }

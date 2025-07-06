@@ -83,7 +83,7 @@ export default function AgentInferenceScreen() {
     <>
       <div className="w-full flex justify-center max-h-[80vh]">
         <ChatMessageList
-          className="!w-full md:!w-1/2 mx-auto"
+          className="!w-full sm:!w-1/2 mx-auto p-12"
           ref={messagesRef}
         >
           {!history?.length && (

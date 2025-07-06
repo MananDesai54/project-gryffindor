@@ -110,8 +110,7 @@ export class AiAgentFactory {
     return new AgentExecutor({
       agent,
       tools,
-      verbose: true,
-      maxIterations: 5,
+      verbose: false,
     });
   }
 

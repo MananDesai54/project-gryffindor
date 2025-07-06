@@ -1,6 +1,8 @@
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -11,13 +13,13 @@ import { SearchRequestDto } from '../../core/rest/request/request.dto';
 import { SearchResponse } from '../../core/rest/request/request.type';
 import { RequestUtil } from '../../core/rest/request/request.util';
 import { SearchService } from '../../core/rest/search.controller';
+import { Status } from '../../core/types/status';
 import {
   CreateKnowledgeBaseDto,
   UpdateKnowledgeBaseDto,
 } from './dto/knowledge-base.dto';
+import { KnowbaseContentExtractorService } from './knowbase-content-extractor.service';
 import { KnowledgeBase } from './schema/knowledge-base.schema';
-import { KnowledgeBaseType } from './types/knowledge-base.type';
-import { Status } from '../../core/types/status';
 
 @Injectable()
 export class KnowledgeBaseService
@@ -26,19 +28,23 @@ export class KnowledgeBaseService
   constructor(
     @InjectModel(KnowledgeBase.name)
     private readonly knowledgeBaseModel: Model<KnowledgeBase>,
+    @Inject()
+    private readonly knowledgeBaseContentExtractorService: KnowbaseContentExtractorService,
   ) {}
 
   async create(data: CreateKnowledgeBaseDto, authContext: AuthContextType) {
     try {
-      const updatedData = {
+      const extractedContent =
+        await this.knowledgeBaseContentExtractorService.extractContentForKnowledgeBase(
+          data,
+        );
+      Logger.log(extractedContent);
+      return this.knowledgeBaseModel.create({
         ...data,
+        content: extractedContent,
         creator: authContext.userId,
-        sourceContentStatus:
-          (data.type as KnowledgeBaseType) === KnowledgeBaseType.TEXT
-            ? Status.Completed
-            : Status.Pending,
-      };
-      return this.knowledgeBaseModel.create(updatedData);
+        sourceContentStatus: Status.Completed,
+      });
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

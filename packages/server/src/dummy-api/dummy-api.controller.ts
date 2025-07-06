@@ -9,4 +9,9 @@ export class DummyApiController {
   getWeather() {
     return this.dummyApiService.getWeather();
   }
+
+  @Get('/cricket-schedule')
+  getCricketSchedule() {
+    return this.dummyApiService.getCricketSchedule();
+  }
 }

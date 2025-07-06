@@ -15,7 +15,7 @@ export class KnowledgeBaseFactory {
       agentId,
       ChromaDBResourceType.Agent,
       resourceName,
-      '',
+      resourceDescription,
     );
   }
 }

@@ -9,6 +9,7 @@ import { LLMType, StandardLLMProvider } from '../../llm/types/llm.type';
 @Injectable()
 export class LLMFactory {
   create(llm: LLM, temperature?: number, maxTokens?: number): BaseChatModel {
+    const mt = maxTokens && maxTokens > 0 ? maxTokens : undefined;
     if ((llm.type as LLMType) === LLMType.STANDARD) {
       switch ((llm as StandardLLM).provider as StandardLLMProvider) {
         case StandardLLMProvider.OPENAI:
@@ -16,7 +17,7 @@ export class LLMFactory {
             openAIApiKey: process.env.OPENAI_API_KEY,
             model: llm.modelId || 'gpt-4.1',
             temperature: temperature,
-            maxTokens: maxTokens,
+            maxTokens: mt,
             // streamUsage: true,
             // streaming: true,
           });
@@ -25,7 +26,7 @@ export class LLMFactory {
             apiKey: process.env.GEMINI_API_KEY,
             model: llm.modelId || 'gemini-2.5-flash',
             temperature: temperature,
-            maxOutputTokens: maxTokens,
+            maxOutputTokens: mt,
             // streamUsage: true,
             // streaming: true,
           });
@@ -34,7 +35,7 @@ export class LLMFactory {
             anthropicApiKey: process.env.ANTHROPIC_API_KEY,
             model: llm.modelId || 'claude-3-7-sonnet-latest',
             temperature: temperature,
-            maxTokens: maxTokens,
+            maxTokens: mt,
             // streamUsage: true,
             // streaming: true,
           });
@@ -43,7 +44,7 @@ export class LLMFactory {
       return new ChatOpenAI({
         model: llm.modelId,
         temperature: temperature,
-        maxTokens: maxTokens,
+        maxTokens: mt,
         configuration: {
           apiKey: (llm as CustomLLM).apiKey,
           baseURL: (llm as CustomLLM).serverUrl,
