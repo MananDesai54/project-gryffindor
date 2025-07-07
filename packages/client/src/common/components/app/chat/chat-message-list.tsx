@@ -3,15 +3,13 @@ import { ArrowDown } from "lucide-react";
 import { useAutoScroll } from "../../../api/decorators/hooks/useAutoScroll";
 import { Button } from "../../shadcn/components/ui/button";
 
-interface ChatMessageListProps extends React.HTMLAttributes<HTMLDivElement> {
-  smooth?: boolean;
-}
+interface ChatMessageListProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const ChatMessageList = React.forwardRef<HTMLDivElement, ChatMessageListProps>(
-  ({ className, children, smooth = false, ...props }, ref) => {
+  ({ className, children, ...props }, ref) => {
     const { scrollRef, isAtBottom, scrollToBottom, disableAutoScroll } =
       useAutoScroll({
-        smooth,
+        smooth: true,
         content: children,
       });
 
@@ -24,7 +22,7 @@ const ChatMessageList = React.forwardRef<HTMLDivElement, ChatMessageListProps>(
           onTouchMove={disableAutoScroll}
           {...props}
         >
-          <div className="flex flex-col gap-6">{children}</div>
+          {children}
         </div>
 
         {!isAtBottom && (
@@ -33,7 +31,6 @@ const ChatMessageList = React.forwardRef<HTMLDivElement, ChatMessageListProps>(
               scrollToBottom();
             }}
             size="icon"
-            variant="outline"
             className="absolute bottom-2 left-1/2 transform -translate-x-1/2 inline-flex rounded-full shadow-md"
             aria-label="Scroll to bottom"
           >

@@ -82,70 +82,73 @@ export default function AgentInferenceScreen() {
   return (
     <>
       <div className="w-full flex justify-center max-h-[80vh]">
-        <ChatMessageList
-          className="!w-full sm:!w-1/2 mx-auto p-12"
-          ref={messagesRef}
-        >
-          {!history?.length && (
-            <ChatBubble variant="received">
-              <ChatBubbleAvatar src="" fallback="🤖" />
-              <ChatBubbleMessage>
-                {agent?.configuration?.firstMessage ||
-                  "Hello! I'm the AI assistant. How can I help you today?"}
-              </ChatBubbleMessage>
-            </ChatBubble>
-          )}
-
-          {map(history, (message, index) => (
-            <ChatBubble
-              key={index}
-              variant={
-                message.type == HistoryMessageType.Human ? "sent" : "received"
-              }
-            >
-              <ChatBubbleAvatar
-                src=""
-                fallback={
-                  message.type == HistoryMessageType.Human ? "👨🏽" : "🤖"
-                }
-              />
-              <ChatBubbleMessage
-                variant={
-                  message.type == HistoryMessageType.Human ? "sent" : "received"
-                }
-              >
-                {message.data?.content
-                  .split("```")
-                  .map((part: string, index: number) => {
-                    // if (index % 2 === 0) {
-                    return (
-                      <Markdown key={index} remarkPlugins={[remarkGfm]}>
-                        {part}
-                      </Markdown>
-                    );
-                    // } else {
-                    //   return (
-                    //     // <pre className=" pt-2" key={index}>
-                    //     //   <CodeDisplayBlock code={part} lang="" />
-                    //     // </pre>
-                    //   );
-                    // }
-                  })}
-              </ChatBubbleMessage>
-            </ChatBubble>
-          ))}
-
-          {isGenerating && (
-            <ChatBubble variant="received">
-              <ChatBubbleAvatar src="" fallback="🤖" />
-              <ChatBubbleMessage isLoading />
-            </ChatBubble>
-          )}
-        </ChatMessageList>
+        <div className="!w-ful flex flex-col items-center">
+          <ChatMessageList ref={messagesRef} className="items-center">
+            <div className="flex flex-col gap-6 w-1/2">
+              {!history?.length && (
+                <ChatBubble variant="received">
+                  <ChatBubbleAvatar src="" fallback="🤖" />
+                  <ChatBubbleMessage>
+                    {agent?.configuration?.firstMessage ||
+                      "Hello! I'm the AI assistant. How can I help you today?"}
+                  </ChatBubbleMessage>
+                </ChatBubble>
+              )}
+              {map(history, (message, index) => (
+                <ChatBubble
+                  key={index}
+                  variant={
+                    message.type == HistoryMessageType.Human
+                      ? "sent"
+                      : "received"
+                  }
+                >
+                  <ChatBubbleAvatar
+                    src=""
+                    fallback={
+                      message.type == HistoryMessageType.Human ? "👨🏽" : "🤖"
+                    }
+                  />
+                  <ChatBubbleMessage
+                    variant={
+                      message.type == HistoryMessageType.Human
+                        ? "sent"
+                        : "received"
+                    }
+                  >
+                    {message.data?.content
+                      .split("```")
+                      .map((part: string, index: number) => {
+                        // if (index % 2 === 0) {
+                        return (
+                          <Markdown key={index} remarkPlugins={[remarkGfm]}>
+                            {part}
+                          </Markdown>
+                        );
+                        // } else {
+                        //   return (
+                        //     // <pre className=" pt-2" key={index}>
+                        //     //   <CodeDisplayBlock code={part} lang="" />
+                        //     // </pre>
+                        //   );
+                        // }
+                      })}
+                  </ChatBubbleMessage>
+                </ChatBubble>
+              ))}
+              {isGenerating && (
+                <ChatBubble variant="received">
+                  <ChatBubbleAvatar src="" fallback="🤖" />
+                  <ChatBubbleMessage isLoading />
+                </ChatBubble>
+              )}
+            </div>
+          </ChatMessageList>
+        </div>
       </div>
       <form
         ref={formRef}
-        className="flex fixed gap-2 bottom-12 left-[25%] right-[25%]"
+        className="flex fixed gap-2 bottom-4 left-[25%] right-[25%]"
         onSubmit={onSubmit}
       >
         <ChatInput

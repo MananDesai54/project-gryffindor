@@ -1,4 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+
+type User = {
+  id: string;
+  name: string;
+  dob: string;
+  address: string;
+  mobile: string;
+  age: number;
+  company: string;
+  email: string;
+  friends: number;
+  isSocialActive: boolean;
+  vehicleNumber: string;
+  description: string;
+};
 
 @Injectable()
 export class DummyApiService {
@@ -151,5 +167,36 @@ export class DummyApiService {
         },
       ],
     };
+  }
+
+  async getAllUsers() {
+    const resp = await axios.get<User[]>(
+      'http://localhost:5173/agent/inference/686b5c8b1d74e3fc17e0ba40',
+    );
+    return resp.data;
+  }
+
+  async getUserByName(name: string) {
+    const users = await this.getAllUsers();
+    return users.find((user) =>
+      user.name?.toLowerCase()?.includes(name.toLowerCase()),
+    );
+  }
+
+  async getUserById(id: string) {
+    const users = await this.getAllUsers();
+    return users.find((user) => user.id === id);
+  }
+
+  async getUserByDOB(dob: string) {
+    const users = await this.getAllUsers();
+    return users.find((user) => {
+      const date = new Date(dob);
+      const userDate = new Date(user.dob);
+      return (
+        date.getMonth() === userDate.getMonth() &&
+        date.getDate() === userDate.getDate()
+      );
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { DummyApiService } from './dummy-api.service';
 
 @Controller('dummy-api')
@@ -13,5 +13,25 @@ export class DummyApiController {
   @Get('/cricket-schedule')
   getCricketSchedule() {
     return this.dummyApiService.getCricketSchedule();
+  }
+
+  @Get('/user-research/get-all')
+  getAllUsers() {
+    return this.dummyApiService.getAllUsers();
+  }
+
+  @Get('/user-research/get-user-by-name/:name')
+  getUserByName(@Param('name') name: string) {
+    return this.dummyApiService.getUserByName(name);
+  }
+
+  @Get('/user-research/get-user-by-id/:id')
+  getUserById(@Param('id') id: string) {
+    return this.dummyApiService.getUserById(id);
+  }
+
+  @Get('/user-research/get-user-by-dob/:dob')
+  getUserByDob(@Param('dob') dob: string) {
+    return this.dummyApiService.getUserByDOB(dob);
   }
 }
