@@ -54,7 +54,9 @@ export class WebhookBodySchema {
 }
 
 export class WebhookApiSchema {
-  @IsUrl()
+  @IsUrl({
+    require_tld: false,
+  })
   @IsNotEmpty()
   url: string;
 

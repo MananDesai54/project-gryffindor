@@ -15,6 +15,12 @@ import { LLMConstants } from '../../llm/constant/llm.constants';
 import { LLMFactory } from '../../llm/factory/llm.factory';
 import { LlmService } from '../../llm/llm.service';
 import { AiAgentService } from '../ai-agent.service';
+import {
+  RunnablePassthrough,
+  RunnableSequence,
+} from '@langchain/core/runnables';
+import { OpenAIToolsAgentOutputParser } from 'langchain/agents/openai/output_parser';
+import { formatToOpenAIToolMessages } from 'langchain/agents/format_scratchpad/openai_tools';
 
 @Injectable()
 export class AiAgentFactory {
@@ -89,12 +95,23 @@ export class AiAgentFactory {
       new MessagesPlaceholder('agent_scratchpad'),
     ]);
 
-    return this.llmFactory.createAgentExecutorForLLM(
-      llmDetails,
-      llm,
+    const agent = RunnableSequence.from([
+      RunnablePassthrough.assign({
+        agent_scratchpad: (input) => {
+          return formatToOpenAIToolMessages(input.steps as any[]);
+        },
+      }),
       prompt,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+      llm.bindTools?.(tools)!,
+      new OpenAIToolsAgentOutputParser(),
+    ]);
+
+    return new AgentExecutor({
+      agent,
       tools,
-    );
+      verbose: false,
+    });
   }
 
   async createDefaultChatAgent(systemPrompt: string, input: string) {
