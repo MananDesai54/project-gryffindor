@@ -2,15 +2,9 @@ import {
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from '@langchain/core/prompts';
-import {
-  RunnablePassthrough,
-  RunnableSequence,
-} from '@langchain/core/runnables';
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { Inject, Injectable } from '@nestjs/common';
 import { AgentExecutor, createOpenAIFunctionsAgent } from 'langchain/agents';
-import { formatToOpenAIToolMessages } from 'langchain/agents/format_scratchpad/openai_tools';
-import { OpenAIToolsAgentOutputParser } from 'langchain/agents/openai/output_parser';
 import { forEach } from 'lodash';
 import { KnowledgeBaseFactory } from '../../../ai/knowledge-base/factory/knowledge-base.factory';
 import { AiToolService } from '../../ai-tool/ai-tool.service';
@@ -95,23 +89,12 @@ export class AiAgentFactory {
       new MessagesPlaceholder('agent_scratchpad'),
     ]);
 
-    const agent = RunnableSequence.from([
-      RunnablePassthrough.assign({
-        agent_scratchpad: (input) => {
-          return formatToOpenAIToolMessages(input.steps as any[]);
-        },
-      }),
+    return this.llmFactory.createAgentExecutorForLLM(
+      llmDetails,
+      llm,
       prompt,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-      llm.bindTools?.(tools)!,
-      new OpenAIToolsAgentOutputParser(),
-    ]);
-
-    return new AgentExecutor({
-      agent,
       tools,
-      verbose: false,
-    });
+    );
   }
 
   async createDefaultChatAgent(systemPrompt: string, input: string) {
