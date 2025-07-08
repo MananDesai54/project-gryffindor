@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { Resend } from 'resend';
 
 type User = {
   id: string;
@@ -198,5 +199,32 @@ export class DummyApiService {
         date.getDate() === userDate.getDate()
       );
     });
+  }
+
+  async sendEntityEmail(body: {
+    name: string;
+    threatLevel: string;
+    email: string;
+    vehicleInfo: string;
+    about: string;
+    to: string;
+  }) {
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      await resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: body.to || 'manan5401desai@gmail.com',
+        subject: `${body.threatLevel} Threat Reported for ${body.name}`,
+        html: `<p>
+          Threat reported
+          <p>
+          ${JSON.stringify(body)}
+          </p>
+        </p>`,
+      });
+      return 'Email sent successfully';
+    } catch (error) {
+      return `Failed to send email: ${(error as Error).message}`;
+    }
   }
 }

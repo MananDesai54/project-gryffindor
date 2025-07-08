@@ -6,6 +6,7 @@ import { useAiToolQuery } from "@gryffindor/client/common/api/serverQueries/agen
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
 import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 import { AiToolType } from "@gryffindor/client/common/types/agent/ai.type";
+import { AiTool } from "@gryffindor/client/common/types/agent/tool.type";
 import { map, reject } from "lodash";
 import { BrainCircuit, Trash, Webhook } from "lucide-react";
 import { useMemo } from "react";
@@ -13,6 +14,7 @@ import { useMemo } from "react";
 type Props = {
   agent: Agent;
   onChange(config: Agent["configuration"]): void;
+  onOpenToolDetails(tool: AiTool): void;
 };
 
 const AiToolIcon = {
@@ -21,7 +23,7 @@ const AiToolIcon = {
 };
 
 export default function AddedTools(props: Props) {
-  const { agent, onChange } = props;
+  const { agent, onChange, onOpenToolDetails } = props;
 
   const request = useMemo(
     () =>
@@ -50,6 +52,9 @@ export default function AddedTools(props: Props) {
         const Icon = AiToolIcon[tool.type];
         return (
           <div
+            onClick={() => {
+              onOpenToolDetails(tool);
+            }}
             key={tool._id}
             className="flex items-center justify-between p-3 rounded-xl hover:bg-secondary cursor-pointer"
           >

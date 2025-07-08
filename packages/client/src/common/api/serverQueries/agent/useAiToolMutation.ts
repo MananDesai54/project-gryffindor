@@ -33,3 +33,33 @@ export const useCreateAiToolMutation = (options?: ServerMutationParams) => {
     ...reactQueryOptions,
   });
 };
+
+const updateToolFn = async (mutationParams: { aiTool: Partial<AiTool> }) => {
+  return aiToolServiceServiceInstance.update(
+    mutationParams.aiTool._id!,
+    mutationParams.aiTool,
+  );
+};
+
+export const useUpdateAiToolMutation = (options?: ServerMutationParams) => {
+  const { reactQueryOptions, onSuccess, onError } = options || {};
+
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateToolFn,
+    onSuccess(data, variables, context) {
+      queryClient.invalidateQueries({
+        predicate(query) {
+          return (
+            (query.queryKey?.[0] as ServerQueryKey)?.primaryKey ===
+            ServerPrimaryKeys.AI_TOOL
+          );
+        },
+      });
+      onSuccess?.(data, variables, context);
+    },
+    onError,
+    ...reactQueryOptions,
+  });
+};

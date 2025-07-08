@@ -31,6 +31,7 @@ export class AiAgentFactory {
   async create(
     agentId: string,
     runTimeVariables?: Record<string, string>,
+    runTimeApiVariables?: Record<string, string>,
   ): Promise<AgentExecutor> {
     const aiAgent = await this.aiAgentService.read(agentId);
     const llmDetails = aiAgent.configuration?.llm
@@ -64,10 +65,13 @@ export class AiAgentFactory {
     forEach(toolsDetails, (tool) => {
       if ((tool.type as AiToolType) === AiToolType.WEB_HOOK) {
         tools.push(
-          this.aiToolFactory.createWebhookTool({
-            ...tool.toObject(),
-            name: this._sanitizeToolName(tool.name),
-          } as unknown as WebhookAiTool),
+          this.aiToolFactory.createWebhookTool(
+            {
+              ...tool.toObject(),
+              name: this._sanitizeToolName(tool.name),
+            } as unknown as WebhookAiTool,
+            runTimeApiVariables,
+          ),
         );
       }
     });
@@ -78,7 +82,7 @@ export class AiAgentFactory {
       const placeholder = `{{${key}}}`;
       systemPrompt = systemPrompt
         .concat(
-          'Other then this information you can also use tools which will help to get better information about user query.\n IMPORTANT: After you have used a tool to retrieve information, your next step is to synthesize that information and provide a final answer to the user. DO NOT use the same tool again for the same query. Once you have the context from a tool, formulate your response.',
+          ' Other then this information you can also use tools which will help to get better information about user query.\n IMPORTANT: After you have used a tool to retrieve information, your next step is to synthesize that information and provide a final answer to the user. DO NOT use the same tool again for the same query. Once you have the context from a tool, formulate your response.',
         )
         .replace(new RegExp(placeholder, 'g'), runTimeVariables?.[key] || '');
     }

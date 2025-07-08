@@ -52,19 +52,21 @@ export const AddBody = ({
           />
           {map(value?.payloadParams, (p, index) => (
             <div className="flex items-center" key={index}>
-              <AddParamForm
-                value={p}
-                onSubmit={(v) => {
-                  onChange({
-                    ...value,
-                    payloadParams: value?.payloadParams?.map((param, _index) =>
-                      _index === index ? v : param,
-                    ),
-                  } as WebhookBodySchema);
-                }}
-                allVariables={allVariables}
-                updateDynamicVariable={updateDynamicVariable}
-              />
+              <div className="flex-1">
+                <AddParamForm
+                  value={p}
+                  onSubmit={(v) => {
+                    onChange({
+                      ...value,
+                      payloadParams: value?.payloadParams?.map(
+                        (param, _index) => (_index === index ? v : param),
+                      ),
+                    } as WebhookBodySchema);
+                  }}
+                  allVariables={allVariables}
+                  updateDynamicVariable={updateDynamicVariable}
+                />
+              </div>
               <Button
                 className="ml-2"
                 variant="outline"
