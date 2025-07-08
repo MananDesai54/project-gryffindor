@@ -36,6 +36,11 @@ export class DummyApiController {
     return this.dummyApiService.getUserByDOB(dob);
   }
 
+  @Post('/add-suspect')
+  addSuspect(@Body() body: { userId: string; reason: string }) {
+    return this.dummyApiService.addSuspectedUser(body);
+  }
+
   @Post('/send-entity-email')
   sendEntityEmail(
     @Body()

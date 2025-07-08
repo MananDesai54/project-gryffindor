@@ -55,11 +55,7 @@ export class InferenceService {
       },
     });
 
-    const langfuseCallBack = new LangfuseCallbackHandler(
-      trace,
-      this.langfuseService.getLangFuseClient(),
-      authContext,
-    );
+    const langfuseCallBack = new LangfuseCallbackHandler(trace);
 
     try {
       const chatHistory = await this.historyService.getHistoryForAgent(chatId);
@@ -75,24 +71,28 @@ export class InferenceService {
       await this.historyService.addTurn(chatId, message, result.output);
       trace
         .span({
-          level: 'ERROR',
+          level: 'DEBUG',
           output: result.output,
           input: message,
           endTime: new Date(),
         })
         .end();
+      langfuseCallBack.endRootSpan(result.output);
 
       return result;
     } catch (error) {
-      trace.span({
-        level: 'ERROR',
-        input: message,
-        endTime: new Date(),
-        statusMessage: (error as Error).message,
-        metadata: {
-          fullError: error,
-        },
-      });
+      trace
+        .span({
+          level: 'ERROR',
+          input: message,
+          endTime: new Date(),
+          statusMessage: (error as Error).message,
+          metadata: {
+            fullError: error,
+          },
+        })
+        .end();
+      langfuseCallBack.endRootSpan(undefined, error);
       throw new InternalServerErrorException(error);
     } finally {
       await this.langfuseService.shutdown();

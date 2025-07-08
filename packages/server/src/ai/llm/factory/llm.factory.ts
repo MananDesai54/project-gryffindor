@@ -25,7 +25,6 @@ export class LLMFactory {
             model: llm.modelId || 'gpt-4.1',
             temperature: temperature,
             maxTokens: mt,
-            // streamUsage: true,
             // streaming: true,
           });
         case StandardLLMProvider.GOOGLE:
@@ -38,7 +37,6 @@ export class LLMFactory {
               baseURL:
                 'https://generativelanguage.googleapis.com/v1beta/openai/',
             },
-            // streamUsage: true,
             // streaming: true,
           });
         case StandardLLMProvider.ANTHROPIC:
@@ -50,7 +48,6 @@ export class LLMFactory {
               apiKey: process.env.ANTHROPIC_API_KEY,
               baseURL: 'https://api.anthropic.com/v1/',
             },
-            // streamUsage: true,
             // streaming: true,
           });
       }

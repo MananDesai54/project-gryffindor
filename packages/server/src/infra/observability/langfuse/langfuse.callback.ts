@@ -1,119 +1,147 @@
 import { BaseCallbackHandler } from '@langchain/core/callbacks/base';
-import { Serialized } from '@langchain/core/load/serializable';
+import {
+  Serialized,
+  SerializedConstructor,
+} from '@langchain/core/load/serializable';
 import { LLMResult } from '@langchain/core/outputs';
-import Langfuse, {
+import { Logger } from '@nestjs/common';
+import {
   LangfuseGenerationClient,
   LangfuseSpanClient,
   LangfuseTraceClient,
 } from 'langfuse-node';
-import { AuthContextType } from 'src/auth/dto/auth.dto';
+import { LLMConstants } from 'src/ai/llm/constant/llm.constants';
 
 export class LangfuseCallbackHandler extends BaseCallbackHandler {
   name = 'LangfuseCallbackHandler';
+  llmName: string;
 
-  private spanStack: LangfuseSpanClient[] = [];
-  private generationStack: LangfuseGenerationClient[] = [];
+  private readonly spanStack: (
+    | LangfuseSpanClient
+    | LangfuseGenerationClient
+  )[] = [];
 
-  constructor(
-    private readonly trace: LangfuseTraceClient,
-    private readonly langfuse: Langfuse,
-    private readonly authContext?: AuthContextType,
-  ) {
+  private readonly rootSpan: LangfuseSpanClient;
+
+  constructor(private readonly trace: LangfuseTraceClient) {
     super();
+    this.rootSpan = this.trace.span({ name: 'agent-execution' });
   }
 
-  private get aCurrentSpan(): LangfuseTraceClient | LangfuseSpanClient {
-    return this.spanStack[this.spanStack.length - 1] ?? this.trace;
+  private getCurrentSpan(): LangfuseSpanClient | LangfuseTraceClient {
+    return this.spanStack[this.spanStack.length - 1] || this.rootSpan;
   }
 
-  private get aCurrentGeneration(): LangfuseGenerationClient {
-    return (
-      this.generationStack[this.generationStack.length - 1] ??
-      this.langfuse.generation({})
-    );
-  }
+  handleLLMStart(llm: SerializedConstructor, prompts: string[]) {
+    const modelName = llm.kwargs?.model as string;
+    this.llmName = modelName;
 
-  // --- LLM Events ---
-
-  handleLLMStart(llm: Serialized, prompts: string[]) {
-    const modelName = llm.id[llm.id.length - 1];
-
-    const generation = this.aCurrentGeneration.generation({
-      input: prompts.join('\n'),
-      metadata: {
-        modelName,
-      },
-      level: 'DEBUG',
-      name: 'LLM Start Generation',
-      completionStartTime: new Date(),
-      // prompt: {
-      //   prompt: [
-      //     { content: prompts.join('\n'), type: 'chatmessage', role: 'user' },
-      //   ],
-      //   type: 'chat',
-      // },
+    const generation = this.getCurrentSpan().generation({
+      name: modelName,
+      startTime: new Date(),
+      input: prompts,
+      model: modelName,
     });
+
     this.spanStack.push(generation);
   }
 
   handleLLMEnd(output: LLMResult) {
-    const generation = this.spanStack.pop();
-    // Logger.log(output);
-    if (generation?.id) {
+    try {
+      const generation = this.spanStack.pop();
+
+      if (!generation) {
+        Logger.warn(
+          'Langfuse: Popped a non-generation from stack in handleLLMEnd.',
+        );
+        return;
+      }
+
+      Logger.log(
+        'LLM Output with Token Usage:',
+        JSON.stringify(output.llmOutput, null, 2),
+      );
+
       generation.end({
         output: output.generations[0][0].text,
-        // @ts-ignore
-        usageDetails: {
+        usage: {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           promptTokens: output.llmOutput?.tokenUsage?.promptTokens,
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           completionTokens: output.llmOutput?.tokenUsage?.completionTokens,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          input: output.llmOutput?.tokenUsage?.promptTokens,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          output: output.llmOutput?.tokenUsage?.completionTokens,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          totalTokens: output.llmOutput?.tokenUsage?.totalTokens,
+          ...this._calculateCost(
+            this.llmName,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+            output.llmOutput?.tokenUsage?.promptTokens,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+            output.llmOutput?.tokenUsage?.completionTokens,
+          ),
+          unit: 'TOKENS',
+        },
+        usageDetails: {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          prompt_tokens: output.llmOutput?.tokenUsage?.promptTokens,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          completion_tokens: output.llmOutput?.tokenUsage?.completionTokens,
         },
       });
+    } catch (error) {
+      Logger.error({ error: error as Error });
     }
   }
 
   handleToolStart(tool: Serialized, input: string) {
     const toolName = tool.id[tool.id.length - 1];
 
-    const span = this.aCurrentSpan.span({
+    const span = this.getCurrentSpan().span({
       name: toolName,
-      input,
+      input: input,
       startTime: new Date(),
-      level: 'DEBUG',
-      metadata: {
-        tool,
-      },
     });
+
     this.spanStack.push(span);
   }
 
   handleToolEnd(output: string) {
     const span = this.spanStack.pop();
-    if (span?.id) {
-      span.end({ output, level: 'DEBUG' });
-    }
+    if (!span) return;
+
+    span.end({ output });
   }
 
-  // --- Error Handling ---
-
-  handleChainError(err: Error) {
-    const span = this.spanStack.pop();
-    if (span?.id) {
-      span.end({
-        level: 'ERROR',
-        statusMessage: err.message,
-      });
-    }
+  public endRootSpan(output?: string, error?: Error) {
+    this.rootSpan.end({
+      output,
+      level: error ? 'ERROR' : 'DEFAULT',
+      statusMessage: error?.message,
+    });
   }
 
-  handleToolError(err: Error) {
-    const span = this.spanStack.pop();
-    if (span?.id) {
-      span.end({
-        level: 'ERROR',
-        statusMessage: err.message,
-      });
+  private _calculateCost(
+    modelName: string,
+    promptTokens: number,
+    completionTokens: number,
+  ) {
+    const pricing = LLMConstants.STANDARD_MODEL_PER_MILLION_COST_USD[modelName];
+
+    if (!pricing) {
+      Logger.warn(
+        `No pricing information found for model: ${modelName}. Cost will be reported as 0.`,
+      );
+      return 0;
     }
+
+    const inputCost = (promptTokens / 1_000_000) * pricing.input;
+    const outputCost = (completionTokens / 1_000_000) * pricing.output;
+
+    const totalCost = inputCost + outputCost;
+
+    return { totalCost, inputCost, outputCost };
   }
 }

@@ -12,6 +12,8 @@ declare namespace NodeJS {
     CHROMA_HOST: string;
     CHROMA_PORT: string;
 
+    KAFKA_BROKER_URL: string;
+
     JWT_SECRET: string;
 
     LANGFUSE_SECRET_KEY: string;
