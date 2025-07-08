@@ -12,5 +12,3 @@ type TypePayload<T = string, P = TSAny> = {
   type: T;
   payload?: P;
 };
-
-export * from "zod";

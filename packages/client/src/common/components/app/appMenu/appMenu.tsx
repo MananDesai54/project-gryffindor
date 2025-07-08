@@ -16,17 +16,29 @@ type Props = {
   title?: string;
   actions: ActionMenuItem[];
   trigger?: React.ReactNode;
+  open?: boolean;
+  controlled?: boolean;
+  onClose?: () => void;
 };
 
-export default function AppMenu({ title, actions, trigger }: Props) {
+export default function AppMenu({
+  title,
+  actions,
+  trigger,
+  open,
+  controlled,
+  onClose,
+}: Props) {
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={onClose}>
       <DropdownMenuTrigger>
-        {trigger || (
-          <Button variant="outline" size="icon">
-            <MoreHorizontal />
-          </Button>
-        )}
+        {controlled
+          ? null
+          : trigger || (
+              <Button variant="outline" size="icon">
+                <MoreHorizontal />
+              </Button>
+            )}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {title ? (

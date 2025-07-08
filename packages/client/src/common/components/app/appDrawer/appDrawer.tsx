@@ -35,13 +35,13 @@ export default function AppDrawer(props: Props) {
     <Sheet open={open} onOpenChange={(val) => !val && onClose?.()}>
       <SheetContent className="w-[600px] !max-w-3xl">
         {title || description ? (
-          <SheetHeader>
+          <SheetHeader className="sticky top-0 bg-background">
             {title && <SheetTitle>{title}</SheetTitle>}
             {description && <SheetDescription>{description}</SheetDescription>}
           </SheetHeader>
         ) : null}
-        {content}
-        <SheetFooter>
+        <div className="overflow-auto">{content}</div>
+        <SheetFooter className="sticky bottom-0 bg-background">
           <div className="flex justify-end">
             {onSave ? (
               <Button type="submit" onClick={onSave}>

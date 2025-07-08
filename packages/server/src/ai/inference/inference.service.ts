@@ -22,13 +22,13 @@ export class InferenceService {
 
   async generateText(text: string, systemPrompt: string) {
     try {
-      const chatAgent = await this.aiAgentFactory.createDefaultChatAgent(
+      const chatAgent = this.aiAgentFactory.createDefaultChatAgent(
         systemPrompt,
         text,
       );
       const result = await chatAgent.invoke({});
       return {
-        response: result.output,
+        response: result,
       };
     } catch (error) {
       throw new InternalServerErrorException(error, 'Error generating text');
@@ -40,7 +40,7 @@ export class InferenceService {
     chatRequest: ChatRequestDto,
     authContext: AuthContextType,
   ) {
-    const { message, runtimeVariables, chatId } = chatRequest;
+    const { message, runtimePromptVariables, chatId } = chatRequest;
 
     const trace = this.langfuseService.getLangFuseClient().trace({
       name: `chat_${agentId}_${chatId}_${authContext.userId}_${Date.now()}`,
@@ -64,7 +64,7 @@ export class InferenceService {
       const chatHistory = await this.historyService.getHistoryForAgent(chatId);
       const agentExecutor = await this.aiAgentFactory.create(
         agentId,
-        runtimeVariables,
+        runtimePromptVariables,
       );
       const result = await agentExecutor.invoke(
         { input: message, chat_history: chatHistory },
