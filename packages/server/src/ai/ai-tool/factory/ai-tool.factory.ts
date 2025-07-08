@@ -3,7 +3,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { z } from 'zod';
 import { WebhookAiTool } from '../../ai-tool/schema/ai-tool.schema';
-import { AiToolParamValueType } from '../types/ai-tool.type';
+import {
+  AiToolParamDataType,
+  AiToolParamValueType,
+} from '../types/ai-tool.type';
+import { ApiParamsValueSchema } from '../dto/ai-tool.dto';
 
 interface ToolInput {
   queryParams?: Record<string, string>;
@@ -12,37 +16,71 @@ interface ToolInput {
   url: string;
 }
 
+export function generateZodSchemaFromApiDef(
+  paramSchema: ApiParamsValueSchema[],
+  runTimeApiVariables?: Record<string, string>,
+): z.ZodObject<any> | null {
+  if (!paramSchema || paramSchema?.length === 0) {
+    return null;
+  }
+
+  const zodShape: Record<string, z.ZodTypeAny> = {};
+
+  for (const schema of paramSchema) {
+    let fieldSchema: z.ZodTypeAny;
+
+    // 1. Map your stored type string to a Zod schema type
+    switch (schema.datatype as AiToolParamDataType) {
+      case AiToolParamDataType.NUMBER:
+        fieldSchema = z.number();
+        break;
+      case AiToolParamDataType.BOOLEAN:
+        fieldSchema = z.boolean();
+        break;
+      case AiToolParamDataType.STRING:
+      default:
+        fieldSchema = z.string();
+        break;
+    }
+
+    fieldSchema = fieldSchema.describe(
+      `name of field is ${schema.name}. description: ${schema.description}. If param valuetype is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use ${JSON.stringify(runTimeApiVariables)}`,
+    );
+
+    fieldSchema = fieldSchema.optional();
+
+    zodShape[schema.name] = fieldSchema;
+  }
+
+  return z.object(zodShape);
+}
+
 @Injectable()
 export class AiToolFactory {
   createWebhookTool(
     tool: WebhookAiTool,
     runTimeApiVariables?: Record<string, string>,
   ): DynamicStructuredTool {
+    const bodySchema = generateZodSchemaFromApiDef(
+      tool.apiSchema.body?.payloadParams,
+      runTimeApiVariables,
+    );
+
+    const headersSchema = generateZodSchemaFromApiDef(
+      tool.apiSchema.headers,
+      runTimeApiVariables,
+    );
+    const queryParamsSchema = generateZodSchemaFromApiDef(
+      tool.apiSchema.queryParams,
+      runTimeApiVariables,
+    );
+
     const inputSchema = z.object({
-      queryParams: z
-        .record(z.string())
-        .optional()
-        .describe(
-          tool.apiSchema?.queryParams
-            ? `This is information about the query parameters: ${JSON.stringify(tool.apiSchema.queryParams)}. If param is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use ${JSON.stringify(runTimeApiVariables)}`
-            : 'Key-value pairs for URL query parameters.',
-        ),
-      body: z
-        .record(z.any())
-        .optional()
-        .describe(
-          tool.apiSchema?.body
-            ? `${tool.apiSchema?.body?.description}\n This is information about the body: ${JSON.stringify(tool.apiSchema.body.payloadParams)}. If param is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use ${JSON.stringify(runTimeApiVariables)}`
-            : 'Key-value pairs for body.',
-        ),
-      headers: z
-        .record(z.string())
-        .optional()
-        .describe(
-          tool.apiSchema?.headers
-            ? `This is information about the headers: ${JSON.stringify(tool.apiSchema.headers)}. If param is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use ${JSON.stringify(runTimeApiVariables)}`
-            : 'Key-value pairs for URL headers.',
-        ),
+      queryParams: queryParamsSchema || z.undefined(),
+      body:
+        bodySchema?.describe(tool.apiSchema?.body?.description || '') ||
+        z.undefined(),
+      headers: headersSchema || z.undefined(),
       url: z
         .string()
         .url()
@@ -50,7 +88,6 @@ export class AiToolFactory {
           `The URL to send the request to. Based on query please Create a valid api url using ${tool.apiSchema.url} and ${JSON.stringify(tool.apiSchema.pathParam)}. If param is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use ${JSON.stringify(runTimeApiVariables)}. Consider the request method as ${tool.apiSchema.method}`,
         ),
     }) satisfies z.ZodType<ToolInput>;
-    Logger.log({ tool });
 
     return new DynamicStructuredTool({
       name: tool.name,
