@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Logger, Param } from '@nestjs/common';
 import { DummyApiService } from './dummy-api.service';
 
 @Controller('dummy-api')
@@ -22,6 +22,7 @@ export class DummyApiController {
 
   @Get('/user-research/get-user-by-name/:name')
   getUserByName(@Param('name') name: string) {
+    Logger.log(name);
     return this.dummyApiService.getUserByName(name);
   }
 

@@ -15,11 +15,26 @@ class AgentInferenceService extends ApiService {
     );
   }
 
-  chat(chatId: string, message: string) {
+  chat(
+    chatId: string,
+    message: string,
+    runtimePromptVariables?: Record<string, string>,
+    runTimeApiVariables?: Record<string, string>,
+  ) {
     return apiRequest.post<
-      { chatId: string; message: string },
+      {
+        chatId: string;
+        message: string;
+        runtimePromptVariables?: Record<string, string>;
+        runTimeApiVariables?: Record<string, string>;
+      },
       { output: string }
-    >(this.createUrl(`chat/${chatId}`), { chatId, message });
+    >(this.createUrl(`chat/${chatId}`), {
+      chatId,
+      message,
+      runtimePromptVariables,
+      runTimeApiVariables,
+    });
   }
 
   static getInstance() {

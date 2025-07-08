@@ -1,10 +1,11 @@
+import { StringOutputParser } from '@langchain/core/output_parsers';
 import {
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from '@langchain/core/prompts';
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { Inject, Injectable } from '@nestjs/common';
-import { AgentExecutor, createOpenAIFunctionsAgent } from 'langchain/agents';
+import { AgentExecutor } from 'langchain/agents';
 import { forEach } from 'lodash';
 import { KnowledgeBaseFactory } from '../../../ai/knowledge-base/factory/knowledge-base.factory';
 import { AiToolService } from '../../ai-tool/ai-tool.service';
@@ -15,12 +16,6 @@ import { LLMConstants } from '../../llm/constant/llm.constants';
 import { LLMFactory } from '../../llm/factory/llm.factory';
 import { LlmService } from '../../llm/llm.service';
 import { AiAgentService } from '../ai-agent.service';
-import {
-  RunnablePassthrough,
-  RunnableSequence,
-} from '@langchain/core/runnables';
-import { OpenAIToolsAgentOutputParser } from 'langchain/agents/openai/output_parser';
-import { formatToOpenAIToolMessages } from 'langchain/agents/format_scratchpad/openai_tools';
 
 @Injectable()
 export class AiAgentFactory {
@@ -95,43 +90,26 @@ export class AiAgentFactory {
       new MessagesPlaceholder('agent_scratchpad'),
     ]);
 
-    const agent = RunnableSequence.from([
-      RunnablePassthrough.assign({
-        agent_scratchpad: (input) => {
-          return formatToOpenAIToolMessages(input.steps as any[]);
-        },
-      }),
+    return this.llmFactory.createAgentExecutorForLLM(
+      llmDetails,
+      llm,
       prompt,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-      llm.bindTools?.(tools)!,
-      new OpenAIToolsAgentOutputParser(),
-    ]);
-
-    return new AgentExecutor({
-      agent,
       tools,
-      verbose: false,
-    });
+    );
   }
 
-  async createDefaultChatAgent(systemPrompt: string, input: string) {
+  createDefaultChatAgent(systemPrompt: string, input: string) {
     const prompt = ChatPromptTemplate.fromMessages([
       ['system', systemPrompt],
       ['human', input],
-      new MessagesPlaceholder('agent_scratchpad'),
     ]);
+    const outputParser = new StringOutputParser();
 
     const llm = this.llmFactory.create(LLMConstants.DEFAULT_MODEL);
 
-    const agent = await createOpenAIFunctionsAgent({ llm, tools: [], prompt });
+    const chain = prompt.pipe(llm).pipe(outputParser);
 
-    const executor = new AgentExecutor({
-      agent,
-      tools: [],
-      verbose: true,
-    });
-
-    return executor;
+    return chain;
   }
 
   // =============== private methods

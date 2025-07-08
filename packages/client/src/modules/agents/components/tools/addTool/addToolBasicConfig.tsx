@@ -4,7 +4,11 @@ import FormInput from "@gryffindor/client/common/components/app/formInput";
 import { Label } from "@gryffindor/client/common/components/shadcn/components/ui/label";
 import { Slider } from "@gryffindor/client/common/components/shadcn/components/ui/slider";
 import { Textarea } from "@gryffindor/client/common/components/shadcn/components/ui/textarea";
-import { AiToolRequestMethod } from "@gryffindor/client/common/types/agent/ai.type";
+import {
+  AiToolParamDataType,
+  AiToolParamValueType,
+  AiToolRequestMethod,
+} from "@gryffindor/client/common/types/agent/ai.type";
 import { AiTool } from "@gryffindor/client/common/types/agent/tool.type";
 import { IdLabel } from "@gryffindor/client/common/types/idLabel.type";
 
@@ -85,6 +89,13 @@ export default function AddToolBasicConfig(props: Props) {
                     apiSchema: {
                       ...tool?.apiSchema,
                       url: e.target.value,
+                      pathParam: e.target.value
+                        .match(new RegExp(/\{([^}]*)\}/g))
+                        ?.map((v) => ({
+                          datatype: AiToolParamDataType.STRING,
+                          name: v,
+                          valueType: AiToolParamValueType.LLM_PROMPT,
+                        })),
                     } as AiTool["apiSchema"],
                   })
                 }

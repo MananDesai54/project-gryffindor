@@ -5,17 +5,17 @@ import { BreadcrumbItemType } from "@gryffindor/client/common/components/app/app
 import AppMenu from "@gryffindor/client/common/components/app/appMenu/appMenu";
 import { ActionMenuItem } from "@gryffindor/client/common/components/app/appMenu/type";
 import Loader from "@gryffindor/client/common/components/app/loader";
+import { NotifySuccess } from "@gryffindor/client/common/components/app/toast";
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
+import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
+import { Textarea } from "@gryffindor/client/common/components/shadcn/components/ui/textarea";
 import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 import { Routes } from "@gryffindor/client/route/routes";
-import { useNavigate, useParams } from "@tanstack/react-router";
+import { useBlocker, useNavigate, useParams } from "@tanstack/react-router";
 import { BrainCircuit, Copy, TriangleAlert } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import AgentConfigurations from "./components/agentConfigurations";
-import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
-import { Textarea } from "@gryffindor/client/common/components/shadcn/components/ui/textarea";
-import { NotifySuccess } from "@gryffindor/client/common/components/app/toast";
 
 export default function AgentDetailScreen() {
   const params = useParams({
@@ -44,6 +44,17 @@ export default function AgentDetailScreen() {
     if (!tempAgent || !data) return false;
     return JSON.stringify(tempAgent) !== JSON.stringify(data);
   }, [tempAgent, data]);
+
+  useBlocker({
+    shouldBlockFn: useCallback(() => {
+      if (isDirty) {
+        return !confirm(
+          "Are you sure you want to leave? Your changes will be lost.",
+        );
+      }
+      return false;
+    }, [isDirty]),
+  });
 
   const actions = useMemo(
     () =>

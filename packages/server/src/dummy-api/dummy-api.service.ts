@@ -171,7 +171,7 @@ export class DummyApiService {
 
   async getAllUsers() {
     const resp = await axios.get<User[]>(
-      'http://localhost:5173/agent/inference/686b5c8b1d74e3fc17e0ba40',
+      'https://686b62b1e559eba908724cdb.mockapi.io/api/researchUserDetails',
     );
     return resp.data;
   }

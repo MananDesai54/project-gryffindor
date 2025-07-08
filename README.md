@@ -36,6 +36,8 @@ curl --location 'http://localhost:3000/ai/index/add-document/$agentId' \
 - Backup System prompt for agent
 - stream response
 - no file upload needed
+- add standard tools like function call, email like action
+- tag a tool, workflow
 
 # project-gryffindor
 Agentic Framework for creating, maintaining, and collaborating with agents

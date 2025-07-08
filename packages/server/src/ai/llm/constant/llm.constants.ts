@@ -13,17 +13,17 @@ const StandardLLMs: Partial<StandardLLM>[] = [
     provider: StandardLLMProvider.GOOGLE,
   },
   {
-    modelId: 'claude-sonnet-4',
+    modelId: 'claude-sonnet-4-0',
     type: LLMType.STANDARD,
     provider: StandardLLMProvider.ANTHROPIC,
   },
   {
-    modelId: 'claude-3-7-sonnet',
+    modelId: 'claude-3-7-sonnet-latest',
     type: LLMType.STANDARD,
     provider: StandardLLMProvider.ANTHROPIC,
   },
   {
-    modelId: 'claude-3-5-sonnet',
+    modelId: 'claude-3-5-sonnet-latest',
     type: LLMType.STANDARD,
     provider: StandardLLMProvider.ANTHROPIC,
   },
