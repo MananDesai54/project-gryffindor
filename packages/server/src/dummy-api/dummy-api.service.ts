@@ -201,6 +201,18 @@ export class DummyApiService {
     });
   }
 
+  async addSuspectedUser(body: { userId: string; reason: string }) {
+    try {
+      await axios.post(
+        'https://686b62b1e559eba908724cdb.mockapi.io/api/suspectedUsers',
+        body,
+      );
+      return 'Suspect added successfully';
+    } catch (error) {
+      return `Failed to add suspect: ${(error as Error).message}`;
+    }
+  }
+
   async sendEntityEmail(body: {
     name: string;
     threatLevel: string;
