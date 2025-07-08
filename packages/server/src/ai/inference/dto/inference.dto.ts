@@ -27,5 +27,9 @@ export class ChatRequestDto {
 
   @IsObject()
   @IsOptional()
-  runtimeVariables?: Record<string, string>;
+  runtimePromptVariables?: Record<string, string>;
+
+  @IsObject()
+  @IsOptional()
+  runtimeApiVariables?: Record<string, string>;
 }
