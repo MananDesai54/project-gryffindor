@@ -1,3 +1,4 @@
+import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
 import AppDrawer from "@gryffindor/client/common/components/app/appDrawer/appDrawer";
 import AppMenu from "@gryffindor/client/common/components/app/appMenu/appMenu";
 import { ActionMenuItem } from "@gryffindor/client/common/components/app/appMenu/type";
@@ -9,24 +10,21 @@ import {
 } from "@gryffindor/client/common/types/agent/ai.type";
 import { AiTool } from "@gryffindor/client/common/types/agent/tool.type";
 import { keys, map, reduce, uniq } from "lodash";
-import { useCallback, useMemo, useState } from "react";
-import AddParameters from "./addParamerters";
-import AddToolBasicConfig from "./addToolBasicConfig";
-import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AddBody } from "./addBody";
+import AddParameters from "./addParamerters";
 import { AddQueryParam } from "./addQueryParam";
+import AddToolBasicConfig from "./addToolBasicConfig";
 
 type Props = {
+  tool: AiTool;
   onAddTool: (tool: AiTool) => void;
+  setNewTool: React.Dispatch<React.SetStateAction<AiTool>>;
 };
 
 export default function AddTool(props: Props) {
-  const { onAddTool } = props;
+  const { onAddTool, tool: newTool, setNewTool } = props;
 
-  const [newTool, setNewTool] = useState<AiTool>({
-    reqTimeout: 20,
-    apiSchema: { method: AiToolRequestMethod.GET },
-  } as AiTool);
   const [activeToolType, setActiveToolType] = useState<AiToolType>();
 
   const actions = useMemo(
@@ -55,17 +53,24 @@ export default function AddTool(props: Props) {
       reqTimeout: 20,
       apiSchema: { method: AiToolRequestMethod.GET },
     } as AiTool);
-  }, [activeToolType, newTool, onAddTool]);
+  }, [activeToolType, newTool, onAddTool, setNewTool]);
 
-  const onChangeTool = useCallback((toolUpdate: Partial<AiTool>) => {
-    setNewTool(
-      (tool) =>
-        ({
-          ...tool,
-          ...toolUpdate,
-        }) as AiTool,
-    );
-  }, []);
+  const onChangeTool = useCallback(
+    (toolUpdate: Partial<AiTool>) => {
+      setNewTool(
+        (tool) =>
+          ({
+            ...tool,
+            ...toolUpdate,
+          }) as AiTool,
+      );
+    },
+    [setNewTool],
+  );
+
+  useEffect(() => {
+    setActiveToolType(newTool.type);
+  }, [newTool.type]);
 
   const allVariables = useMemo(() => {
     return keys(newTool.dynamicVariables);

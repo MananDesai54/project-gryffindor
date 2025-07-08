@@ -78,7 +78,7 @@ export default function AddParamForm(props: Props) {
                 datatype: datatype,
               } as ApiParamsValueSchema);
             }}
-            value={value?.datatype || AiToolParamDataType.STRING}
+            value={value?.datatype}
           />
         </div>
         <FormInput
@@ -113,7 +113,7 @@ export default function AddParamForm(props: Props) {
             } as ApiParamsValueSchema);
             setVariable("");
           }}
-          value={value?.valueType || AiToolParamValueType.LLM_PROMPT}
+          value={value?.valueType}
         />
       </div>
       {value?.valueType === AiToolParamValueType.LLM_PROMPT ? (
@@ -131,13 +131,17 @@ export default function AddParamForm(props: Props) {
             } as ApiParamsValueSchema);
           }}
         />
-      ) : (
+      ) : value?.valueType ? (
         <div className="flex items-center">
           <FormInput
             required
             id="value"
             name="value"
-            value={variable}
+            value={
+              value?.valueType === AiToolParamValueType.CONSTANT
+                ? value?.value
+                : variable
+            }
             placeholder={
               value?.valueType === AiToolParamValueType.CONSTANT
                 ? "Enter value"
@@ -150,7 +154,7 @@ export default function AddParamForm(props: Props) {
               } else {
                 onSubmit({
                   ...value,
-                  value: variable,
+                  value: e.target.value,
                 } as ApiParamsValueSchema);
               }
             }}
@@ -182,7 +186,7 @@ export default function AddParamForm(props: Props) {
             </>
           ) : null}
         </div>
-      )}
+      ) : null}
     </form>
   );
 }

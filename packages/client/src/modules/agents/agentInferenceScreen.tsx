@@ -65,7 +65,7 @@ export default function AgentInferenceScreen() {
   const { data: tools, isLoading: loadingTools } = useAiToolQuery({
     queryParams: request,
     reactQueryOptions: {
-      enabled: !!agent,
+      enabled: !!agent?.configuration?.customTools?.length,
     },
   });
 
@@ -100,38 +100,38 @@ export default function AgentInferenceScreen() {
     }
   }, [history]);
 
+  const performAgentInference = useCallback(async () => {
+    await doAgentInference({
+      chatId: params.id,
+      message: input,
+      runTimeApiVariables: apiVariablesState,
+      runtimePromptVariables: promptVariablesState,
+    });
+    setInput("");
+  }, [
+    apiVariablesState,
+    doAgentInference,
+    input,
+    params.id,
+    promptVariablesState,
+  ]);
+
   const onSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      await doAgentInference({
-        chatId: params.id,
-        message: input,
-        runTimeApiVariables: apiVariablesState,
-        runtimePromptVariables: promptVariablesState,
-      });
-      setInput("");
+      await performAgentInference();
     },
-    [
-      apiVariablesState,
-      doAgentInference,
-      input,
-      params.id,
-      promptVariablesState,
-    ],
+    [performAgentInference],
   );
 
   const onKeyDown = useCallback(
     async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
-        await doAgentInference({
-          chatId: params.id,
-          message: input,
-        });
-        setInput("");
+        await performAgentInference();
       }
     },
-    [doAgentInference, input, params.id],
+    [performAgentInference],
   );
 
   if (loadingAgent || loadingTools || loadingHistory) {

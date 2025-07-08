@@ -33,5 +33,7 @@ declare namespace NodeJS {
     ANTHROPIC_API_KEY: string;
 
     FIRE_CRAWL_API_KEY: string;
+
+    RESEND_API_KEY: string;
   }
 }

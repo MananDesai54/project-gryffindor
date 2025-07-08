@@ -40,7 +40,8 @@ export class InferenceService {
     chatRequest: ChatRequestDto,
     authContext: AuthContextType,
   ) {
-    const { message, runtimePromptVariables, chatId } = chatRequest;
+    const { message, runtimePromptVariables, chatId, runtimeApiVariables } =
+      chatRequest;
 
     const trace = this.langfuseService.getLangFuseClient().trace({
       name: `chat_${agentId}_${chatId}_${authContext.userId}_${Date.now()}`,
@@ -65,6 +66,7 @@ export class InferenceService {
       const agentExecutor = await this.aiAgentFactory.create(
         agentId,
         runtimePromptVariables,
+        runtimeApiVariables,
       );
       const result = await agentExecutor.invoke(
         { input: message, chat_history: chatHistory },
