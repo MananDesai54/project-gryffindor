@@ -22,7 +22,7 @@ curl --location 'http://localhost:3000/user/create' \
 curl --location 'http://localhost:3000/ai/internal/llm/create-standard-llms'
 ```
 - Create Agent, tools, Knowledge base from Ui
-- Once done run this curl with your agent
+- Once done run this curl with your agent to index Knowledge base
 ```sh
 curl --location 'http://localhost:3000/ai/index/add-document/$agentId' \
 --header 'X-AUTH-TOKEN: YOUR_TOKEN' \
