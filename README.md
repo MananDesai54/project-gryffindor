@@ -4,6 +4,7 @@
 ```sh
 git clone https://github.com/manandesai54/project-gryffindor.git
 cd project-gryffindor
+cp packages/server/env/.env.example packages/server/env/.env
 bun install
 bun run dev:server
 bun run dev:client
