@@ -13,6 +13,8 @@ import {
 import { LLMConstants } from 'src/ai/llm/constant/llm.constants';
 
 export class LangfuseCallbackHandler extends BaseCallbackHandler {
+  private readonly logger = new Logger(LangfuseCallbackHandler.name);
+
   name = 'LangfuseCallbackHandler';
   llmName: string;
 
@@ -51,13 +53,13 @@ export class LangfuseCallbackHandler extends BaseCallbackHandler {
       const generation = this.spanStack.pop();
 
       if (!generation) {
-        Logger.warn(
+        this.logger.warn(
           'Langfuse: Popped a non-generation from stack in handleLLMEnd.',
         );
         return;
       }
 
-      Logger.log(
+      this.logger.log(
         'LLM Output with Token Usage:',
         JSON.stringify(output.llmOutput, null, 2),
       );
@@ -92,7 +94,7 @@ export class LangfuseCallbackHandler extends BaseCallbackHandler {
         },
       });
     } catch (error) {
-      Logger.error({ error: error as Error });
+      this.logger.error({ error: error as Error });
     }
   }
 
@@ -131,7 +133,7 @@ export class LangfuseCallbackHandler extends BaseCallbackHandler {
     const pricing = LLMConstants.STANDARD_MODEL_PER_MILLION_COST_USD[modelName];
 
     if (!pricing) {
-      Logger.warn(
+      this.logger.warn(
         `No pricing information found for model: ${modelName}. Cost will be reported as 0.`,
       );
       return 0;

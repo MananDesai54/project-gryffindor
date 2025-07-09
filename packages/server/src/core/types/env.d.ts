@@ -22,7 +22,6 @@ declare namespace NodeJS {
 
     GCS_PROJECT_ID: string;
     GCS_BUCKET_NAME: string;
-    GCS_KEYFILE_PATH: string;
     GCS_CRED_TYPE: string;
     GCS_PRIVATE_KEY_ID: string;
     GCS_PRIVATE_KEY: string;

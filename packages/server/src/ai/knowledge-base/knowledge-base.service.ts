@@ -38,7 +38,7 @@ export class KnowledgeBaseService
         await this.knowledgeBaseContentExtractorService.extractContentForKnowledgeBase(
           data,
         );
-      Logger.log(extractedContent);
+
       return this.knowledgeBaseModel.create({
         ...data,
         content: extractedContent,

@@ -11,10 +11,10 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { CloudModule } from './cloud/cloud.module';
 import { CoreModule } from './core/core.module';
+import { DummyApiModule } from './dummy-api/dummy-api.module';
 import { FileModule } from './file/file.module';
 import { InfraModule } from './infra/infra.module';
 import { UserModule } from './user/user.module';
-import { DummyApiModule } from './dummy-api/dummy-api.module';
 
 @Module({
   imports: [

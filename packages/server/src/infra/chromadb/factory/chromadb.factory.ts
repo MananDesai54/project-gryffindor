@@ -8,6 +8,8 @@ import { map } from 'lodash';
 
 @Injectable()
 export class ChromaDbFactory {
+  private readonly logger = new Logger(ChromaDbFactory.name);
+
   constructor(private readonly chromaDbService: ChromadbService) {}
 
   createRetrieverTool(
@@ -29,7 +31,7 @@ export class ChromaDbFactory {
       description: `This tool allows you to query your Vector database for more information. ${toolDescription}`,
       schema: schema,
       func: async ({ query }: { query: string }) => {
-        Logger.log('Ai rag tool call');
+        this.logger.log('Ai rag tool call');
         try {
           const response = await this.chromaDbService.queryCollection(
             resourceId,

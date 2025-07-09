@@ -3,6 +3,8 @@ import { FilterTypeToMongoOperator } from './filter.constant';
 import { Filter, FilterType } from './filter.type';
 
 export class FilterUtil {
+  private static readonly logger = new Logger(FilterUtil.name);
+
   static getMongoQueryForFilters(filters: Filter[]): Record<string, any> {
     if (!filters || filters.length === 0) {
       return {};
@@ -15,7 +17,7 @@ export class FilterUtil {
         const mongoOperator = FilterTypeToMongoOperator[filterType];
 
         if (!mongoOperator) {
-          Logger.warn(
+          this.logger.warn(
             `Unsupported filter type received: ${filterType}. Skipping.`,
           );
           return query;
@@ -32,14 +34,14 @@ export class FilterUtil {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               query[field] = { [mongoOperator]: value[0] };
             } else {
-              Logger.warn(
+              this.logger.warn(
                 `'EQ' filter for field '${field}' received an empty or null value array. Skipping.`,
               );
             }
             break;
 
           default:
-            Logger.warn(
+            this.logger.warn(
               `Filter logic for type '${filterType as any}' not implemented. Skipping.`,
             );
             break;
