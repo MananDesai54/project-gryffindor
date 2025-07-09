@@ -8,6 +8,8 @@ import { UploadedFile } from '../../file/type/file.type';
 
 @Injectable()
 export class StorageService {
+  private readonly logger = new Logger(StorageService.name);
+
   private readonly storage: Storage;
   private readonly bucketName: string;
 
@@ -46,7 +48,7 @@ export class StorageService {
       });
 
       blobStream.on('error', (error) => {
-        Logger.error('[Cloud Storage Upload Error]', error);
+        this.logger.error('[Cloud Storage Upload Error]', error);
         reject(new InternalServerErrorException(error));
       });
 
@@ -72,7 +74,7 @@ export class StorageService {
       const buffer: Buffer[] = [];
 
       fileStream.on('error', (error) => {
-        Logger.error('[Cloud Storage Download Error]', error);
+        this.logger.error('[Cloud Storage Download Error]', error);
         reject(new InternalServerErrorException(error));
       });
 

@@ -34,10 +34,10 @@ export default function AddTool(props: Props) {
           label: `Add ${ToolTypeLabel[AiToolType.WEB_HOOK]}`,
           onAction: () => setActiveToolType(AiToolType.WEB_HOOK),
         },
-        {
-          label: `Add ${ToolTypeLabel[AiToolType.AGENT]}`,
-          onAction: () => setActiveToolType(AiToolType.AGENT),
-        },
+        // {
+        //   label: `Add ${ToolTypeLabel[AiToolType.AGENT]}`,
+        //   onAction: () => setActiveToolType(AiToolType.AGENT),
+        // },
       ] as ActionMenuItem[],
     [],
   );

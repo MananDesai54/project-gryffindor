@@ -57,6 +57,8 @@ export function generateZodSchemaFromApiDef(
 
 @Injectable()
 export class AiToolFactory {
+  private readonly logger = new Logger(AiToolFactory.name);
+
   createWebhookTool(
     tool: WebhookAiTool,
     runTimeApiVariables?: Record<string, string>,
@@ -96,8 +98,8 @@ export class AiToolFactory {
       func: async (input: ToolInput) => {
         const { queryParams, body, headers, url } = input;
 
-        Logger.log('Ai webhook tool call');
-        Logger.log({ input });
+        this.logger.log('Ai webhook tool call');
+        this.logger.log({ input });
         try {
           const response = await axios({
             method: tool.apiSchema.method,
@@ -106,13 +108,13 @@ export class AiToolFactory {
             params: queryParams,
             data: body,
           });
-          Logger.log('Ai webhook tool call success', response.data);
+          this.logger.log('Ai webhook tool call success', response.data);
 
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           return JSON.stringify({ response: response.data });
         } catch (error) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          Logger.log({ error, message: 'Ai webhook tool call error' });
+          this.logger.log({ error, message: 'Ai webhook tool call error' });
           if (axios.isAxiosError(error) && error.response) {
             return `Error: Request failed with status ${error.response.status}. Response data: ${JSON.stringify(error.response.data)}`;
           }

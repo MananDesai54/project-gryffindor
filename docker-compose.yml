@@ -14,6 +14,8 @@ services:
       retries: 1
     ports:
       - "27017:27017"
+    networks:
+      - database
 
   chroma:
     image: chromadb/chroma:latest
@@ -30,6 +32,39 @@ services:
       interval: 60s
       timeout: 10s
       retries: 1
+    networks:
+      - database
+
+  # kafka:
+  #   image: apache/kafka:latest
+  #   hostname: kafka
+  #   container_name: kafka
+  #   ports:
+  #     - 9092:9092
+  #   environment:
+  #     KAFKA_BROKER_ID: 1
+  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  #     KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+  #     KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+  #     KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+  #     KAFKA_PROCESS_ROLES: broker,controller
+  #     KAFKA_NODE_ID: 1
+  #     KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+  #     KAFKA_LISTENERS: PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092
+  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+  #     KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+  #     KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+  #     CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+  #   healthcheck:
+  #     test:
+  #       ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
+  #     interval: 15s
+  #     timeout: 10s
+  #     retries: 1
+  #   networks:
+  #     - messaging
 
   server:
     build:
@@ -42,6 +77,8 @@ services:
         condition: service_healthy
       chroma:
         condition: service_healthy
+      # kafka:
+      #   condition: service_started
     ports:
       - "3000:3000"
     volumes:
@@ -50,6 +87,10 @@ services:
       watch:
         - path: .
           action: rebuild
+    networks:
+      - default
+      # - messaging
+      - database
 
   # client:
   #   build:
@@ -68,3 +109,11 @@ volumes:
   mongo_data:
   chroma_data:
     driver: local
+
+networks:
+  # messaging:
+  #   driver: bridge
+  default:
+    driver: bridge
+  database:
+    driver: bridge

@@ -14,6 +14,8 @@ interface ErrorLogDto {
 
 @Injectable()
 export class ErrorLoggingService {
+  private readonly logger = new Logger(ErrorLoggingService.name);
+
   constructor(
     @InjectModel(ErrorLog.name) private errorLogModel: Model<ErrorLog>,
   ) {}
@@ -22,7 +24,7 @@ export class ErrorLoggingService {
     try {
       return this.errorLogModel.create(data);
     } catch (error) {
-      Logger.error('Error creating error log:', error);
+      this.logger.error('Error creating error log:', error);
       throw error;
     }
   }
@@ -31,7 +33,7 @@ export class ErrorLoggingService {
     try {
       return this.errorLogModel.findById(id);
     } catch (error) {
-      Logger.error('Error reading error log:', error);
+      this.logger.error('Error reading error log:', error);
       throw error;
     }
   }
