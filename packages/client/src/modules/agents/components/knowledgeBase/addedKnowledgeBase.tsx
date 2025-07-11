@@ -1,18 +1,12 @@
-import {
-  FilterBuilder,
-  SearchRequestBuilder,
-} from "@gryffindor/client/common/api/common/request/requestBuilder";
-import { useKnowledgeBaseQuery } from "@gryffindor/client/common/api/serverQueries/agent/useKnowldgeBaseQuery";
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
-import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 import { KnowledgeBaseType } from "@gryffindor/client/common/types/agent/ai.type";
-import { map, reject } from "lodash";
+import { KnowledgeBase } from "@gryffindor/client/common/types/agent/knowledgeBase.type";
+import { map } from "lodash";
 import { File, Globe, Text, Trash } from "lucide-react";
-import { useMemo } from "react";
 
 type Props = {
-  agent: Agent;
-  onChange(config: Agent["configuration"]): void;
+  kbs: KnowledgeBase[];
+  onDeleteKnowledgeBase(id: string): void;
 };
 
 const KnowledgeBaseIcon = {
@@ -22,32 +16,13 @@ const KnowledgeBaseIcon = {
 };
 
 export default function AddedKnowledgeBase(props: Props) {
-  const { agent, onChange } = props;
+  const { kbs, onDeleteKnowledgeBase } = props;
 
-  const request = useMemo(
-    () =>
-      new SearchRequestBuilder()
-        .addFilter(
-          new FilterBuilder()
-            .field("_id")
-            .value(agent?.configuration?.knowledgeBase || [])
-            .build(),
-        )
-        .build(),
-    [agent?.configuration?.knowledgeBase],
-  );
-  const { data, isLoading } = useKnowledgeBaseQuery({
-    queryParams: request,
-    reactQueryOptions: {
-      enabled: !!agent?.configuration?.knowledgeBase?.length,
-    },
-  });
-
-  if (!data?.data?.length || isLoading) return null;
+  if (!kbs?.length) return null;
 
   return (
     <div className="bg-background p-4 rounded-xl border">
-      {map(data.data, (kb) => {
+      {map(kbs, (kb) => {
         const Icon = KnowledgeBaseIcon[kb.type];
         return (
           <div
@@ -62,12 +37,7 @@ export default function AddedKnowledgeBase(props: Props) {
               size="icon"
               variant="outline"
               onClick={() => {
-                onChange({
-                  knowledgeBase: reject(
-                    agent.configuration?.knowledgeBase,
-                    (v) => v === kb._id,
-                  ),
-                });
+                onDeleteKnowledgeBase(kb._id);
               }}
             >
               <Trash />

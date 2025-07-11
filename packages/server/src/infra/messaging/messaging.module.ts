@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MessagingConstant } from './constant/messaging.constant';
+import { MessagingProducerService } from './messaging-producer.service';
 
 @Module({
   imports: [
@@ -12,7 +13,12 @@ import { MessagingConstant } from './constant/messaging.constant';
           client: {
             clientId: 'kafka-producer',
             brokers: [process.env.KAFKA_BROKER_URL],
-            connectionTimeout: 10000,
+            connectionTimeout: 5000,
+            requestTimeout: 30000,
+            retry: {
+              initialRetryTime: 300,
+              retries: 5,
+            },
           },
           producer: {
             allowAutoTopicCreation: true,
@@ -21,6 +27,7 @@ import { MessagingConstant } from './constant/messaging.constant';
       },
     ]),
   ],
-  exports: [ClientsModule],
+  providers: [MessagingProducerService],
+  exports: [MessagingProducerService],
 })
 export class MessagingModule {}

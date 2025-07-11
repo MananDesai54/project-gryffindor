@@ -7,6 +7,7 @@ import { LinkContentLoader } from '../../file/loaders/link-content.loader';
 import { PDFContentLoader } from '../../file/loaders/pdf-content.loader';
 import { KnowledgeBase } from './schema/knowledge-base.schema';
 import { KnowledgeBaseType } from './types/knowledge-base.type';
+import { Document } from '@langchain/core/documents';
 
 @Injectable()
 export class KnowbaseContentExtractorService {
@@ -15,28 +16,24 @@ export class KnowbaseContentExtractorService {
     @Inject() private readonly linkContentLoader: LinkContentLoader,
   ) {}
 
-  async extractContentForKnowledgeBase(
-    kb: Partial<KnowledgeBase>,
-  ): Promise<string> {
+  async extractContentForKnowledgeBase(kb: Partial<KnowledgeBase>) {
     switch (kb.type as KnowledgeBaseType) {
       case KnowledgeBaseType.FILE:
         if (!kb.url)
           throw new InternalServerErrorException(
             'KnowledgeBase url is required',
           );
-        return (await this.pdfContentLoader.loadPDFContentFromURL(kb.url))
-          .pageContent;
+        return await this.pdfContentLoader.loadPDFContentFromURL(kb.url);
       case KnowledgeBaseType.LINK:
         if (!kb.url)
           throw new InternalServerErrorException(
             'KnowledgeBase url is required',
           );
-        return (await this.linkContentLoader.loadLinkContent(kb.url))
-          .pageContent;
+        return await this.linkContentLoader.loadLinkContent(kb.url);
       case KnowledgeBaseType.TEXT:
       default:
-        return new Promise<string>((resolve) => {
-          resolve(kb.content || '');
+        return new Promise<Document>((resolve) => {
+          resolve(new Document({ pageContent: kb.content || '' }));
         });
     }
   }

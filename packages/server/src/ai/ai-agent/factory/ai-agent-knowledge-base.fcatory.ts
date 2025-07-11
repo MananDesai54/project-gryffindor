@@ -3,7 +3,7 @@ import { ChromaDbFactory } from '../../../infra/chromadb/factory/chromadb.factor
 import { ChromaDBResourceType } from '../../../infra/chromadb/type/chromadb.type';
 
 @Injectable()
-export class KnowledgeBaseFactory {
+export class AiAgentKnowledgeBaseFactory {
   constructor(@Inject() private readonly chromadbFactory: ChromaDbFactory) {}
 
   createAgentKnowledgeBaseTool(

@@ -28,7 +28,7 @@ export default function AgentDetailScreen() {
       id: params.id,
     },
   });
-  const { mutate } = useUpdateAgentMutation();
+  const { mutateAsync } = useUpdateAgentMutation();
   const [tempAgent, setTempAgent] = useState<Agent | undefined>(data);
 
   const breadCrumbItems = useMemo(
@@ -84,13 +84,13 @@ export default function AgentDetailScreen() {
     [onUpdateAgent, tempAgent],
   );
 
-  const onSaveAgent = useCallback(() => {
+  const onSaveAgent = useCallback(async () => {
     if (!data?._id || !tempAgent) return;
-    mutate({
+    await mutateAsync({
       agentId: data._id,
       agent: tempAgent!,
     });
-  }, [data?._id, mutate, tempAgent]);
+  }, [data?._id, mutateAsync, tempAgent]);
 
   const onCancelAgent = useCallback(() => {
     setTempAgent(data);

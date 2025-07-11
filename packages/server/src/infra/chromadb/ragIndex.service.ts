@@ -21,6 +21,17 @@ export class RAGIndexService implements CRUDService<RAGIndex> {
     }
   }
 
+  createMany(data: Partial<RAGIndex>[]): Promise<Partial<RAGIndex>[]> {
+    try {
+      return this.ragIndexModel.insertMany(data);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        'Failed to create RAGIndex',
+      );
+    }
+  }
+
   read(id: string) {
     try {
       return this.ragIndexModel.findById(id) as Promise<RAGIndex>;

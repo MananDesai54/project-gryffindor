@@ -1,12 +1,16 @@
 import {
+  IsArray,
   IsEnum,
   IsMimeType,
   IsNotEmpty,
+  IsObject,
+  IsOptional,
   IsString,
   IsUrl,
   ValidateIf,
 } from 'class-validator';
 import { KnowledgeBaseType } from '../types/knowledge-base.type';
+import { Status } from 'src/core/types/status';
 
 export class CreateKnowledgeBaseDto {
   @IsEnum(KnowledgeBaseType)
@@ -41,6 +45,21 @@ export class CreateKnowledgeBaseDto {
   @IsMimeType()
   @IsNotEmpty()
   mimeType: string;
+
+  @IsArray()
+  dependentAgents: string[];
 }
 
-export class UpdateKnowledgeBaseDto extends CreateKnowledgeBaseDto {}
+class SourceContentMetadataDto {
+  @IsEnum(Status)
+  status: string;
+  @IsObject()
+  @IsObject()
+  metadata?: Map<string, any>;
+}
+
+export class UpdateKnowledgeBaseDto extends CreateKnowledgeBaseDto {
+  @IsObject()
+  @IsOptional()
+  sourceContentMetadata?: SourceContentMetadataDto;
+}

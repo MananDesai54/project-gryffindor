@@ -8,6 +8,9 @@ import { ChromadbModule } from '../../infra/chromadb/chromadb.module';
 import { LlmModule } from '../llm/llm.module';
 import { AiToolModule } from '../ai-tool/ai-tool.module';
 import { KnowledgeBaseModule } from '../knowledge-base/knowledge-base.module';
+import { AiAgentKnowledgeBaseIngestionConsumer } from './consumer/aiAgentKnowledgeBaseIngestion.consumer';
+import { MessagingModule } from '../../infra/messaging/messaging.module';
+import { AiAgentKnowledgeBaseFactory } from './factory/ai-agent-knowledge-base.fcatory';
 
 @Module({
   imports: [
@@ -16,9 +19,10 @@ import { KnowledgeBaseModule } from '../knowledge-base/knowledge-base.module';
     LlmModule,
     AiToolModule,
     KnowledgeBaseModule,
+    MessagingModule,
   ],
-  controllers: [AiAgentController],
-  providers: [AiAgentService, AiAgentFactory],
+  controllers: [AiAgentController, AiAgentKnowledgeBaseIngestionConsumer],
+  providers: [AiAgentService, AiAgentFactory, AiAgentKnowledgeBaseFactory],
   exports: [AiAgentService, AiAgentFactory],
 })
 export class AiAgentModule {}

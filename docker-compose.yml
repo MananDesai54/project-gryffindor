@@ -11,7 +11,7 @@ services:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       interval: 60s
       timeout: 10s
-      retries: 1
+      retries: 3
     ports:
       - "27017:27017"
     networks:
@@ -31,40 +31,43 @@ services:
         ["CMD", "/bin/bash", "-c", "cat < /dev/null > /dev/tcp/localhost/8000"]
       interval: 60s
       timeout: 10s
-      retries: 1
+      retries: 3
     networks:
       - database
 
-  # kafka:
-  #   image: apache/kafka:latest
-  #   hostname: kafka
-  #   container_name: kafka
-  #   ports:
-  #     - 9092:9092
-  #   environment:
-  #     KAFKA_BROKER_ID: 1
-  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
-  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  #     KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-  #     KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-  #     KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-  #     KAFKA_PROCESS_ROLES: broker,controller
-  #     KAFKA_NODE_ID: 1
-  #     KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
-  #     KAFKA_LISTENERS: PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092
-  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-  #     KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-  #     KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
-  #     CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
-  #   healthcheck:
-  #     test:
-  #       ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
-  #     interval: 15s
-  #     timeout: 10s
-  #     retries: 1
-  #   networks:
-  #     - messaging
+  kafka:
+    image: apache/kafka:latest
+    hostname: kafka
+    container_name: kafka
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --list",
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+    networks:
+      - messaging
 
   server:
     build:
@@ -72,24 +75,27 @@ services:
     container_name: gryffindor-server
     env_file:
       - packages/server/env/.env
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
     depends_on:
       mongodb:
         condition: service_healthy
       chroma:
         condition: service_healthy
-      # kafka:
-      #   condition: service_started
+      kafka:
+        condition: service_healthy
     ports:
       - "3000:3000"
     volumes:
       - ./packages/server/secret:/mnt/gryffindor/secret
     develop:
       watch:
-        - path: .
+        - path: ./packages/server
           action: rebuild
     networks:
       - default
-      # - messaging
+      - messaging
       - database
 
   # client:
@@ -102,8 +108,13 @@ services:
   #     - "3001:3001"
   #   develop:
   #     watch:
-  #       - path: .
+  #       - path: ./packages/client
   #         action: rebuild
+  #   depends_on:
+  #     server:
+  #       condition: service_healthy
+  #   networks:
+  #     - default
 
 volumes:
   mongo_data:
@@ -111,8 +122,8 @@ volumes:
     driver: local
 
 networks:
-  # messaging:
-  #   driver: bridge
+  messaging:
+    driver: bridge
   default:
     driver: bridge
   database:

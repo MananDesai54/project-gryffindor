@@ -25,7 +25,7 @@ export class IndexingService {
 
         await this.chromaDbService.addDocumentToCollection(
           agentId,
-          ChromaDBResourceType.Agent,
+          ChromaDBResourceType.AgentKnowledgeBase,
           chunks,
         );
 
@@ -45,11 +45,11 @@ export class IndexingService {
   ): Promise<Document[]> {
     switch (kb.type as KnowledgeBaseType) {
       case KnowledgeBaseType.TEXT:
-        return new Promise((res) => {
-          res([new Document({ pageContent: kb.content })]);
-        });
       case KnowledgeBaseType.FILE:
       case KnowledgeBaseType.LINK:
+        return new Promise((res) => {
+          res([new Document({ pageContent: kb.content, id: kb._id })]);
+        });
       default:
         return new Promise((res) => {
           res([]);
