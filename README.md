@@ -3,7 +3,7 @@
 ```sh
 git clone https://github.com/manandesai54/project-gryffindor.git
 cd project-gryffindor
-cp packages/server/env/.env.sample packages/server/env/.env
+cp packages/server/env/.env.sample packages/server/env/.env # add your env variables here
 bun install # optional for local development
 docker-compose up --build -d # server starts on 3000, client on 3001
 ```
