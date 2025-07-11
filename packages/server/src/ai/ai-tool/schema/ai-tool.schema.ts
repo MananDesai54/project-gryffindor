@@ -14,6 +14,8 @@ export class AiTool {
   description: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   creator: string;
+  @Prop({ required: false })
+  isStandard?: boolean;
 }
 
 export class ApiParamsValueSchema {
@@ -22,7 +24,7 @@ export class ApiParamsValueSchema {
   @Prop({ required: true })
   datatype: string;
   @Prop()
-  description: string;
+  description?: string;
   @Prop({ required: true })
   valueType: string;
   @Prop({ required: true })
@@ -42,13 +44,13 @@ export class WebhookApiSchema {
   @Prop({ required: true })
   method: string;
   @Prop()
-  headers: ApiParamsValueSchema[];
+  headers?: ApiParamsValueSchema[];
   @Prop()
-  pathParam: ApiParamsValueSchema[];
+  pathParams?: ApiParamsValueSchema[];
   @Prop()
-  queryParams: ApiParamsValueSchema[];
+  queryParams?: ApiParamsValueSchema[];
   @Prop()
-  body: WebhookBodySchema;
+  body?: WebhookBodySchema;
 }
 
 @Schema()

@@ -18,7 +18,9 @@ import { RAGIndex } from '../../../infra/chromadb/schema/ragIndex.schema';
 import { ChromaDBResourceType } from 'src/infra/chromadb/type/chromadb.type';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { AuthContextType } from 'src/auth/dto/auth.dto';
+
 /**
+ * considered that only agent update can trigger this flow and indexes will be created per agent and not per knowledge base.
  * This can be triggered when Agent is updated with knowledge base. Update / Delete
  * Knowledge base content cannot be updated so no need to trigger this event on delete of knowledge base
  * Knowledge base cannot be deleted without removing all associated agents so no need to trigger this event on delete of knowledge base
