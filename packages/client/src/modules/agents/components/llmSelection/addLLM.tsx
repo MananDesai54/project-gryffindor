@@ -1,8 +1,6 @@
 import { useCreateCustomLLMMutation } from "@gryffindor/client/common/api/serverQueries/agent/useLLMMutation";
 import FormInput from "@gryffindor/client/common/components/app/formInput";
 import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
-import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
-import { Label } from "@gryffindor/client/common/components/shadcn/components/ui/label";
 import { LLM } from "@gryffindor/client/common/types/agent/llm.type";
 import { useCallback, useState } from "react";
 

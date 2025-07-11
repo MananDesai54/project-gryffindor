@@ -1,13 +1,10 @@
 # How to run?
-- install bun
 - install docker
 ```sh
 git clone https://github.com/manandesai54/project-gryffindor.git
 cd project-gryffindor
 cp packages/server/env/.env.sample packages/server/env/.env
-bun install
-bun run dev:server # server start on 3000
-bun run dev:client # client start on 3001
+docker-compose up --build -d # server starts on 3000, client on 3001
 ```
 - run following internal services to setup initial environment
 ```sh

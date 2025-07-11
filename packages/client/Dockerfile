@@ -7,7 +7,7 @@ RUN bun install
 COPY packages/client .
 
 # RUN bun test
-RUN bun run build
+# RUN bun run build
 
-EXPOSE 3000/tcp
+EXPOSE 3001/tcp
 ENTRYPOINT [ "bun", "run", "dev" ]
