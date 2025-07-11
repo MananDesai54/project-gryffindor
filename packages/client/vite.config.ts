@@ -19,4 +19,7 @@ export default defineConfig({
       "@gryffindor/client": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    port: process.env.PORT ? +process.env.PORT : 3001,
+  },
 });
