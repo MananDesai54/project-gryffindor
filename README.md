@@ -1,5 +1,6 @@
 # How to run?
 - install docker
+- install bun (optional for local development)
 ```sh
 git clone https://github.com/manandesai54/project-gryffindor.git
 cd project-gryffindor
