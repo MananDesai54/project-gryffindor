@@ -14,9 +14,9 @@ docker-compose up --build -d # server starts on 3000, client on 3001
 curl --location 'http://localhost:3000/user/create' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "username": "manandesai54",
-    "email": "manan@gmail.com",
-    "password": "Manan@123"
+    "username": "YOUR_USER_NAME",
+    "email": "YOUR_EMAIL",
+    "password": "YOUR_PASSWORD"
 }'
 # create standard llms
 curl --location 'http://localhost:3000/ai/internal/llm/create-standard-llms'
