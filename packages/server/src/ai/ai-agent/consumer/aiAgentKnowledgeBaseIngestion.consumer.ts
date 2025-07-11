@@ -1,23 +1,23 @@
 import { Document } from '@langchain/core/documents';
 import {
-  Controller,
   Inject,
+  Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { flatMap, map } from 'lodash';
 import { MessagingTopicConstant } from 'src/core/constant/messaging-topic.constant';
+import { AuthContextType } from '../../../auth/dto/auth.dto';
 import { Status } from '../../../core/types/status';
 import { ChromadbService } from '../../../infra/chromadb/chromadb.service';
 import { RAGIndexService } from '../../../infra/chromadb/ragIndex.service';
+import { RAGIndex } from '../../../infra/chromadb/schema/ragIndex.schema';
+import { ChromaDBResourceType } from '../../../infra/chromadb/type/chromadb.type';
+import { MessagingConsumer } from '../../../infra/messaging/decorators/messaging-consumer.decorator';
 import { KnowbaseContentExtractorService } from '../../knowledge-base/knowbase-content-extractor.service';
 import { KnowledgeBaseService } from '../../knowledge-base/knowledge-base.service';
 import { AiAgentKnowledgeBaseContentInjectionParams } from '../types/ai-agent.type';
-import { RAGIndex } from '../../../infra/chromadb/schema/ragIndex.schema';
-import { ChromaDBResourceType } from 'src/infra/chromadb/type/chromadb.type';
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { AuthContextType } from 'src/auth/dto/auth.dto';
 
 /**
  * considered that only agent update can trigger this flow and indexes will be created per agent and not per knowledge base.
@@ -25,7 +25,7 @@ import { AuthContextType } from 'src/auth/dto/auth.dto';
  * Knowledge base content cannot be updated so no need to trigger this event on delete of knowledge base
  * Knowledge base cannot be deleted without removing all associated agents so no need to trigger this event on delete of knowledge base
  */
-@Controller()
+@Injectable()
 export class AiAgentKnowledgeBaseIngestionConsumer {
   private readonly logger = new Logger(
     AiAgentKnowledgeBaseIngestionConsumer.name,
@@ -39,7 +39,7 @@ export class AiAgentKnowledgeBaseIngestionConsumer {
     @Inject() private readonly ragIndexService: RAGIndexService,
   ) {}
 
-  @MessagePattern(
+  @MessagingConsumer(
     MessagingTopicConstant.TopicNames.AiAgentKnowledgeBaseContentIngestionTopic,
   )
   async ingestContent(params: AiAgentKnowledgeBaseContentInjectionParams) {

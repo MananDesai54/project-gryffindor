@@ -1,4 +1,10 @@
-import { Module } from '@nestjs/common';
+import {
+  Inject,
+  Logger,
+  Module,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { AiAgentModule } from './ai/ai-agent/ai-agent.module';
 import { AiToolModule } from './ai/ai-tool/ai-tool.module';
 import { IndexingModule } from './ai/indexing/indexing.module';
@@ -14,6 +20,7 @@ import { CoreModule } from './core/core.module';
 import { DummyApiModule } from './dummy-api/dummy-api.module';
 import { FileModule } from './file/file.module';
 import { InfraModule } from './infra/infra.module';
+import { InfraService } from './infra/infra.service';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -36,4 +43,26 @@ import { UserModule } from './user/user.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(AppModule.name);
+
+  constructor(@Inject() private readonly infraService: InfraService) {}
+
+  async onModuleInit() {
+    try {
+      await this.infraService.initInfra();
+    } catch (error) {
+      this.logger.error('Error initializing infrastructure: ', error);
+      throw error;
+    }
+  }
+
+  async onModuleDestroy() {
+    try {
+      await this.infraService.destroyInfra();
+    } catch (error) {
+      this.logger.error('Error destroying infrastructure: ', error);
+      throw error;
+    }
+  }
+}

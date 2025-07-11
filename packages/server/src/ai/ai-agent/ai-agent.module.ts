@@ -21,8 +21,13 @@ import { AiAgentKnowledgeBaseFactory } from './factory/ai-agent-knowledge-base.f
     KnowledgeBaseModule,
     MessagingModule,
   ],
-  controllers: [AiAgentController, AiAgentKnowledgeBaseIngestionConsumer],
-  providers: [AiAgentService, AiAgentFactory, AiAgentKnowledgeBaseFactory],
+  controllers: [AiAgentController],
+  providers: [
+    AiAgentService,
+    AiAgentFactory,
+    AiAgentKnowledgeBaseFactory,
+    AiAgentKnowledgeBaseIngestionConsumer,
+  ],
   exports: [AiAgentService, AiAgentFactory],
 })
 export class AiAgentModule {}

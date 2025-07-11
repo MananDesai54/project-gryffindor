@@ -16,7 +16,7 @@ import { RequestUtil } from '../../core/rest/request/request.util';
 import { SearchService } from '../../core/rest/search.controller';
 import { CreateAiAgentDto, UpdateAiAgentDto } from './dto/ai-agent.dto';
 import { AiAgent } from './schema/ai-agent.schema';
-import { MessagingProducerService } from '../../infra/messaging/messaging-producer.service';
+import { MessagingService } from '../../infra/messaging/messaging.service';
 import { MessagingTopicConstant } from '../../core/constant/messaging-topic.constant';
 import { AiAgentKnowledgeBaseContentInjectionParams } from './types/ai-agent.type';
 import { ArrayUtils } from 'src/core/utils/arrayUtils';
@@ -30,7 +30,7 @@ export class AiAgentService
   constructor(
     @InjectModel(AiAgent.name) private readonly aiAgent: Model<AiAgent>,
     @Inject()
-    private readonly messagingProducerService: MessagingProducerService,
+    private readonly messagingService: MessagingService,
   ) {}
 
   async create(
@@ -43,7 +43,7 @@ export class AiAgentService
         creator: authContext.userId,
       });
       if (createAiAgentDto.configuration?.knowledgeBase?.length) {
-        this.messagingProducerService.produce<AiAgentKnowledgeBaseContentInjectionParams>(
+        await this.messagingService.produce<AiAgentKnowledgeBaseContentInjectionParams>(
           MessagingTopicConstant.TopicNames
             .AiAgentKnowledgeBaseContentIngestionTopic,
           {
@@ -94,7 +94,7 @@ export class AiAgentService
       );
 
       if (added?.length || removed?.length) {
-        this.messagingProducerService.produce<AiAgentKnowledgeBaseContentInjectionParams>(
+        await this.messagingService.produce<AiAgentKnowledgeBaseContentInjectionParams>(
           MessagingTopicConstant.TopicNames
             .AiAgentKnowledgeBaseContentIngestionTopic,
           {
