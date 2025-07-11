@@ -34,15 +34,16 @@ export class ChromadbService {
     return result;
   }
 
-  async deleteAllDocuments(
+  async deleteDocuments(
     resourceId: string,
     resourceType: ChromaDBResourceType,
+    documentIds: string[],
   ) {
     const vectorStore = new Chroma(this.embeddings, {
       collectionName: this._getCollectionName(resourceId, resourceType),
       url: process.env.CHROMA_URL,
     });
-    const result = await vectorStore.delete({ ids: [resourceId] });
+    const result = await vectorStore.delete({ ids: documentIds });
     return result;
   }
 

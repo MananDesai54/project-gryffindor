@@ -7,13 +7,7 @@ import { IndexingService } from './indexing.service';
 
 @Module({
   controllers: [IndexingController],
-  // controllers: [IndexingController, InjexingConsumer],
   providers: [IndexingService],
-  imports: [
-    ChromadbModule,
-    AiAgentModule,
-    KnowledgeBaseModule,
-    // MessagingModule,
-  ],
+  imports: [ChromadbModule, AiAgentModule, KnowledgeBaseModule],
 })
 export class IndexingModule {}

@@ -6,8 +6,8 @@ git clone https://github.com/manandesai54/project-gryffindor.git
 cd project-gryffindor
 cp packages/server/env/.env.sample packages/server/env/.env
 bun install
-bun run dev:server
-bun run dev:client
+bun run dev:server # server start on 3000
+bun run dev:client # client start on 3001
 ```
 - run following internal services to setup initial environment
 ```sh

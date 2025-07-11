@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './core/filters/http-exception.filter';
 import { ErrorLoggingService } from './infra/observability/error-logging/error-logging.service';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,19 +12,28 @@ async function bootstrap() {
   });
   app.useGlobalFilters(new HttpExceptionFilter(app.get(ErrorLoggingService)));
 
-  // app.connectMicroservice<MicroserviceOptions>({
-  //   transport: Transport.KAFKA,
-  //   options: {
-  //     client: {
-  //       brokers: [process.env.KAFKA_BROKER_URL],
-  //     },
-  //     consumer: {
-  //       groupId: 'kafka-consumer',
-  //     },
-  //   },
-  // });
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        clientId: 'kafka-consumer',
+        brokers: [process.env.KAFKA_BROKER_URL],
+        connectionTimeout: 5000,
+        requestTimeout: 30000,
+        retry: {
+          initialRetryTime: 1000,
+          retries: 8,
+          maxRetryTime: 30000,
+        },
+      },
+      consumer: {
+        groupId: 'kafka-consumer',
+        sessionTimeout: 60000,
+      },
+    },
+  });
 
-  // await app.startAllMicroservices();
+  await app.startAllMicroservices();
 
   await app.listen(process.env.PORT ?? 3000);
 }

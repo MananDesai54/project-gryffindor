@@ -35,7 +35,7 @@ class AiAgentConfigurationDto {
 
   @IsArray()
   @IsOptional()
-  knowledgeBaseIds?: string[];
+  knowledgeBase?: string[];
 
   @IsArray()
   @IsOptional()
@@ -44,7 +44,7 @@ class AiAgentConfigurationDto {
 
   @IsArray()
   @IsOptional()
-  customToolIds?: string[];
+  customTools?: string[];
 
   @IsString()
   @IsNotEmpty()

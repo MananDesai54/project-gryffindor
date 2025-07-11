@@ -7,7 +7,6 @@ import { DynamicStructuredTool } from '@langchain/core/tools';
 import { Inject, Injectable } from '@nestjs/common';
 import { AgentExecutor } from 'langchain/agents';
 import { forEach } from 'lodash';
-import { KnowledgeBaseFactory } from '../../../ai/knowledge-base/factory/knowledge-base.factory';
 import { AiToolService } from '../../ai-tool/ai-tool.service';
 import { AiToolFactory } from '../../ai-tool/factory/ai-tool.factory';
 import { WebhookAiTool } from '../../ai-tool/schema/ai-tool.schema';
@@ -16,6 +15,7 @@ import { LLMConstants } from '../../llm/constant/llm.constants';
 import { LLMFactory } from '../../llm/factory/llm.factory';
 import { LlmService } from '../../llm/llm.service';
 import { AiAgentService } from '../ai-agent.service';
+import { AiAgentKnowledgeBaseFactory } from './ai-agent-knowledge-base.fcatory';
 
 @Injectable()
 export class AiAgentFactory {
@@ -24,7 +24,8 @@ export class AiAgentFactory {
     @Inject() private readonly aiToolService: AiToolService,
     @Inject() private readonly llmService: LlmService,
     @Inject() private readonly llmFactory: LLMFactory,
-    @Inject() private readonly knowledgeBaseFactory: KnowledgeBaseFactory,
+    @Inject()
+    private readonly aiAgentKnowledgeBaseFactory: AiAgentKnowledgeBaseFactory,
     @Inject() private readonly aiToolFactory: AiToolFactory,
   ) {}
 
@@ -54,7 +55,7 @@ export class AiAgentFactory {
       aiAgent.configuration?.knowledgeBase?.length > 0
     ) {
       const retrieverTool =
-        this.knowledgeBaseFactory.createAgentKnowledgeBaseTool(
+        this.aiAgentKnowledgeBaseFactory.createAgentKnowledgeBaseTool(
           aiAgent._id,
           this._sanitizeToolName(aiAgent.name),
           aiAgent.description,

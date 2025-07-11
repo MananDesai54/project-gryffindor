@@ -11,6 +11,13 @@ const createKbFn = async (mutationParams: { kb: Partial<KnowledgeBase> }) => {
   return knowledgeBaseServiceInstance.create(mutationParams.kb);
 };
 
+const updateKbFn = async (mutationParams: { kb: Partial<KnowledgeBase> }) => {
+  return knowledgeBaseServiceInstance.update(
+    mutationParams.kb._id!,
+    mutationParams.kb,
+  );
+};
+
 export const useCreateKnowledgeBaseMutation = (
   options?: ServerMutationParams,
 ) => {
@@ -20,6 +27,31 @@ export const useCreateKnowledgeBaseMutation = (
 
   return useMutation({
     mutationFn: createKbFn,
+    onSuccess(data, variables, context) {
+      queryClient.invalidateQueries({
+        predicate(query) {
+          return (
+            (query.queryKey?.[0] as ServerQueryKey)?.primaryKey ===
+            ServerPrimaryKeys.KNOWLEDGE_BASE
+          );
+        },
+      });
+      onSuccess?.(data, variables, context);
+    },
+    onError,
+    ...reactQueryOptions,
+  });
+};
+
+export const useUpdateKnowledgeBaseMutation = (
+  options?: ServerMutationParams,
+) => {
+  const { reactQueryOptions, onSuccess, onError } = options || {};
+
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateKbFn,
     onSuccess(data, variables, context) {
       queryClient.invalidateQueries({
         predicate(query) {

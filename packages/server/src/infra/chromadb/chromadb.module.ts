@@ -3,6 +3,7 @@ import { ChromadbService } from './chromadb.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RAGIndex, RAGIndexSchema } from './schema/ragIndex.schema';
 import { ChromaDbFactory } from './factory/chromadb.factory';
+import { RAGIndexService } from './ragIndex.service';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { ChromaDbFactory } from './factory/chromadb.factory';
       },
     ]),
   ],
-  providers: [ChromadbService, ChromaDbFactory],
-  exports: [ChromadbService, ChromaDbFactory],
+  providers: [ChromadbService, ChromaDbFactory, RAGIndexService],
+  exports: [ChromadbService, ChromaDbFactory, RAGIndexService],
 })
 export class ChromadbModule {}

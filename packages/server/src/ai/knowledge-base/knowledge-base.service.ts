@@ -1,8 +1,6 @@
 import {
-  Inject,
   Injectable,
   InternalServerErrorException,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -18,8 +16,8 @@ import {
   CreateKnowledgeBaseDto,
   UpdateKnowledgeBaseDto,
 } from './dto/knowledge-base.dto';
-import { KnowbaseContentExtractorService } from './knowbase-content-extractor.service';
 import { KnowledgeBase } from './schema/knowledge-base.schema';
+import { KnowledgeBaseType } from './types/knowledge-base.type';
 
 @Injectable()
 export class KnowledgeBaseService
@@ -28,22 +26,20 @@ export class KnowledgeBaseService
   constructor(
     @InjectModel(KnowledgeBase.name)
     private readonly knowledgeBaseModel: Model<KnowledgeBase>,
-    @Inject()
-    private readonly knowledgeBaseContentExtractorService: KnowbaseContentExtractorService,
   ) {}
 
   async create(data: CreateKnowledgeBaseDto, authContext: AuthContextType) {
     try {
-      const extractedContent =
-        await this.knowledgeBaseContentExtractorService.extractContentForKnowledgeBase(
-          data,
-        );
-
       return this.knowledgeBaseModel.create({
         ...data,
-        content: extractedContent,
+        content: data.content,
         creator: authContext.userId,
-        sourceContentStatus: Status.Completed,
+        sourceContentMetadata: {
+          status:
+            (data.type as KnowledgeBaseType) === KnowledgeBaseType.TEXT
+              ? Status.Completed
+              : Status.Pending, // sourceContent will only be extracted if kb is linked with any agent. When any agent is updated/created It will publish topic to process kb
+        },
       });
     } catch (error) {
       throw new InternalServerErrorException(error);
