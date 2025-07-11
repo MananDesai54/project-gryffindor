@@ -17,7 +17,7 @@ export default function AgentListScreen() {
   const { data: agents } = useAgentQuery({});
 
   return (
-    <section className="w-1/2 flex flex-col items-center overflow-auto mx-auto my-8">
+    <section className="w-4/5 flex flex-col items-center overflow-auto mx-auto my-8">
       <header className="border-b w-full p-4 flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Agents</h1>

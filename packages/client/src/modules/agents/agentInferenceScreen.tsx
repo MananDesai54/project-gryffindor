@@ -34,6 +34,7 @@ export default function AgentInferenceScreen() {
   });
 
   const [input, setInput] = useState<string>("");
+  const [tempUserInput, setTempUserInput] = useState<string>("");
   const [promptVariablesState, setPromptVariablesState] = useState<
     Record<string, string>
   >(EMPTY_OBJECT_READ_ONLY);
@@ -101,13 +102,15 @@ export default function AgentInferenceScreen() {
   }, [history]);
 
   const performAgentInference = useCallback(async () => {
+    setTempUserInput(input);
+    setInput("");
     await doAgentInference({
       chatId: params.id,
       message: input,
       runTimeApiVariables: apiVariablesState,
       runtimePromptVariables: promptVariablesState,
     });
-    setInput("");
+    setTempUserInput("");
   }, [
     apiVariablesState,
     doAgentInference,
@@ -143,51 +146,61 @@ export default function AgentInferenceScreen() {
   return (
     <>
       <div className="w-full flex justify-center max-h-[80vh] relative">
-        <AppCard
-          title="Runtime Variables"
-          description="Variables that are available to the agent during inference."
-          className="absolute top-0 left-10 w-[300px] z-10"
-          content={
-            <div>
-              <Label className="my-4">Prompt Variables</Label>
-              <div className="p-4 bg-background rounded-2xl">
-                {map(promptVariables, (variable) => (
-                  <div key={variable}>
-                    {variable}
-                    <FormInput
-                      placeholder="Enter value"
-                      value={promptVariablesState?.[variable]}
-                      onChange={(e) =>
-                        setPromptVariablesState({
-                          ...promptVariablesState,
-                          [variable]: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                ))}
+        {promptVariables?.length || apiVariables?.length ? (
+          <AppCard
+            title="Runtime Variables"
+            description="Variables that are available to the agent during inference."
+            className="absolute top-0 left-10 w-[300px] z-10"
+            content={
+              <div>
+                {promptVariables?.length ? (
+                  <>
+                    <Label className="my-4">Prompt Variables</Label>
+                    <div className="p-4 bg-background rounded-2xl">
+                      {map(promptVariables, (variable) => (
+                        <div key={variable}>
+                          {variable}
+                          <FormInput
+                            placeholder="Enter value"
+                            value={promptVariablesState?.[variable]}
+                            onChange={(e) =>
+                              setPromptVariablesState({
+                                ...promptVariablesState,
+                                [variable]: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : null}
+                {apiVariables?.length ? (
+                  <>
+                    <Label className="my-4">API Variables</Label>
+                    <div className="p-4 bg-background rounded-2xl">
+                      {map(apiVariables, (variable) => (
+                        <div key={variable}>
+                          {variable}
+                          <FormInput
+                            placeholder="Enter value"
+                            value={apiVariablesState?.[variable]}
+                            onChange={(e) =>
+                              setApiVariablesState({
+                                ...apiVariablesState,
+                                [variable]: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : null}
               </div>
-              <Label className="my-4">API Variables</Label>
-              <div className="p-4 bg-background rounded-2xl">
-                {map(apiVariables, (variable) => (
-                  <div key={variable}>
-                    {variable}
-                    <FormInput
-                      placeholder="Enter value"
-                      value={apiVariablesState?.[variable]}
-                      onChange={(e) =>
-                        setApiVariablesState({
-                          ...apiVariablesState,
-                          [variable]: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          }
-        />
+            }
+          />
+        ) : null}
         <div className="!w-full flex flex-col items-center">
           <ChatMessageList ref={messagesRef} className="items-center">
             <div className="flex flex-col gap-6 w-1/2">
@@ -242,6 +255,12 @@ export default function AgentInferenceScreen() {
                   </ChatBubbleMessage>
                 </ChatBubble>
               ))}
+              {tempUserInput && (
+                <ChatBubble variant="sent">
+                  <ChatBubbleAvatar src="" fallback="👨🏽" />
+                  <ChatBubbleMessage>{tempUserInput}</ChatBubbleMessage>
+                </ChatBubble>
+              )}
               {isGenerating && (
                 <ChatBubble variant="received">
                   <ChatBubbleAvatar src="" fallback="🤖" />
