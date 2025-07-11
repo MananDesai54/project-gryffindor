@@ -3,7 +3,7 @@ export class LocalStorageUtils {
     return localStorage.getItem(key);
   }
 
-  static setItem(key: string, value: string): void {
+  static setItem(key: string, value: any): void {
     localStorage.setItem(key, value);
   }
 

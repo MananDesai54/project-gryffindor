@@ -6,7 +6,6 @@ import {
   Outlet,
   RouterProvider,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { AnimatePresence } from "motion/react";
 import React from "react";
 import ReactQueryProvider from "../common/api/common/reactQueryProvider";
@@ -39,7 +38,7 @@ const rootRoute = createRootRoute({
       <Layout>
         <ReactQueryProvider>
           <Outlet />
-          <TanStackRouterDevtools position="bottom-left" />
+          {/* <TanStackRouterDevtools position="bottom-left"  /> */}
           <Toaster />
         </ReactQueryProvider>
       </Layout>
