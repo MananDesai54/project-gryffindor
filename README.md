@@ -4,6 +4,7 @@
 git clone https://github.com/manandesai54/project-gryffindor.git
 cd project-gryffindor
 cp packages/server/env/.env.sample packages/server/env/.env
+bun install # optional for local development
 docker-compose up --build -d # server starts on 3000, client on 3001
 ```
 - run following internal services to setup initial environment
