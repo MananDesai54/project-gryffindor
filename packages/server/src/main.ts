@@ -12,28 +12,32 @@ async function bootstrap() {
   });
   app.useGlobalFilters(new HttpExceptionFilter(app.get(ErrorLoggingService)));
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.KAFKA,
-    options: {
-      client: {
-        clientId: 'kafka-consumer',
-        brokers: [process.env.KAFKA_BROKER_URL],
-        connectionTimeout: 5000,
-        requestTimeout: 30000,
-        retry: {
-          initialRetryTime: 1000,
-          retries: 8,
-          maxRetryTime: 30000,
+  try {
+    app.connectMicroservice<MicroserviceOptions>({
+      transport: Transport.KAFKA,
+      options: {
+        client: {
+          clientId: 'kafka-consumer',
+          brokers: [process.env.KAFKA_BROKER_URL],
+          connectionTimeout: 5000,
+          requestTimeout: 30000,
+          retry: {
+            initialRetryTime: 1000,
+            retries: 8,
+            maxRetryTime: 30000,
+          },
+        },
+        consumer: {
+          groupId: 'kafka-consumer',
+          sessionTimeout: 60000,
         },
       },
-      consumer: {
-        groupId: 'kafka-consumer',
-        sessionTimeout: 60000,
-      },
-    },
-  });
+    });
 
-  await app.startAllMicroservices();
+    await app.startAllMicroservices();
+  } catch (error) {
+    Logger.error('[Microservice connect error]', error);
+  }
 
   await app.listen(process.env.PORT ?? 3000);
 }

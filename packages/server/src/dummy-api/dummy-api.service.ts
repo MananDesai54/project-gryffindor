@@ -213,26 +213,14 @@ export class DummyApiService {
     }
   }
 
-  async sendEntityEmail(body: {
-    name: string;
-    threatLevel: string;
-    email: string;
-    vehicleInfo: string;
-    about: string;
-    to: string;
-  }) {
+  async sendEmail(body: { subject: string; body: string; to: string }) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({
         from: 'onboarding@resend.dev',
         to: body.to || 'manan5401desai@gmail.com',
-        subject: `${body.threatLevel} Threat Reported for ${body.name}`,
-        html: `<p>
-          Threat reported
-          <p>
-          ${JSON.stringify(body)}
-          </p>
-        </p>`,
+        subject: body.subject,
+        html: body.body,
       });
       return 'Email sent successfully';
     } catch (error) {

@@ -17,7 +17,7 @@ interface ToolInput {
 }
 
 export function generateZodSchemaFromApiDef(
-  paramSchema: ApiParamsValueSchema[],
+  paramSchema?: ApiParamsValueSchema[],
   runTimeApiVariables?: Record<string, string>,
 ): z.ZodObject<any> | null {
   if (!paramSchema || paramSchema?.length === 0) {
@@ -87,7 +87,7 @@ export class AiToolFactory {
         .string()
         .url()
         .describe(
-          `The URL to send the request to. Based on query please Create a valid api url using ${tool.apiSchema.url} and ${JSON.stringify(tool.apiSchema.pathParam)}. If param is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use ${JSON.stringify(runTimeApiVariables)}. Consider the request method as ${tool.apiSchema.method}`,
+          `The URL to send the request to. Based on query please Create a valid api url using ${tool.apiSchema.url} and ${JSON.stringify(tool.apiSchema.pathParams)}. If param is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use ${JSON.stringify(runTimeApiVariables)}. Consider the request method as ${tool.apiSchema.method}`,
         ),
     }) satisfies z.ZodType<ToolInput>;
 

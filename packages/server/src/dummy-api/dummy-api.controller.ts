@@ -40,18 +40,15 @@ export class DummyApiController {
     return this.dummyApiService.addSuspectedUser(body);
   }
 
-  @Post('/send-entity-email')
+  @Post('/send-email')
   sendEntityEmail(
     @Body()
     body: {
-      name: string;
-      threatLevel: string;
-      email: string;
-      vehicleInfo: string;
-      about: string;
+      subject: string;
+      body: string;
       to: string;
     },
   ) {
-    return this.dummyApiService.sendEntityEmail(body);
+    return this.dummyApiService.sendEmail(body);
   }
 }
