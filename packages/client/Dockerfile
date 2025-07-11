@@ -1,13 +1,13 @@
 FROM oven/bun:1 AS base
 WORKDIR /app
 
-COPY packages/server/package.json .
+COPY packages/client/package.json .
 RUN bun install
 
-COPY packages/server .
+COPY packages/client .
 
 # RUN bun test
 RUN bun run build
 
 EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "run", "start" ]
+ENTRYPOINT [ "bun", "run", "dev" ]
