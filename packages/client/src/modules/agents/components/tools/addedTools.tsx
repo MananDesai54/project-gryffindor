@@ -34,9 +34,6 @@ export default function AddedTools(props: Props) {
             .value(agent?.configuration?.customTools || [])
             .build(),
         )
-        .addFilter(
-          new FilterBuilder().field("isStandard").value([false]).build(),
-        )
         .build(),
     [agent?.configuration?.customTools],
   );
