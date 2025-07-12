@@ -10,13 +10,13 @@ const agentInferenceFn = async (mutationParams: {
   chatId: string;
   message: string;
   runtimePromptVariables?: Record<string, string>;
-  runTimeApiVariables?: Record<string, string>;
+  runtimeApiVariables?: Record<string, string>;
 }) => {
   return agentInferenceServiceInstance.chat(
     mutationParams.chatId,
     mutationParams.message,
     mutationParams.runtimePromptVariables,
-    mutationParams.runTimeApiVariables,
+    mutationParams.runtimeApiVariables,
   );
 };
 

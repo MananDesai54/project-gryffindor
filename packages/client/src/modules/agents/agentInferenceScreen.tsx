@@ -107,7 +107,7 @@ export default function AgentInferenceScreen() {
     await doAgentInference({
       chatId: params.id,
       message: input,
-      runTimeApiVariables: apiVariablesState,
+      runtimeApiVariables: apiVariablesState,
       runtimePromptVariables: promptVariablesState,
     });
     setTempUserInput("");

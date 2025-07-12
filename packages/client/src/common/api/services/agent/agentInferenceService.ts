@@ -19,21 +19,21 @@ class AgentInferenceService extends ApiService {
     chatId: string,
     message: string,
     runtimePromptVariables?: Record<string, string>,
-    runTimeApiVariables?: Record<string, string>,
+    runtimeApiVariables?: Record<string, string>,
   ) {
     return apiRequest.post<
       {
         chatId: string;
         message: string;
         runtimePromptVariables?: Record<string, string>;
-        runTimeApiVariables?: Record<string, string>;
+        runtimeApiVariables?: Record<string, string>;
       },
       { output: string }
     >(this.createUrl(`chat/${chatId}`), {
       chatId,
       message,
       runtimePromptVariables,
-      runTimeApiVariables,
+      runtimeApiVariables,
     });
   }
 

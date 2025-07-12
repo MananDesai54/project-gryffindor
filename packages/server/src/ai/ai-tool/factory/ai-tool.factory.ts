@@ -18,7 +18,7 @@ interface ToolInput {
 
 export function generateZodSchemaFromApiDef(
   paramSchema?: ApiParamsValueSchema[],
-  runTimeApiVariables?: Record<string, string>,
+  runtimeApiVariables?: Record<string, string>,
 ): z.ZodObject<any> | null {
   if (!paramSchema || paramSchema?.length === 0) {
     return null;
@@ -44,8 +44,10 @@ export function generateZodSchemaFromApiDef(
     }
 
     fieldSchema = fieldSchema.describe(
-      `name of field is ${schema.name}. description: ${schema.description}. If param value type is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use ${JSON.stringify(runTimeApiVariables)}. If param value type is ${AiToolParamValueType.CONSTANT} then use value provided in ${schema.value}`,
+      `name of field is ${schema.name}. description: ${schema.description}. If param value type is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use this variables: '''${JSON.stringify(runtimeApiVariables)}'''. If param value type is ${AiToolParamValueType.CONSTANT} then use value provided in ${schema.value}`,
     );
+
+    Logger.log({ api_param: schema, runtimeApiVariables });
 
     fieldSchema = fieldSchema.optional();
 
@@ -61,20 +63,20 @@ export class AiToolFactory {
 
   createWebhookTool(
     tool: WebhookAiTool,
-    runTimeApiVariables?: Record<string, string>,
+    runtimeApiVariables?: Record<string, string>,
   ): DynamicStructuredTool {
     const bodySchema = generateZodSchemaFromApiDef(
       tool.apiSchema.body?.payloadParams,
-      runTimeApiVariables,
+      runtimeApiVariables,
     );
 
     const headersSchema = generateZodSchemaFromApiDef(
       tool.apiSchema.headers,
-      runTimeApiVariables,
+      runtimeApiVariables,
     );
     const queryParamsSchema = generateZodSchemaFromApiDef(
       tool.apiSchema.queryParams,
-      runTimeApiVariables,
+      runtimeApiVariables,
     );
 
     const inputSchema = z.object({
@@ -87,13 +89,13 @@ export class AiToolFactory {
         .string()
         .url()
         .describe(
-          `The URL to send the request to. Based on query please Create a valid api url using ${tool.apiSchema.url} and ${JSON.stringify(tool.apiSchema.pathParams)}. If param is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use ${JSON.stringify(runTimeApiVariables)}. Consider the request method as ${tool.apiSchema.method}`,
+          `The URL to send the request to. Based on query please Create a valid api url using ${tool.apiSchema.url} and ${JSON.stringify(tool.apiSchema.pathParams)}. If param is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use ${JSON.stringify(runtimeApiVariables)} Prefer these variable over other possible values. Consider the request method as ${tool.apiSchema.method}`,
         ),
     }) satisfies z.ZodType<ToolInput>;
 
     return new DynamicStructuredTool({
       name: tool.name,
-      description: `${tool.description}. Use this tool for requests requiring a ${tool.apiSchema.method} to ${tool.apiSchema.url}. The input should be a JSON string representing the request payload, or an empty string for GET requests. This are runtime variables that can be used: ${JSON.stringify(runTimeApiVariables)}`,
+      description: `${tool.description}. Use this tool for requests requiring a ${tool.apiSchema.method} to ${tool.apiSchema.url}. The input should be a JSON string representing the request payload, or an empty string for GET requests. This are runtime variables that can be used: ${JSON.stringify(runtimeApiVariables)}`,
       schema: inputSchema,
       func: async (input: ToolInput) => {
         const { queryParams, body, headers, url } = input;
