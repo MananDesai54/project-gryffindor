@@ -33,7 +33,7 @@ export class AiAgentFactory {
     agentId: string,
     runTimeVariables?: Record<string, string>,
     runTimeApiVariables?: Record<string, string>,
-  ): Promise<AgentExecutor> {
+  ) {
     const aiAgent = await this.aiAgentService.read(agentId);
     const llmDetails = aiAgent.configuration?.llm
       ? await this.llmService.read(aiAgent.configuration?.llm)

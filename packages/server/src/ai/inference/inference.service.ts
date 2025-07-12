@@ -3,6 +3,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 
 import { LangfuseCallbackHandler } from '../../infra/observability/langfuse/langfuse.callback';
@@ -14,6 +15,8 @@ import { HistoryService } from './history/history.service';
 
 @Injectable()
 export class InferenceService {
+  private readonly logger = new Logger(InferenceService.name);
+
   constructor(
     @Inject() private readonly aiAgentFactory: AiAgentFactory,
     @Inject() private readonly historyService: HistoryService,
@@ -68,11 +71,42 @@ export class InferenceService {
         { input: message, chat_history: chatHistory },
         { callbacks: [langfuseCallBack] },
       );
-      await this.historyService.addTurn(chatId, message, result.output);
+      let output = result.output;
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      if (!output || output?.trim() === '') {
+        // Now, let's find out why it was empty.
+        // The generation info is often nested in the full chain output.
+        // This requires inspecting your specific log structure for the result.
+        // Let's assume the LLM result is accessible somewhere in the response.
+        const generationInfo = this._findGenerationInfo(result);
+
+        if (generationInfo?.finishReason === 'SAFETY') {
+          this.logger.warn('LLM response was blocked due to safety filters.');
+          output =
+            'I am sorry, but I cannot process that request as it may have triggered content safety filters. Please try rephrasing your query.';
+          trace
+            .span({
+              level: 'WARNING',
+              statusMessage: 'Blocked by safety filter',
+            })
+            .end();
+        } else {
+          this.logger.warn(
+            'LLM returned an empty or null response for an unknown reason.',
+            { generationInfo, result },
+          );
+          output =
+            'I am sorry, but I was unable to generate a response. Please try again.';
+          trace.span({ level: 'ERROR', statusMessage: 'Empty LLM response' });
+        }
+      }
+
+      await this.historyService.addTurn(chatId, message, output);
       trace
         .span({
           level: 'DEBUG',
-          output: result.output,
+          output: output,
           input: message,
           endTime: new Date(),
         })
@@ -97,5 +131,20 @@ export class InferenceService {
     } finally {
       await this.langfuseService.shutdown();
     }
+  }
+
+  private _findGenerationInfo(result: any): { finishReason?: string } | null {
+    // This is a common pattern, but you should log your `fullResult` to confirm
+    if (
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      result.intermediate_steps?.[0]?.observation?.generations?.[0]?.[0]
+        ?.generationInfo
+    ) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+      return result.intermediate_steps[0]?.observation?.generations?.[0]?.[0]
+        ?.generationInfo;
+    }
+    // Check other possible locations
+    return null;
   }
 }

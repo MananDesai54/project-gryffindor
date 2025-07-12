@@ -6,12 +6,13 @@ import {
 } from '@langchain/core/runnables';
 import { StructuredTool } from '@langchain/core/tools';
 import { ChatOpenAI } from '@langchain/openai';
-import { Injectable } from '@nestjs/common';
-import { AgentExecutor } from 'langchain/agents';
+import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import { Injectable, Logger } from '@nestjs/common';
 import { formatToOpenAIToolMessages } from 'langchain/agents/format_scratchpad/openai_tools';
 import { OpenAIToolsAgentOutputParser } from 'langchain/agents/openai/output_parser';
 import { CustomLLM, LLM, StandardLLM } from '../../llm/schema/llm.schema';
 import { LLMType, StandardLLMProvider } from '../../llm/types/llm.type';
+import { AgentExecutor } from 'langchain/agents';
 
 @Injectable()
 export class LLMFactory {
@@ -28,15 +29,16 @@ export class LLMFactory {
             // streaming: true,
           });
         case StandardLLMProvider.GOOGLE:
-          return new ChatOpenAI({
+          return new ChatGoogleGenerativeAI({
             model: llm.modelId || 'gemini-2.5-flash',
             temperature: temperature,
-            maxTokens: mt,
-            configuration: {
-              apiKey: process.env.GEMINI_API_KEY,
-              baseURL:
-                'https://generativelanguage.googleapis.com/v1beta/openai/',
-            },
+            maxOutputTokens: mt,
+            apiKey: process.env.GEMINI_API_KEY,
+            // configuration: {
+            //   apiKey: process.env.GEMINI_API_KEY,
+            //   baseURL:
+            //     'https://generativelanguage.googleapis.com/v1beta/openai/',
+            // },
             // streaming: true,
           });
         case StandardLLMProvider.ANTHROPIC:
@@ -74,8 +76,8 @@ export class LLMFactory {
       case LLMType.STANDARD:
         switch ((llm as StandardLLM).provider as StandardLLMProvider) {
           case StandardLLMProvider.OPENAI:
-          case StandardLLMProvider.GOOGLE:
           case StandardLLMProvider.ANTHROPIC:
+          case StandardLLMProvider.GOOGLE:
             return this._createOpenAIAgentExecutor(llmModel, prompt, tools);
           default:
             throw new Error(`Unsupported Standard LLM type: ${llm.type}`);
@@ -97,6 +99,10 @@ export class LLMFactory {
     const agent = RunnableSequence.from([
       RunnablePassthrough.assign({
         agent_scratchpad: (input) => {
+          Logger.debug('[scratch pad input]', input);
+          if (!input?.steps || (input?.steps as any[])?.length === 0) {
+            return [];
+          }
           return formatToOpenAIToolMessages(input.steps as any[]);
         },
       }),

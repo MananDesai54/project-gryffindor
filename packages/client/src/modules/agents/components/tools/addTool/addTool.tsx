@@ -15,6 +15,7 @@ import { AddBody } from "./addBody";
 import AddParameters from "./addParamerters";
 import { AddQueryParam } from "./addQueryParam";
 import AddToolBasicConfig from "./addToolBasicConfig";
+import { NotifyError } from "@gryffindor/client/common/components/app/toast";
 
 type Props = {
   tool: AiTool;
@@ -44,6 +45,18 @@ export default function AddTool(props: Props) {
 
   const onSave = useCallback(() => {
     if (!newTool || !activeToolType) return;
+    if (!newTool.name || !newTool.description) {
+      NotifyError("Tool Name and description are required");
+      return;
+    }
+    if (!newTool.apiSchema?.url || !newTool.apiSchema?.method) {
+      NotifyError("Tool URL and method are required");
+      return;
+    }
+    if (newTool?.apiSchema?.body && !newTool.apiSchema?.body?.description) {
+      NotifyError("Tool body description is required");
+      return;
+    }
     onAddTool({
       ...newTool,
       type: activeToolType,
