@@ -23,7 +23,7 @@ const AiToolIcon = {
 };
 
 export default function AddedTools(props: Props) {
-  const { agent, onChange, onOpenToolDetails } = props;
+  const { agent, onChange } = props;
 
   const request = useMemo(
     () =>
@@ -52,9 +52,9 @@ export default function AddedTools(props: Props) {
         const Icon = AiToolIcon[tool.type];
         return (
           <div
-            onClick={() => {
-              onOpenToolDetails(tool);
-            }}
+            // onClick={() => {
+            //   onOpenToolDetails(tool);
+            // }}
             key={tool._id}
             className="flex items-center justify-between p-3 rounded-xl hover:bg-secondary cursor-pointer"
           >
