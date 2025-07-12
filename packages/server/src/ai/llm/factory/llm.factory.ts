@@ -6,13 +6,12 @@ import {
 } from '@langchain/core/runnables';
 import { StructuredTool } from '@langchain/core/tools';
 import { ChatOpenAI } from '@langchain/openai';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { Injectable, Logger } from '@nestjs/common';
+import { AgentExecutor } from 'langchain/agents';
 import { formatToOpenAIToolMessages } from 'langchain/agents/format_scratchpad/openai_tools';
 import { OpenAIToolsAgentOutputParser } from 'langchain/agents/openai/output_parser';
 import { CustomLLM, LLM, StandardLLM } from '../../llm/schema/llm.schema';
 import { LLMType, StandardLLMProvider } from '../../llm/types/llm.type';
-import { AgentExecutor } from 'langchain/agents';
 
 @Injectable()
 export class LLMFactory {
@@ -29,17 +28,17 @@ export class LLMFactory {
             // streaming: true,
           });
         case StandardLLMProvider.GOOGLE:
-          return new ChatGoogleGenerativeAI({
+          return new ChatOpenAI({
             model: llm.modelId || 'gemini-2.5-flash',
             temperature: temperature,
-            maxOutputTokens: mt,
+            maxTokens: mt,
             apiKey: process.env.GEMINI_API_KEY,
-            // configuration: {
-            //   apiKey: process.env.GEMINI_API_KEY,
-            //   baseURL:
-            //     'https://generativelanguage.googleapis.com/v1beta/openai/',
-            // },
-            // streaming: true,
+            configuration: {
+              apiKey: process.env.GEMINI_API_KEY,
+              baseURL:
+                'https://generativelanguage.googleapis.com/v1beta/openai/',
+            },
+            streaming: true,
           });
         case StandardLLMProvider.ANTHROPIC:
           return new ChatOpenAI({
