@@ -5,7 +5,6 @@ import {
 } from '@langchain/core/prompts';
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { Inject, Injectable } from '@nestjs/common';
-import { AgentExecutor } from 'langchain/agents';
 import { forEach } from 'lodash';
 import { AiToolService } from '../../ai-tool/ai-tool.service';
 import { AiToolFactory } from '../../ai-tool/factory/ai-tool.factory';
@@ -32,7 +31,7 @@ export class AiAgentFactory {
   async create(
     agentId: string,
     runTimeVariables?: Record<string, string>,
-    runTimeApiVariables?: Record<string, string>,
+    runtimeApiVariables?: Record<string, string>,
   ) {
     const aiAgent = await this.aiAgentService.read(agentId);
     const llmDetails = aiAgent.configuration?.llm
@@ -71,7 +70,7 @@ export class AiAgentFactory {
               ...tool.toObject(),
               name: this._sanitizeToolName(tool.name),
             } as unknown as WebhookAiTool,
-            runTimeApiVariables,
+            runtimeApiVariables,
           ),
         );
       }

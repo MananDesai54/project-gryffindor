@@ -13,7 +13,8 @@ import { SearchResponse } from '../../core/rest/request/request.type';
 import { RequestUtil } from '../../core/rest/request/request.util';
 import { SearchService } from '../../core/rest/search.controller';
 import { CreateAiToolDto, UpdateAiToolDto } from './dto/ai-tool.dto';
-import { AiTool } from './schema/ai-tool.schema';
+import { AiTool, WebhookAiTool } from './schema/ai-tool.schema';
+import { AiToolType } from './types/ai-tool.type';
 
 @Injectable()
 export class AiToolService
@@ -21,6 +22,8 @@ export class AiToolService
 {
   constructor(
     @InjectModel(AiTool.name) private readonly aiToolModel: Model<AiTool>,
+    @InjectModel(AiToolType.WEB_HOOK)
+    private readonly webhookAiToolModel: Model<WebhookAiTool>,
   ) {}
 
   async create(data: CreateAiToolDto, authContext: AuthContextType) {
@@ -41,7 +44,7 @@ export class AiToolService
     authContext: AuthContextType,
   ) {
     try {
-      const tool = await this.aiToolModel.findOneAndUpdate(
+      const tool = await this.webhookAiToolModel.findOneAndUpdate(
         {
           _id: id,
           creator: authContext.userId,
