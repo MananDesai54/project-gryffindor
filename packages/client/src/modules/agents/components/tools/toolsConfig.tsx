@@ -1,14 +1,14 @@
-import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
-import AddTool from "./addTool/addTool";
-import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
-import { useCallback, useState } from "react";
-import { AiTool } from "@gryffindor/client/common/types/agent/tool.type";
 import {
   useCreateAiToolMutation,
   useUpdateAiToolMutation,
 } from "@gryffindor/client/common/api/serverQueries/agent/useAiToolMutation";
-import AddedTools from "./addedTools";
+import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
+import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
 import { AiToolRequestMethod } from "@gryffindor/client/common/types/agent/ai.type";
+import { AiTool } from "@gryffindor/client/common/types/agent/tool.type";
+import { useCallback, useState } from "react";
+import AddedTools from "./addedTools";
+import AddTool from "./addTool/addTool";
 
 type Props = {
   agent: Agent;

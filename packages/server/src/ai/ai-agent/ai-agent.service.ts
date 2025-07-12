@@ -85,7 +85,7 @@ export class AiAgentService
           'You cannot update this agent. Either you do not own it or it does not exist.',
         );
 
-      const existingKbs = exestingAgent.configuration.knowledgeBase;
+      const existingKbs = exestingAgent.configuration?.knowledgeBase;
       const newKbs = updateAiAgentDto.configuration?.knowledgeBase;
 
       const { added, removed } = ArrayUtils.calculateIdDiff(

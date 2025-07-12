@@ -41,6 +41,7 @@ export const AddBody = ({
         <div className="grid gap-4">
           <Label>Description</Label>
           <Textarea
+            className="!bg-background"
             placeholder="Enter description for body (This is needed as this will be passed to the LLM)"
             value={value?.description}
             onChange={(e) => {

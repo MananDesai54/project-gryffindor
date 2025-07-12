@@ -44,7 +44,7 @@ export function generateZodSchemaFromApiDef(
     }
 
     fieldSchema = fieldSchema.describe(
-      `name of field is ${schema.name}. description: ${schema.description}. If param valuetype is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use ${JSON.stringify(runTimeApiVariables)}`,
+      `name of field is ${schema.name}. description: ${schema.description}. If param value type is ${AiToolParamValueType.DYNAMIC_VARIABLE} then you can use ${JSON.stringify(runTimeApiVariables)}. If param value type is ${AiToolParamValueType.CONSTANT} then use value provided in ${schema.value}`,
     );
 
     fieldSchema = fieldSchema.optional();

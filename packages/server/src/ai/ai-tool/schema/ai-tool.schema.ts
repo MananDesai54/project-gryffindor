@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { AiToolConstants } from '../../ai-tool/constant/ai.constant';
+import { AiToolConstants } from '../../ai-tool/constant/ai-tool.constant';
 
 export type AiToolDocument = HydratedDocument<AiTool>;
 

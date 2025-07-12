@@ -21,3 +21,7 @@ curl --location 'http://localhost:3000/user/create' \
 # create standard llms
 curl --location 'http://localhost:3000/ai/internal/llm/create-standard-llms'
 ```
+
+# some dummy tools for testing
+- check out dummy-api module it has many dummy webhook api endpoint which can be used to test webhook functionality
+- There is sample Email action tool in `server/src/ai/ai-tool/constant/ai-tool.constant.ts`
