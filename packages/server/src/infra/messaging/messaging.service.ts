@@ -64,7 +64,7 @@ export class MessagingService {
     private readonly messagingConsumerRegistryService: MessagingConsumerRegistryService,
   ) {
     this.kafka = new Kafka({
-      clientId: 'griffindor-app',
+      clientId: 'gryffindor-app',
       brokers: [process.env.KAFKA_BROKER_URL],
     });
 
