@@ -18,6 +18,7 @@ import { MessagingConsumer } from '../../../infra/messaging/decorators/messaging
 import { KnowbaseContentExtractorService } from '../../knowledge-base/knowbase-content-extractor.service';
 import { KnowledgeBaseService } from '../../knowledge-base/knowledge-base.service';
 import { AiAgentKnowledgeBaseContentInjectionParams } from '../types/ai-agent.type';
+import { ObjectUtils } from 'src/core/utils/objectUtils';
 
 /**
  * considered that only agent update can trigger this flow and indexes will be created per agent and not per knowledge base.
@@ -123,9 +124,11 @@ export class AiAgentKnowledgeBaseIngestionConsumer {
           document = new Document({
             pageContent: extractedDocument.pageContent,
             id: kb._id,
-            metadata: extractedDocument.metadata,
+            metadata: ObjectUtils.flattenObject(
+              extractedDocument.metadata,
+            ) as Map<string, any>,
           });
-          this.logger.debug(`Content extracted for KB ${kb._id}`);
+          this.logger.debug(`Content extracted for KB ${kb._id}`, { document });
 
           await this.knowledgeBaseService.update(
             kb._id,
@@ -133,7 +136,7 @@ export class AiAgentKnowledgeBaseIngestionConsumer {
               content: document.pageContent,
               sourceContentMetadata: {
                 status: Status.Completed,
-                metadata: extractedDocument.metadata as Map<string, any>,
+                metadata: document.metadata as Map<string, any>,
               },
             },
             {
@@ -183,6 +186,9 @@ export class AiAgentKnowledgeBaseIngestionConsumer {
       agentId,
       ChromaDBResourceType.AgentKnowledgeBase,
       knowledgeBaseIds,
+    );
+    this.logger.debug(
+      `KBs ${knowledgeBaseIds.join(', ')} deleted for agent ${agentId}`,
     );
   }
 }

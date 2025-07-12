@@ -3,9 +3,10 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { last, split } from 'lodash';
+import { last, reduce, split } from 'lodash';
 import { FileService } from '../file.service';
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
+import { Document } from '@langchain/core/documents';
 
 @Injectable()
 export class PDFContentLoader {
@@ -16,7 +17,14 @@ export class PDFContentLoader {
     if (!fileId) throw new InternalServerErrorException('fileId is required');
     const fileBuffer = await this.fileService.downloadFile(fileId);
     const loader = new PDFLoader(new Blob([fileBuffer]));
-    const document = await loader.load();
-    return document[0];
+    const documents = await loader.load();
+    return new Document({
+      pageContent: reduce(documents, (acc, doc) => acc + doc.pageContent, ''),
+      metadata: reduce(
+        documents,
+        (acc, doc) => ({ ...acc, ...doc.metadata }),
+        {},
+      ),
+    });
   }
 }
