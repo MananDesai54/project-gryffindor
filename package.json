@@ -13,6 +13,7 @@
   },
   "scripts": {
     "dev": "docker-compose up --build",
-    "start": "docker-compose up --build -d"
+    "start": "docker-compose up --build -d",
+    "dev:client": "bun run --cwd packages/client dev:temp"
   }
 }

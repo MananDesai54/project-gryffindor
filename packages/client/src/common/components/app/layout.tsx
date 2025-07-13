@@ -13,22 +13,17 @@ import {
 import { Routes } from "@gryffindor/client/route/routes";
 import { useNavigate } from "@tanstack/react-router";
 import { BrainCircuit, Home, Moon, Sun } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../../api/decorators/hoc/authContextProvider";
-import { LocalStorageUtils } from "../../utils/localStorageUtils";
+import { Theme, ThemeContext } from "../../api/decorators/hoc/themeProvider";
 
 export default function Layout(props: { children: React.ReactNode }) {
   const { isLoggedIn } = useContext(AuthContext);
 
-  const [isDarkMode, setIsDarkMode] = useState(
-    LocalStorageUtils.getItem("theme") === "dark",
-  );
+  const { theme, setTheme } = useContext(ThemeContext);
+  const isDarkTheme = theme === Theme.dark;
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    document.body.className = isDarkMode ? "dark" : "light";
-  }, [isDarkMode]);
 
   if (!isLoggedIn) {
     return <div className="h-screen bg-secondary flex">{props.children}</div>;
@@ -65,20 +60,27 @@ export default function Layout(props: { children: React.ReactNode }) {
                   <span className="truncate font-semibold">Agents</span>
                 </div>
               </SidebarMenuButton>
+              {/* <SidebarMenuButton size="lg" className="my-1 cursor-pointer">
+                <div
+                  className="flex aspect-square size-8 items-center justify-center rounded-lg"
+                  onClick={() => navigate({ to: Routes.AI_WORKFLOW_LIST })}
+                >
+                  <Workflow className="size-5" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">Workflows</span>
+                </div>
+              </SidebarMenuButton> */}
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter>
             <div
               className="cursor-pointer"
               onClick={() => {
-                setIsDarkMode(!isDarkMode);
-                LocalStorageUtils.setItem(
-                  "theme",
-                  isDarkMode ? "light" : "dark",
-                );
+                setTheme(isDarkTheme ? Theme.light : Theme.dark);
               }}
             >
-              {isDarkMode ? <Moon /> : <Sun />}
+              {isDarkTheme ? <Moon /> : <Sun />}
             </div>
           </SidebarFooter>
         </Sidebar>

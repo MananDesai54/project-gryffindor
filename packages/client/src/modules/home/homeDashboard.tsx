@@ -19,7 +19,7 @@ const ACTIONS: Action[] = [
   // {
   //   icon: <Workflow />,
   //   title: "Create Agentic Workflow",
-  //   link: Routes.AGENT_WORKFLOW,
+  //   link: Routes.AI_WORKFLOW_CREATE,
   // },
   {
     icon: <BrainCircuit />,
