@@ -1,81 +1,104 @@
+import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@gryffindor/client/common/components/shadcn/components/ui/collapsible";
-import {
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-} from "@gryffindor/client/common/components/shadcn/components/ui/sidebar";
+import { SidebarRail } from "@gryffindor/client/common/components/shadcn/components/ui/sidebar";
 import {
   AiWorkflowComponentCategory,
   BaseWorkflowComponent,
 } from "@gryffindor/client/common/types/ai-workflow/ai-workflow.type";
 import { map } from "lodash";
-import { ChevronRight } from "lucide-react";
+import {
+  BrainCircuit,
+  BrainCog,
+  Cable,
+  ChevronRight,
+  Database,
+  GripVertical,
+  Plus,
+} from "lucide-react";
 
 type Props = {
   workflowComponents: Record<
     AiWorkflowComponentCategory,
     BaseWorkflowComponent[]
   >;
+  onAddComponent: (component: BaseWorkflowComponent) => void;
+};
+
+const WorkflowCategoryVsIcon = {
+  [AiWorkflowComponentCategory.IO]: Cable,
+  [AiWorkflowComponentCategory.Agent]: BrainCircuit,
+  [AiWorkflowComponentCategory.LLM]: BrainCog,
+  [AiWorkflowComponentCategory.Data]: Database,
 };
 
 export function SettingsPanel(props: Props) {
-  const { workflowComponents } = props;
+  const { workflowComponents, onAddComponent } = props;
 
   return (
-    <div className="w-[400px] bg-background">
-      <SidebarContent className="gap-0">
+    <aside className="w-[400px] bg-background">
+      <div className="gap-0 p-2">
         {map(
           workflowComponents,
           (
             components: BaseWorkflowComponent[],
             category: AiWorkflowComponentCategory,
-          ) => (
-            <Collapsible
-              key={category}
-              title={category}
-              className="group/collapsible"
-            >
-              <SidebarGroup className="!py-0">
-                <SidebarGroupLabel
-                  asChild
-                  className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm cursor-pointer"
-                >
-                  <CollapsibleTrigger>
-                    {category}
+          ) => {
+            const Icon = WorkflowCategoryVsIcon[category];
+
+            return (
+              <Collapsible
+                key={category}
+                title={category}
+                className="group/collapsible"
+              >
+                <div className="!py-0">
+                  <CollapsibleTrigger className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm cursor-pointer flex items-center p-2 rounded-md w-full">
+                    {Icon ? <Icon className="mr-2" size={16} /> : null}
+                    <span>{category}</span>
                     <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                   </CollapsibleTrigger>
-                </SidebarGroupLabel>
-                <CollapsibleContent>
-                  <SidebarGroupContent>
-                    <SidebarMenu className="p-2">
+                  <CollapsibleContent>
+                    <div className="p-2">
                       {map(components, (component: BaseWorkflowComponent) => (
-                        <SidebarMenuItem key={category}>
-                          <SidebarMenuButton
-                            asChild
-                            className="cursor-pointer bg-secondary p-5 my-1 border border-transparent hover:border-gray-400"
-                          >
-                            <div>{component.name}</div>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
+                        <div
+                          draggable
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData(
+                              "application/reactflow",
+                              JSON.stringify(component),
+                            );
+                            e.dataTransfer.effectAllowed = "move";
+                          }}
+                          key={category}
+                          className="group cursor-pointer bg-secondary p-2 my-2 rounded-md hover:bg-neutral-900 transition-all flex justify-between items-center"
+                        >
+                          <div>{component.name}</div>
+                          <div className="flex items-center">
+                            <Button
+                              className="opacity-0 group-hover:opacity-100 transition-opacity"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => onAddComponent(component)}
+                            >
+                              <Plus size={16} />
+                            </Button>
+                            <GripVertical />
+                          </div>
+                        </div>
                       ))}
-                    </SidebarMenu>
-                  </SidebarGroupContent>
-                </CollapsibleContent>
-              </SidebarGroup>
-            </Collapsible>
-          ),
+                    </div>
+                  </CollapsibleContent>
+                </div>
+              </Collapsible>
+            );
+          },
         )}
-      </SidebarContent>
+      </div>
       <SidebarRail />
-    </div>
+    </aside>
   );
 }
