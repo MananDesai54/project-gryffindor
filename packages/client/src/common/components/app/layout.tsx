@@ -12,7 +12,7 @@ import {
 } from "@gryffindor/client/common/components/shadcn/components/ui/sidebar";
 import { Routes } from "@gryffindor/client/route/routes";
 import { useNavigate } from "@tanstack/react-router";
-import { BrainCircuit, Home, Moon, Sun } from "lucide-react";
+import { BrainCircuit, Home, Moon, Sun, Workflow } from "lucide-react";
 import { useContext } from "react";
 import { AuthContext } from "../../api/decorators/hoc/authContextProvider";
 import { Theme, ThemeContext } from "../../api/decorators/hoc/themeProvider";
@@ -60,7 +60,7 @@ export default function Layout(props: { children: React.ReactNode }) {
                   <span className="truncate font-semibold">Agents</span>
                 </div>
               </SidebarMenuButton>
-              {/* <SidebarMenuButton size="lg" className="my-1 cursor-pointer">
+              <SidebarMenuButton size="lg" className="my-1 cursor-pointer">
                 <div
                   className="flex aspect-square size-8 items-center justify-center rounded-lg"
                   onClick={() => navigate({ to: Routes.AI_WORKFLOW_LIST })}
@@ -70,7 +70,7 @@ export default function Layout(props: { children: React.ReactNode }) {
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">Workflows</span>
                 </div>
-              </SidebarMenuButton> */}
+              </SidebarMenuButton>
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter>
