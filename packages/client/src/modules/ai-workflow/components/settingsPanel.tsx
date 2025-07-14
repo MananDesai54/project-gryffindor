@@ -4,7 +4,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@gryffindor/client/common/components/shadcn/components/ui/collapsible";
-import { SidebarRail } from "@gryffindor/client/common/components/shadcn/components/ui/sidebar";
 import {
   AiWorkflowComponentCategory,
   BaseWorkflowComponent,
@@ -98,7 +97,6 @@ export function SettingsPanel(props: Props) {
           },
         )}
       </div>
-      <SidebarRail />
     </aside>
   );
 }

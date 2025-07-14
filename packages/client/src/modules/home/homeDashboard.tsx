@@ -2,7 +2,7 @@ import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
 import { Routes } from "@gryffindor/client/route/routes";
 import { Link } from "@tanstack/react-router";
 import { map } from "lodash";
-import { BrainCircuit, Zap } from "lucide-react";
+import { BrainCircuit, Workflow, Zap } from "lucide-react";
 
 type Action = {
   icon: React.ReactNode;
@@ -16,11 +16,11 @@ const ACTIONS: Action[] = [
     title: "Build Agent",
     link: Routes.AGENT_CREATE,
   },
-  // {
-  //   icon: <Workflow />,
-  //   title: "Create Agentic Workflow",
-  //   link: Routes.AI_WORKFLOW_CREATE,
-  // },
+  {
+    icon: <Workflow />,
+    title: "Create Agentic Workflow",
+    link: Routes.AI_WORKFLOW_CREATE,
+  },
   {
     icon: <BrainCircuit />,
     title: "Interact with Agent",
