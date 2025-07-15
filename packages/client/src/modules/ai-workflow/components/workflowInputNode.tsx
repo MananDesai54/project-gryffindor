@@ -13,9 +13,14 @@ function WorkflowInputNode(props: NodeProps<AiWorkflowComponent>) {
         description={data.description}
         content={<div className="bg-background">Input</div>}
         footer={
-          <div className=" w-full">
+          <div className="relative w-full">
             Output
-            <Handle type="source" position={Position.Right} className="p-1" />
+            <Handle
+              id={data.id}
+              type="source"
+              position={Position.Right}
+              className="p-1 absolute !top-1"
+            />
           </div>
         }
       />

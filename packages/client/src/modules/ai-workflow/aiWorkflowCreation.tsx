@@ -4,8 +4,10 @@ import {
 } from "@gryffindor/client/common/api/decorators/hoc/themeProvider";
 import { EMPTY_ARRAY_READ_ONLY } from "@gryffindor/client/common/constants/readOnly";
 import {
+  AiWorkflowComponent,
   AiWorkflowComponentCategory,
   AiWorkflowComponentType,
+  AiWorkflowNodeOutputType,
   BaseWorkflowComponent,
 } from "@gryffindor/client/common/types/ai-workflow/ai-workflow.type";
 import {
@@ -60,6 +62,25 @@ const WorkflowComponents: Record<
   [AiWorkflowComponentCategory.Agent]: [],
   [AiWorkflowComponentCategory.LLM]: [],
   [AiWorkflowComponentCategory.Data]: [],
+};
+
+const WorkflowComponentNodes: Record<
+  AiWorkflowComponentType,
+  AiWorkflowComponent
+> = {
+  [AiWorkflowComponentType.ChatInput]: {
+    data: {
+      node: {
+        outputs: [
+          {
+            id: `${AiWorkflowComponentType.ChatInput}`,
+            name: "Chat Input",
+            outputTypes: [AiWorkflowNodeOutputType.Message],
+          },
+        ],
+      },
+    },
+  },
 };
 
 const NODE_TYPES: NodeTypes = {
