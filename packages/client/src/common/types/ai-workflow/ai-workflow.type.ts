@@ -76,8 +76,8 @@ export type BaseWorkflowComponent = {
 export interface AiWorkflowComponent extends Node {
   data: BaseWorkflowComponent & {
     node?: {
-      fieldOrder: string[];
-      inputFields: Record<string, AiWorkflowNodeInputField>;
+      fieldOrder?: string[];
+      inputFields?: Record<string, AiWorkflowNodeInputField>;
       outputs: Array<AiWorkflowNodeOutput>;
     };
   };
