@@ -5,37 +5,30 @@ import {
   CollapsibleTrigger,
 } from "@gryffindor/client/common/components/shadcn/components/ui/collapsible";
 import {
-  AiWorkflowComponentCategory,
-  AiWorkflowComponentType,
-  BaseWorkflowComponent,
+  AiWorkflowNodeCategory,
+  BaseWorkflowNode,
 } from "@gryffindor/client/common/types/ai-workflow/ai-workflow.type";
 import { map } from "lodash";
 import { ChevronRight, GripVertical, Plus } from "lucide-react";
 import {
   WorkflowCategoryVsIcon,
-  WorkflowComponentVsIcon,
+  WorkflowNodeVsIcon,
 } from "./constants/ai-workflow.constant";
 
 type Props = {
-  workflowComponents: Record<
-    AiWorkflowComponentCategory,
-    BaseWorkflowComponent[]
-  >;
-  onAddComponent: (component: BaseWorkflowComponent) => void;
+  workflowNodes: Record<AiWorkflowNodeCategory, BaseWorkflowNode[]>;
+  onAddNode: (node: BaseWorkflowNode) => void;
 };
 
 export function SettingsPanel(props: Props) {
-  const { workflowComponents, onAddComponent } = props;
+  const { workflowNodes, onAddNode } = props;
 
   return (
     <aside className="w-[400px] bg-background">
       <div className="gap-0 p-2">
         {map(
-          workflowComponents,
-          (
-            components: BaseWorkflowComponent[],
-            category: AiWorkflowComponentCategory,
-          ) => {
+          workflowNodes,
+          (nodes: BaseWorkflowNode[], category: AiWorkflowNodeCategory) => {
             const Icon = WorkflowCategoryVsIcon[category];
 
             return (
@@ -52,33 +45,33 @@ export function SettingsPanel(props: Props) {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <div className="p-2">
-                      {map(components, (component: BaseWorkflowComponent) => {
-                        const Icon = WorkflowComponentVsIcon[component.type];
+                      {map(nodes, (node: BaseWorkflowNode) => {
+                        const Icon = WorkflowNodeVsIcon[node.type];
                         return (
                           <div
                             draggable
                             onDragStart={(e) => {
                               e.dataTransfer.setData(
                                 "application/reactflow",
-                                JSON.stringify(component),
+                                JSON.stringify(node),
                               );
                               e.dataTransfer.effectAllowed = "move";
                             }}
-                            key={category}
+                            key={node.type}
                             className="group cursor-pointer bg-secondary p-2 my-2 rounded-md hover:bg-neutral-900 transition-all flex justify-between items-center"
                           >
                             <div className="flex items-center">
                               {Icon ? (
                                 <Icon className="mr-2" size={16} />
                               ) : null}
-                              <div className="text-sm">{component.name}</div>
+                              <div className="text-sm">{node.name}</div>
                             </div>
                             <div className="flex items-center">
                               <Button
                                 className="opacity-0 group-hover:opacity-100 transition-opacity"
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => onAddComponent(component)}
+                                onClick={() => onAddNode(node)}
                               >
                                 <Plus size={16} />
                               </Button>
