@@ -22,6 +22,7 @@ import { FileModule } from './file/file.module';
 import { InfraModule } from './infra/infra.module';
 import { InfraService } from './infra/infra.service';
 import { UserModule } from './user/user.module';
+import { AiWorkflowModule } from './ai-workflow/ai-workflow.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { UserModule } from './user/user.module';
     IndexingModule,
     InternalModule,
     DummyApiModule,
+    AiWorkflowModule,
   ],
   controllers: [AppController],
   providers: [AppService],

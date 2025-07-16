@@ -4,11 +4,8 @@ import {
 } from "@gryffindor/client/common/api/decorators/hoc/themeProvider";
 import { EMPTY_ARRAY_READ_ONLY } from "@gryffindor/client/common/constants/readOnly";
 import {
-  AiWorkflowComponent,
-  AiWorkflowComponentCategory,
-  AiWorkflowComponentType,
-  AiWorkflowNodeOutputType,
-  BaseWorkflowComponent,
+  AiWorkflowNode,
+  BaseWorkflowNode,
 } from "@gryffindor/client/common/types/ai-workflow/ai-workflow.type";
 import {
   addEdge,
@@ -26,62 +23,12 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { DragEventHandler, useCallback, useContext, useRef } from "react";
+import {
+  WorkflowNodesByCategory,
+  WorkflowNodes,
+} from "./components/constants/workflowDefaults";
 import { SettingsPanel } from "./components/settingsPanel";
 import WorkflowInputNode from "./components/workflowInputNode";
-
-const WorkflowComponents: Record<
-  AiWorkflowComponentCategory,
-  BaseWorkflowComponent[]
-> = {
-  [AiWorkflowComponentCategory.IO]: [
-    {
-      category: AiWorkflowComponentCategory.IO,
-      name: "Chat Input",
-      type: AiWorkflowComponentType.ChatInput,
-      id: "chat-input",
-    },
-    {
-      category: AiWorkflowComponentCategory.IO,
-      name: "Chat Output",
-      type: AiWorkflowComponentType.ChatOutput,
-      id: "chat-output",
-    },
-    {
-      category: AiWorkflowComponentCategory.IO,
-      name: "Text Input",
-      type: AiWorkflowComponentType.TextInput,
-      id: "text-input",
-    },
-    {
-      category: AiWorkflowComponentCategory.IO,
-      name: "Text Output",
-      type: AiWorkflowComponentType.TextOutput,
-      id: "text-output",
-    },
-  ],
-  [AiWorkflowComponentCategory.Agent]: [],
-  [AiWorkflowComponentCategory.LLM]: [],
-  [AiWorkflowComponentCategory.Data]: [],
-};
-
-const WorkflowComponentNodes: Record<
-  AiWorkflowComponentType,
-  AiWorkflowComponent
-> = {
-  [AiWorkflowComponentType.ChatInput]: {
-    data: {
-      node: {
-        outputs: [
-          {
-            id: `${AiWorkflowComponentType.ChatInput}`,
-            name: "Chat Input",
-            outputTypes: [AiWorkflowNodeOutputType.Message],
-          },
-        ],
-      },
-    },
-  },
-};
 
 const NODE_TYPES: NodeTypes = {
   "workflow-node": WorkflowInputNode,
@@ -101,25 +48,26 @@ function WorkflowCreation() {
   );
 
   const appendNode = useCallback(
-    (position: XYPosition, component: BaseWorkflowComponent) => {
+    (position: XYPosition, node: BaseWorkflowNode) => {
       setNodes((nodes) => [
         ...nodes,
         {
-          id: `${component.type}-${Date.now()}`,
+          id: `${node.type}-${Date.now()}`,
           position,
           data: {
-            ...component,
-            id: `${component.type}-${Date.now()}`,
+            ...node,
+            id: `${node.type}-${Date.now()}`,
+            node: WorkflowNodes[node.type]?.data?.node,
           },
           type: "workflow-node",
-        },
+        } as AiWorkflowNode,
       ]);
     },
     [setNodes],
   );
 
-  const onAddComponent = useCallback(
-    (component: BaseWorkflowComponent) => {
+  const onAddNode = useCallback(
+    (node: BaseWorkflowNode) => {
       const position = screenToFlowPosition({
         x: reactFlowRef.current?.clientWidth
           ? reactFlowRef.current.clientWidth / 2
@@ -128,7 +76,7 @@ function WorkflowCreation() {
           ? reactFlowRef.current.clientHeight / 2
           : 0,
       });
-      appendNode(position, component);
+      appendNode(position, node);
     },
     [screenToFlowPosition, appendNode],
   );
@@ -136,15 +84,15 @@ function WorkflowCreation() {
   const onDrop: DragEventHandler<HTMLDivElement> = useCallback(
     (event) => {
       event.preventDefault();
-      const componentJson = event.dataTransfer.getData("application/reactflow");
-      const component = JSON.parse(componentJson) as BaseWorkflowComponent;
+      const nodeJson = event.dataTransfer.getData("application/reactflow");
+      const node = JSON.parse(nodeJson) as BaseWorkflowNode;
 
       const position = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
 
-      appendNode(position, component);
+      appendNode(position, node);
     },
     [screenToFlowPosition, appendNode],
   );
@@ -157,8 +105,8 @@ function WorkflowCreation() {
   return (
     <div className="w-full h-full bg-secondary flex">
       <SettingsPanel
-        workflowComponents={WorkflowComponents}
-        onAddComponent={onAddComponent}
+        workflowNodes={WorkflowNodesByCategory}
+        onAddNode={onAddNode}
       />
       <ReactFlow
         nodeTypes={NODE_TYPES}

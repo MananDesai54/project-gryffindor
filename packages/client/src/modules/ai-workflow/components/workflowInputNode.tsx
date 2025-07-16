@@ -1,27 +1,59 @@
 import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
-import { AiWorkflowComponent } from "@gryffindor/client/common/types/ai-workflow/ai-workflow.type";
+import { Button } from "@gryffindor/client/common/components/shadcn/components/ui/button";
+import { AiWorkflowNode } from "@gryffindor/client/common/types/ai-workflow/ai-workflow.type";
 import { Handle, NodeProps, Position } from "@xyflow/react";
+import { size } from "lodash";
+import { Play } from "lucide-react";
 import { memo } from "react";
+import { WorkflowNodeVsIcon } from "./constants/ai-workflow.constant";
 
-function WorkflowInputNode(props: NodeProps<AiWorkflowComponent>) {
+function WorkflowInputNode(props: NodeProps<AiWorkflowNode>) {
   const { data } = props;
 
+  const Icon = WorkflowNodeVsIcon[data.type];
+
   return (
-    <div className="w-[400px]">
+    <div className="min-w-[300px]">
       <AppCard
-        title={data.name}
-        description={data.description}
-        content={<div className="bg-background">Input</div>}
-        footer={
-          <div className="relative w-full">
-            Output
-            <Handle
-              id={data.id}
-              type="source"
-              position={Position.Right}
-              className="p-1 absolute !top-1"
-            />
+        title={
+          <div className="flex items-center">
+            {Icon ? <Icon className="mr-2" size={16} /> : null}
+            <div className="text-sm">{data.name}</div>
           </div>
+        }
+        description={data.description}
+        className="py-0 rounded-2xl gap-0"
+        headerClassName="p-4"
+        footerClassName="px-0"
+        cardAction={
+          <Button variant="ghost" size="icon">
+            <Play size={16} />
+          </Button>
+        }
+        content={
+          size(data?.node?.inputFields) ? (
+            <div className="bg-background">
+              <Handle
+                id={data.id}
+                type="target"
+                position={Position.Left}
+                className="p-1 absolute !top-50% !bg-indigo-300 !border-2 !border-indigo-600 hover:!border-white"
+              />
+            </div>
+          ) : undefined
+        }
+        footer={
+          data.node?.outputs?.length ? (
+            <div className="relative w-full bg-secondary p-4 rounded-b-2xl">
+              {data.node.outputs[0].name}
+              <Handle
+                id={data.id}
+                type="source"
+                position={Position.Right}
+                className="p-1 absolute !top-50% !bg-indigo-300 !border-2 !border-indigo-600 hover:!border-white"
+              />
+            </div>
+          ) : undefined
         }
       />
     </div>

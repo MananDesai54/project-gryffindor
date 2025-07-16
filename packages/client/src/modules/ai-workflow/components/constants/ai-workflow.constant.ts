@@ -1,6 +1,6 @@
 import {
-  AiWorkflowComponentCategory,
-  AiWorkflowComponentType,
+  AiWorkflowNodeCategory,
+  AiWorkflowNodeType,
 } from "@gryffindor/client/common/types/ai-workflow/ai-workflow.type";
 import {
   BrainCircuit,
@@ -14,24 +14,24 @@ import {
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 export const WorkflowCategoryVsIcon = {
-  [AiWorkflowComponentCategory.IO]: Cable,
-  [AiWorkflowComponentCategory.Agent]: BrainCircuit,
-  [AiWorkflowComponentCategory.LLM]: BrainCog,
-  [AiWorkflowComponentCategory.Data]: Database,
+  [AiWorkflowNodeCategory.IO]: Cable,
+  [AiWorkflowNodeCategory.Agent]: BrainCircuit,
+  [AiWorkflowNodeCategory.LLM]: BrainCog,
+  [AiWorkflowNodeCategory.Data]: Database,
 } as Record<
-  AiWorkflowComponentCategory,
+  AiWorkflowNodeCategory,
   ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >
 >;
 
-export const WorkflowComponentVsIcon = {
-  [AiWorkflowComponentType.ChatInput]: MessagesSquare,
-  [AiWorkflowComponentType.ChatOutput]: MessagesSquare,
-  [AiWorkflowComponentType.TextInput]: Type,
-  [AiWorkflowComponentType.TextOutput]: Type,
+export const WorkflowNodeVsIcon = {
+  [AiWorkflowNodeType.ChatInput]: MessagesSquare,
+  [AiWorkflowNodeType.ChatOutput]: MessagesSquare,
+  [AiWorkflowNodeType.TextInput]: Type,
+  [AiWorkflowNodeType.TextOutput]: Type,
 } as Record<
-  AiWorkflowComponentType,
+  AiWorkflowNodeType,
   ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >

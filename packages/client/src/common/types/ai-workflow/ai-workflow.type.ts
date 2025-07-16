@@ -1,14 +1,14 @@
 import { Edge, Node, Viewport } from "@xyflow/react";
 import { DbDocument } from "../dbDocument.type";
 
-export enum AiWorkflowComponentCategory {
+export enum AiWorkflowNodeCategory {
   IO = "io",
   LLM = "llm",
   Agent = "agent",
   Data = "data",
 }
 
-export enum AiWorkflowComponentType {
+export enum AiWorkflowNodeType {
   ChatInput = "chatInput",
   ChatOutput = "chatOutput",
   TextInput = "textInput",
@@ -23,32 +23,28 @@ export enum AiWorkflowComponentType {
   WebApi = "webApi",
 }
 
-export enum AiWorkflowNodeInputFieldType {
-  string = "string",
-  tool = "tool",
-}
-
 export enum AiWorkflowNodeInputFieldValueType {
   string = "string",
   number = "number",
   boolean = "boolean",
   array = "array",
   object = "object",
+  connection = "connection",
 }
 
-export enum AiWorkflowNodeOutputType {
+export enum AiWorkflowNodeConnectionType {
   Message = "message",
   Tool = "tool",
 }
 
 export interface AiWorkflowNodeInputField {
   id: string;
-  type: AiWorkflowNodeInputFieldType;
+  type: AiWorkflowNodeConnectionType;
   valueType?: AiWorkflowNodeInputFieldValueType;
   name: string;
   description?: string;
   defaultValue?: any;
-  injectInputType?: AiWorkflowNodeOutputType[];
+  injectInputTypes?: AiWorkflowNodeConnectionType[];
   options?: string[];
   value?: any;
   toolMode?: boolean;
@@ -59,22 +55,22 @@ export interface AiWorkflowNodeInputField {
 
 export interface AiWorkflowNodeOutput {
   id: string;
-  outputTypes: AiWorkflowNodeOutputType[];
+  outputTypes: AiWorkflowNodeConnectionType[];
   name: string;
   description?: string;
   toolMode?: boolean;
 }
 
-export type BaseWorkflowComponent = {
+export type BaseWorkflowNode = {
   id: string;
-  category: AiWorkflowComponentCategory;
-  type: AiWorkflowComponentType;
+  category: AiWorkflowNodeCategory;
+  type: AiWorkflowNodeType;
   name: string;
   description?: string;
 };
 
-export interface AiWorkflowComponent extends Node {
-  data: BaseWorkflowComponent & {
+export interface AiWorkflowNode extends Node {
+  data: BaseWorkflowNode & {
     node?: {
       fieldOrder?: string[];
       inputFields?: Record<string, AiWorkflowNodeInputField>;
@@ -88,14 +84,14 @@ export interface AiWorkflowEdge extends Edge {
     sourceHandle: {
       id: string;
       name: string;
-      type: AiWorkflowComponentType;
-      outputTypes: AiWorkflowNodeOutputType[];
+      type: AiWorkflowNodeType;
+      outputTypes: AiWorkflowNodeConnectionType[];
     };
     targetHandle?: {
       id: string;
       name: string;
-      type: AiWorkflowComponentType;
-      inputTypes: AiWorkflowNodeOutputType[];
+      type: AiWorkflowNodeType;
+      inputTypes: AiWorkflowNodeConnectionType[];
     };
   };
 }
@@ -104,7 +100,7 @@ export interface AiWorkflow extends DbDocument {
   name: string;
   description: string;
   data: {
-    nodes: AiWorkflowComponent[];
+    nodes: AiWorkflowNode[];
     edges: AiWorkflowEdge[];
     viewport: Viewport;
   };

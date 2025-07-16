@@ -15,6 +15,9 @@ type Props = {
   footer?: React.ReactNode;
   className?: string;
   cardAction?: React.ReactNode;
+  headerClassName?: string;
+  footerClassName?: string;
+  contentClassName?: string;
 };
 
 export default function AppCard({
@@ -24,11 +27,14 @@ export default function AppCard({
   footer,
   className,
   cardAction,
+  headerClassName,
+  footerClassName,
+  contentClassName,
 }: Props) {
   return (
     <Card className={className}>
       {title || description ? (
-        <CardHeader>
+        <CardHeader className={headerClassName}>
           {title ? <CardTitle>{title}</CardTitle> : null}
           {description ? (
             <CardDescription>{description}</CardDescription>
@@ -36,8 +42,12 @@ export default function AppCard({
           {cardAction ? <CardAction>{cardAction}</CardAction> : null}
         </CardHeader>
       ) : null}
-      {content ? <CardContent>{content}</CardContent> : null}
-      {footer ? <CardFooter>{footer}</CardFooter> : null}
+      {content ? (
+        <CardContent className={contentClassName}>{content}</CardContent>
+      ) : null}
+      {footer ? (
+        <CardFooter className={footerClassName}>{footer}</CardFooter>
+      ) : null}
     </Card>
   );
 }
