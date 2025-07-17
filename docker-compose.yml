@@ -1,22 +1,22 @@
 services:
-  mongodb:
-    image: mongo:8.0
-    container_name: mongodb
-    restart: unless-stopped
-    env_file:
-      - packages/server/env/.env
-    volumes:
-      - mongo_data:/data/db
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    ports:
-      - "27017:27017"
-    networks:
-      - database
+  # mongodb:
+  #   image: mongo:8.0
+  #   container_name: mongodb
+  #   restart: unless-stopped
+  #   env_file:
+  #     - packages/server/env/.env
+  #   volumes:
+  #     - mongo_data:/data/db
+  #   healthcheck:
+  #     test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 10s
+  #   ports:
+  #     - "27017:27017"
+  #   networks:
+  #     - database
 
   chroma:
     image: chromadb/chroma:1.0.16.dev45
@@ -83,8 +83,8 @@ services:
       - NODE_ENV=development
       - PORT=3000
     depends_on:
-      mongodb:
-        condition: service_healthy
+      # mongodb:
+      #   condition: service_healthy
       chroma:
         condition: service_healthy
       kafka:
@@ -102,24 +102,24 @@ services:
       - messaging
       - database
 
-  client:
-    build:
-      dockerfile: packages/client/Dockerfile
-    container_name: gryffindor-client
-    environment:
-      - NODE_ENV=development
-      - PORT=3001
-    ports:
-      - "3001:3001"
-    develop:
-      watch:
-        - path: ./packages/client
-          action: rebuild
-    depends_on:
-      server:
-        condition: service_started
-    networks:
-      - default
+  # client:
+  #   build:
+  #     dockerfile: packages/client/Dockerfile
+  #   container_name: gryffindor-client
+  #   environment:
+  #     - NODE_ENV=development
+  #     - PORT=3001
+  #   ports:
+  #     - "3001:3001"
+  #   develop:
+  #     watch:
+  #       - path: ./packages/client
+  #         action: rebuild
+  #   depends_on:
+  #     server:
+  #       condition: service_started
+  #   networks:
+  #     - default
 
 volumes:
   mongo_data:

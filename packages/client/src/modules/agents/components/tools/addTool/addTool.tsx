@@ -16,6 +16,7 @@ import AddParameters from "./addParamerters";
 import { AddQueryParam } from "./addQueryParam";
 import AddToolBasicConfig from "./addToolBasicConfig";
 import { NotifyError } from "@gryffindor/client/common/components/app/toast";
+import { AddHeaders } from "./addHeaders";
 
 type Props = {
   tool: AiTool;
@@ -137,6 +138,19 @@ export default function AddTool(props: Props) {
                   apiSchema: {
                     ...newTool.apiSchema,
                     queryParams: v,
+                  } as AiTool["apiSchema"],
+                })
+              }
+              updateDynamicVariable={updateDynamicVariable}
+            />
+            <AddHeaders
+              allVariables={allVariables}
+              value={newTool.apiSchema?.headers}
+              onChange={(v) =>
+                onChangeTool({
+                  apiSchema: {
+                    ...newTool.apiSchema,
+                    headers: v,
                   } as AiTool["apiSchema"],
                 })
               }
