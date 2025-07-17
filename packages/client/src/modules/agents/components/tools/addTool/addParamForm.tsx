@@ -1,4 +1,3 @@
-import useBoolean from "@gryffindor/client/common/api/decorators/hooks/useBoolean";
 import AppMenu from "@gryffindor/client/common/components/app/appMenu/appMenu";
 import { ActionMenuItem } from "@gryffindor/client/common/components/app/appMenu/type";
 import AppSelect from "@gryffindor/client/common/components/app/appSelect/appSelect";
@@ -46,7 +45,6 @@ export default function AddParamForm(props: Props) {
   } = props;
 
   const [variable, setVariable] = useState<string>(value?.value || "");
-  const { toggle: toggleVariableBox, value: isOpenVariableBox } = useBoolean();
 
   const menuOptions = useMemo(() => {
     if (!allVariables) return [];
@@ -160,19 +158,11 @@ export default function AddParamForm(props: Props) {
             }}
           />
           {value?.valueType === AiToolParamValueType.DYNAMIC_VARIABLE ? (
-            <>
-              <AppMenu
-                actions={menuOptions}
-                controlled
-                open={isOpenVariableBox}
-                onClose={toggleVariableBox}
-              />
+            <div className="flex items-center">
               <Button
+                className="mr-2"
                 type="button"
-                variant="outline"
-                size="icon"
                 onClick={() => {
-                  toggleVariableBox();
                   if (variable)
                     onSubmit({
                       ...value,
@@ -181,9 +171,10 @@ export default function AddParamForm(props: Props) {
                   updateDynamicVariable(variable);
                 }}
               >
-                <Plus />
+                <Plus /> Add
               </Button>
-            </>
+              <AppMenu actions={menuOptions} />
+            </div>
           ) : null}
         </div>
       ) : null}

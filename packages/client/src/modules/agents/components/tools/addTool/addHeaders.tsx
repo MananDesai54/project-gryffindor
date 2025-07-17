@@ -34,7 +34,7 @@ export const AddHeaders = ({
       }
       description="Define headers that will be collected by the LLM and sent as the headers of the request."
       content={map(value, (p, index) => (
-        <div className="flex items-center" key={index}>
+        <div className="flex items-center my-4" key={index}>
           <div className="flex-1">
             <AddParamForm
               value={p}
