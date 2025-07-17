@@ -53,7 +53,7 @@ export const WorkflowNodes: Record<
       node: {
         outputs: [
           {
-            id: `${AiWorkflowNodeType.ChatInput}`,
+            id: `${AiWorkflowNodeType.ChatInput}-message-output`,
             name: "Message",
             outputTypes: [AiWorkflowNodeConnectionType.Message],
           },
@@ -66,8 +66,8 @@ export const WorkflowNodes: Record<
       node: {
         inputFields: {
           input: {
-            id: "input",
-            name: "ID",
+            id: `${AiWorkflowNodeType.ChatOutput}-input-value`,
+            name: "Input",
             type: AiWorkflowNodeConnectionType.Message,
             required: true,
             valueType: AiWorkflowNodeInputFieldValueType.connection,
@@ -76,7 +76,7 @@ export const WorkflowNodes: Record<
         },
         outputs: [
           {
-            id: `${AiWorkflowNodeType.ChatOutput}`,
+            id: `${AiWorkflowNodeType.ChatOutput}-message-output`,
             name: "Message",
             outputTypes: [AiWorkflowNodeConnectionType.Message],
           },

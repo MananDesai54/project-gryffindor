@@ -1,48 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, HydratedDocument } from 'mongoose';
+import { AiWorkflowEdge } from './workflow-edge.schema';
+import { AiWorkflowNode, AIWorkflowXYPosition } from './workflow-node.schema';
 
 export type AiWorkflowDocument = HydratedDocument<AIWorkflow>;
 
-export class AIWorkflowXYPosition {
-  @Prop()
-  x: number;
-
-  @Prop()
-  y: number;
-}
-
-export class AiWorkflowViewport extends AIWorkflowXYPosition {
+class AiWorkflowViewport extends AIWorkflowXYPosition {
   @Prop()
   zoom: number;
 }
 
-export class AiWorkflowNodeData {
-  @Prop({ required: true })
-  id: string;
-  // category: AiWorkflowNodeCategory;
-  // type: AiWorkflowNodeType;
-
-  @Prop({ required: true })
-  name: string;
-
-  @Prop({ required: true })
-  description?: string;
-}
-
-export class AiWorkflowNode {
-  @Prop({ required: true })
-  id: string;
-
-  @Prop({ required: true, type: AIWorkflowXYPosition })
-  position: AIWorkflowXYPosition;
-
-  @Prop({ type: AiWorkflowNodeData })
-  data: AiWorkflowNodeData;
-}
-
-export class AiWorkflowEdge {}
-
-export class AIWorkflowData {
+class AIWorkflowData {
   @Prop({ required: true, type: [AiWorkflowNode] })
   nodes: Array<AiWorkflowNode>;
 
@@ -65,7 +33,7 @@ export class AIWorkflow extends Document {
   creator: string;
 
   @Prop({ type: AIWorkflowData })
-  data: AIWorkflowData;
+  data?: AIWorkflowData;
 }
 
 export const AiWorkflowSchema = SchemaFactory.createForClass(AIWorkflow);

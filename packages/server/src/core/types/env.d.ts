@@ -3,9 +3,9 @@ declare namespace NodeJS {
     NODE_ENV: 'development' | 'production' | 'test';
     PORT: string;
 
-    MONGO_INITDB_ROOT_USERNAME: string;
-    MONGO_INITDB_ROOT_PASSWORD: string;
-    MONGO_INITDB_DATABASE: string;
+    // MONGO_INITDB_ROOT_USERNAME: string;
+    // MONGO_INITDB_ROOT_PASSWORD: string;
+    // MONGO_INITDB_DATABASE: string;
     MONGO_CONNECTION_URI: string;
 
     CHROMA_URL: string;

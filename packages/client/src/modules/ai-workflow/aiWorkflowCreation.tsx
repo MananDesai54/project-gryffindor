@@ -4,7 +4,10 @@ import {
 } from "@gryffindor/client/common/api/decorators/hoc/themeProvider";
 import { EMPTY_ARRAY_READ_ONLY } from "@gryffindor/client/common/constants/readOnly";
 import {
+  AiWorkflowEdge,
   AiWorkflowNode,
+  AiWorkflowNodeConnectionType,
+  AiWorkflowNodeType,
   BaseWorkflowNode,
 } from "@gryffindor/client/common/types/ai-workflow/ai-workflow.type";
 import {
@@ -29,6 +32,7 @@ import {
 } from "./components/constants/workflowDefaults";
 import { SettingsPanel } from "./components/settingsPanel";
 import WorkflowInputNode from "./components/workflowInputNode";
+import { find } from "lodash";
 
 const NODE_TYPES: NodeTypes = {
   "workflow-node": WorkflowInputNode,
@@ -43,9 +47,39 @@ function WorkflowCreation() {
   const { theme } = useContext(ThemeContext);
 
   const onConnect: OnConnect = useCallback(
-    (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
-    [setEdges],
+    (params) => {
+      const sourceNode = find(nodes, { id: params.source }) as AiWorkflowNode;
+      const targetNode = find(nodes, { id: params.target }) as AiWorkflowNode;
+
+      setEdges((edgesSnapshot) => [
+        ...edgesSnapshot,
+        {
+          id: `${params.source}-${params.target}`,
+          source: params.source,
+          target: params.target,
+          sourceHandle: params.sourceHandle,
+          targetHandle: params.targetHandle,
+          type: "node-connection",
+          data: {
+            sourceHandle: {
+              id: params.source,
+              name: sourceNode?.data?.name,
+              outputTypes: [AiWorkflowNodeConnectionType.Message],
+              type: sourceNode?.data?.type,
+            },
+            targetHandle: {
+              id: params.target,
+              name: targetNode?.data?.name,
+              inputTypes: [AiWorkflowNodeConnectionType.Message],
+              type: targetNode?.data?.type,
+            },
+          },
+        } as AiWorkflowEdge,
+      ]);
+    },
+    [nodes, setEdges],
   );
+  console.log(edges);
 
   const appendNode = useCallback(
     (position: XYPosition, node: BaseWorkflowNode) => {

@@ -47,7 +47,7 @@ function WorkflowInputNode(props: NodeProps<AiWorkflowNode>) {
             <div className="relative w-full bg-secondary p-4 rounded-b-2xl">
               {data.node.outputs[0].name}
               <Handle
-                id={data.id}
+                id={data.node.outputs[0]?.id}
                 type="source"
                 position={Position.Right}
                 className="p-1 absolute !top-50% !bg-indigo-300 !border-2 !border-indigo-600 hover:!border-white"

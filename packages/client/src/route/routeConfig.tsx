@@ -88,12 +88,12 @@ const agentInferenceRoute = createRoute({
 const workflowList = createRoute({
   path: Routes.AI_WORKFLOW_LIST,
   component: () => "workflowList",
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => protectedAppRoute,
 });
 const workflowCreate = createRoute({
   path: Routes.AI_WORKFLOW_CREATE,
   component: AiWorkflowCreation,
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => protectedAppRoute,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -104,9 +104,9 @@ const routeTree = rootRoute.addChildren([
     agentDetail,
     agentList,
     agentInferenceRoute,
+    workflowList,
+    workflowCreate,
   ]),
-  workflowList,
-  workflowCreate,
 ]);
 
 const router = createRouter({ routeTree });

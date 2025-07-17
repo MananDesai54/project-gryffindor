@@ -19,3 +19,17 @@ export enum AiWorkflowNodeType {
   WebSearch = 'webSearch',
   WebApi = 'webApi',
 }
+
+export enum AiWorkflowNodeInputFieldValueType {
+  string = 'string',
+  number = 'number',
+  boolean = 'boolean',
+  array = 'array',
+  object = 'object',
+  connection = 'connection',
+}
+
+export enum AiWorkflowNodeConnectionType {
+  Message = 'message',
+  Tool = 'tool',
+}
