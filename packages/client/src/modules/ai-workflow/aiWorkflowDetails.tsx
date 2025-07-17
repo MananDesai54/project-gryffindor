@@ -4,10 +4,8 @@ import {
 } from "@gryffindor/client/common/api/decorators/hoc/themeProvider";
 import { EMPTY_ARRAY_READ_ONLY } from "@gryffindor/client/common/constants/readOnly";
 import {
-  AiWorkflowEdge,
+  AiWorkflow,
   AiWorkflowNode,
-  AiWorkflowNodeConnectionType,
-  AiWorkflowNodeType,
   BaseWorkflowNode,
 } from "@gryffindor/client/common/types/ai-workflow/ai-workflow.type";
 import {
@@ -27,18 +25,28 @@ import {
 import "@xyflow/react/dist/style.css";
 import { DragEventHandler, useCallback, useContext, useRef } from "react";
 import {
-  WorkflowNodesByCategory,
   WorkflowNodes,
+  WorkflowNodesByCategory,
 } from "./components/constants/workflowDefaults";
 import { SettingsPanel } from "./components/settingsPanel";
 import WorkflowInputNode from "./components/workflowInputNode";
-import { find } from "lodash";
+import { useParams } from "@tanstack/react-router";
+import { Routes } from "@gryffindor/client/route/routes";
+import { useAiWorkflowByIdQuery } from "@gryffindor/client/common/api/serverQueries/aiWorkflow/useAiWorkflowQuery";
+import Loader from "@gryffindor/client/common/components/app/loader";
+
+type Props = {
+  workflow: AiWorkflow;
+};
 
 const NODE_TYPES: NodeTypes = {
   "workflow-node": WorkflowInputNode,
 };
 
-function WorkflowCreation() {
+function WorkflowDetails(props: Props) {
+  const { workflow } = props;
+  console.log(workflow);
+
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(EMPTY_ARRAY_READ_ONLY);
   const [edges, setEdges, onEdgesChange] = useEdgesState(EMPTY_ARRAY_READ_ONLY);
@@ -48,38 +56,10 @@ function WorkflowCreation() {
 
   const onConnect: OnConnect = useCallback(
     (params) => {
-      const sourceNode = find(nodes, { id: params.source }) as AiWorkflowNode;
-      const targetNode = find(nodes, { id: params.target }) as AiWorkflowNode;
-
-      setEdges((edgesSnapshot) => [
-        ...edgesSnapshot,
-        {
-          id: `${params.source}-${params.target}`,
-          source: params.source,
-          target: params.target,
-          sourceHandle: params.sourceHandle,
-          targetHandle: params.targetHandle,
-          type: "node-connection",
-          data: {
-            sourceHandle: {
-              id: params.source,
-              name: sourceNode?.data?.name,
-              outputTypes: [AiWorkflowNodeConnectionType.Message],
-              type: sourceNode?.data?.type,
-            },
-            targetHandle: {
-              id: params.target,
-              name: targetNode?.data?.name,
-              inputTypes: [AiWorkflowNodeConnectionType.Message],
-              type: targetNode?.data?.type,
-            },
-          },
-        } as AiWorkflowEdge,
-      ]);
+      setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot));
     },
-    [nodes, setEdges],
+    [setEdges],
   );
-  console.log(edges);
 
   const appendNode = useCallback(
     (position: XYPosition, node: BaseWorkflowNode) => {
@@ -162,10 +142,26 @@ function WorkflowCreation() {
   );
 }
 
-export default function AiWorkflowCreation() {
+export default function AiWorkflowDetails() {
+  const params = useParams({
+    from: Routes.AI_WORKFLOW_DETAIL,
+  });
+
+  const { data, isLoading } = useAiWorkflowByIdQuery({
+    queryParams: {
+      id: params.id,
+    },
+  });
+
+  if (isLoading || !data) {
+    return (
+      <Loader className="w-screen h-screen flex justify-center items-center" />
+    );
+  }
+
   return (
     <ReactFlowProvider>
-      <WorkflowCreation />
+      <WorkflowDetails workflow={data} />
     </ReactFlowProvider>
   );
 }

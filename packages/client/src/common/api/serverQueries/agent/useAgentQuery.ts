@@ -44,7 +44,7 @@ export const useAgentByIdQuery = (
   });
 };
 
-const kbListFn: FetchQueryFunctionType<SearchRequest> = async (ctx) => {
+const agentListFn: FetchQueryFunctionType<SearchRequest> = async (ctx) => {
   const { queryKey } = ctx;
   const { otherParams } = queryKey[0];
 
@@ -60,7 +60,7 @@ export const useAgentQuery = (options: ServerQueryParams<SearchRequest>) => {
 
   return useQuery<TSAny, Error, SearchResponse<Agent>>({
     queryKey: [queryKey],
-    queryFn: kbListFn as TSAny,
+    queryFn: agentListFn as TSAny,
     ...reactQueryOptions,
   });
 };
