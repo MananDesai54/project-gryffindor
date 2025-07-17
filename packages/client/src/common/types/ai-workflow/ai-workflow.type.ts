@@ -74,7 +74,7 @@ export interface AiWorkflowNode extends Node {
     node?: {
       fieldOrder?: string[];
       inputFields?: Record<string, AiWorkflowNodeInputField>;
-      outputs: Array<AiWorkflowNodeOutput>;
+      outputs?: Array<AiWorkflowNodeOutput>;
     };
   };
 }
@@ -87,7 +87,7 @@ export interface AiWorkflowEdge extends Edge {
       type: AiWorkflowNodeType;
       outputTypes: AiWorkflowNodeConnectionType[];
     };
-    targetHandle?: {
+    targetHandle: {
       id: string;
       name: string;
       type: AiWorkflowNodeType;

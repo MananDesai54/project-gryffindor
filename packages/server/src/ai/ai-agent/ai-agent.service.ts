@@ -74,18 +74,18 @@ export class AiAgentService
     authContext: AuthContextType,
   ) {
     try {
-      const exestingAgent = await this.aiAgent
+      const existingAgent = await this.aiAgent
         .findOne({
           _id: id,
           creator: authContext.userId,
         })
         .exec();
-      if (!exestingAgent)
+      if (!existingAgent)
         throw new NotFoundException(
           'You cannot update this agent. Either you do not own it or it does not exist.',
         );
 
-      const existingKbs = exestingAgent.configuration?.knowledgeBase;
+      const existingKbs = existingAgent.configuration?.knowledgeBase;
       const newKbs = updateAiAgentDto.configuration?.knowledgeBase;
 
       const { added, removed } = ArrayUtils.calculateIdDiff(
