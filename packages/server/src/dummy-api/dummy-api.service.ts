@@ -227,4 +227,10 @@ export class DummyApiService {
       return `Failed to send email: ${(error as Error).message}`;
     }
   }
+
+  async getCityCabs(city: string) {
+    return new Promise((res) => {
+      res('Ola: 10, Uber: 5 in ' + city);
+    });
+  }
 }

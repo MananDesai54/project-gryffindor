@@ -12,7 +12,7 @@ type Props = {
   allVariables?: string[];
 };
 
-export const AddQueryParam = ({
+export const AddHeaders = ({
   value,
   onChange,
   updateDynamicVariable,
@@ -20,7 +20,7 @@ export const AddQueryParam = ({
 }: Props) => {
   return (
     <AppCard
-      title="Query parameters"
+      title="Headers"
       cardAction={
         <Button
           type="button"
@@ -32,7 +32,7 @@ export const AddQueryParam = ({
           Add
         </Button>
       }
-      description="Define parameters that will be collected by the LLM and sent as the query of the request."
+      description="Define headers that will be collected by the LLM and sent as the headers of the request."
       content={map(value, (p, index) => (
         <div className="flex items-center" key={index}>
           <div className="flex-1">

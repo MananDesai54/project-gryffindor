@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { DummyApiService } from './dummy-api.service';
 
 @Controller('dummy-api')
@@ -50,5 +58,18 @@ export class DummyApiController {
     },
   ) {
     return this.dummyApiService.sendEmail(body);
+  }
+
+  @Get('/get-city-cabs')
+  getCityCabs(
+    @Query('city_name')
+    city: string,
+    @Headers('api_key')
+    apiKey: string,
+  ) {
+    if (apiKey !== '1234') {
+      throw new Error('Invalid API Key');
+    }
+    return this.dummyApiService.getCityCabs(city);
   }
 }
