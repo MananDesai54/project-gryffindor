@@ -12,5 +12,6 @@ export enum Routes {
   AGENT_INFERENCE = "/agent/inference/$id",
 
   AI_WORKFLOW_LIST = "/ai-workflow/list",
+  AI_WORKFLOW_DETAIL = "/ai-workflow/$id",
   AI_WORKFLOW_CREATE = "/ai-workflow/create",
 }
