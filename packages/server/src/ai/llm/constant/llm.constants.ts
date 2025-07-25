@@ -2,16 +2,16 @@ import { StandardLLM } from '../schema/llm.schema';
 import { LLMType, StandardLLMProvider } from '../types/llm.type';
 
 const StandardLLMs: Partial<StandardLLM>[] = [
-  // {
-  //   modelId: 'gemini-2.5-flash',
-  //   type: LLMType.STANDARD,
-  //   provider: StandardLLMProvider.GOOGLE,
-  // },
-  // {
-  //   modelId: 'gemini-2.0-flash',
-  //   type: LLMType.STANDARD,
-  //   provider: StandardLLMProvider.GOOGLE,
-  // },
+  {
+    modelId: 'gemini-2.5-flash',
+    type: LLMType.STANDARD,
+    provider: StandardLLMProvider.GOOGLE,
+  },
+  {
+    modelId: 'gemini-2.0-flash',
+    type: LLMType.STANDARD,
+    provider: StandardLLMProvider.GOOGLE,
+  },
   {
     modelId: 'claude-sonnet-4-0',
     type: LLMType.STANDARD,

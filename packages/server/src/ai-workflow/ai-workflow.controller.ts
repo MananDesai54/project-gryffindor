@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { CRUDController } from '../core/rest/crud.controller';
@@ -19,7 +20,9 @@ import {
   CreateAIWorkflowDto,
   UpdateAiWorkflowDto,
 } from './dto/ai-workflow.dto';
+import { AuthGuard } from 'src/core/guard/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('ai-workflow')
 export class AiWorkflowController
   implements CRUDController<AIWorkflow>, SearchController<AIWorkflow>

@@ -37,6 +37,9 @@ const AiWorkflowCreateScreen = React.lazy(
 const AiWorkflowDetails = React.lazy(
   () => import("@gryffindor/client/modules/ai-workflow/aiWorkflowDetails"),
 );
+const AiWorkflowListScreen = React.lazy(
+  () => import("@gryffindor/client/modules/ai-workflow/aiWorkflowListScreen"),
+);
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -90,7 +93,7 @@ const agentInferenceRoute = createRoute({
 });
 const workflowList = createRoute({
   path: Routes.AI_WORKFLOW_LIST,
-  component: () => "workflowList",
+  component: AiWorkflowListScreen,
   getParentRoute: () => protectedAppRoute,
 });
 const workflowCreate = createRoute({
