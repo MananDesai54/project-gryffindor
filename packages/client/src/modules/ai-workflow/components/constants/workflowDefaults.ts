@@ -39,8 +39,25 @@ export const WorkflowNodesByCategory: Record<
       id: "text-output",
     },
   ],
-  [AiWorkflowNodeCategory.Agent]: [],
-  [AiWorkflowNodeCategory.LLM]: [],
+  [AiWorkflowNodeCategory.Agent]: [
+    {
+      category: AiWorkflowNodeCategory.Agent,
+      name: "Agent",
+      type: AiWorkflowNodeType.Agent,
+      id: "agent",
+      description:
+        "Define the agent's instructions, then enter a task to complete using tools",
+    },
+  ],
+  [AiWorkflowNodeCategory.LLM]: [
+    {
+      category: AiWorkflowNodeCategory.LLM,
+      name: "Language Model",
+      type: AiWorkflowNodeType.LLM,
+      id: "llm",
+      description: "Runs a language model given a specified provider",
+    },
+  ],
   [AiWorkflowNodeCategory.Data]: [],
 };
 
@@ -59,7 +76,7 @@ export const WorkflowNodes: Record<
           },
         ],
       },
-    },
+    } as AiWorkflowNode["data"],
   },
   [AiWorkflowNodeType.ChatOutput]: {
     data: {
@@ -68,9 +85,8 @@ export const WorkflowNodes: Record<
           input: {
             id: `${AiWorkflowNodeType.ChatOutput}-input-value`,
             name: "Input",
-            type: AiWorkflowNodeConnectionType.Message,
             required: true,
-            valueType: AiWorkflowNodeInputFieldValueType.connection,
+            type: AiWorkflowNodeInputFieldValueType.string,
             injectInputTypes: [AiWorkflowNodeConnectionType.Message],
           },
         },
@@ -78,6 +94,54 @@ export const WorkflowNodes: Record<
           {
             id: `${AiWorkflowNodeType.ChatOutput}-message-output`,
             name: "Message",
+            outputTypes: [AiWorkflowNodeConnectionType.Message],
+          },
+        ],
+      },
+    },
+  },
+  [AiWorkflowNodeType.Agent]: {
+    data: {
+      node: {
+        inputFields: {
+          model_provider: {
+            id: `${AiWorkflowNodeType.Agent}-model-provider`,
+            name: "Provider",
+            required: true,
+            type: AiWorkflowNodeInputFieldValueType.string,
+            options: ["Open Ai", "Antripics", "Google"],
+            placeholder: "Select the model provider",
+            defaultValue: "Open Ai",
+          },
+          model_name: {
+            id: `${AiWorkflowNodeType.Agent}-model-name`,
+            name: "Model Name",
+            required: true,
+            type: AiWorkflowNodeInputFieldValueType.string,
+            placeholder: "Select the model name",
+            options: ["gpt-3.5-turbo", "gpt-4", "text-davinci-003"],
+            defaultValue: "gpt-3.5-turbo",
+          },
+          system_prompt: {
+            id: `${AiWorkflowNodeType.Agent}-system-prompt`,
+            name: "System Prompt",
+            required: true,
+            type: AiWorkflowNodeInputFieldValueType.string,
+            placeholder: "Define Agent System prompt",
+          },
+          tools: {
+            id: `${AiWorkflowNodeType.Agent}-tools`,
+            name: "Tools",
+            type: AiWorkflowNodeInputFieldValueType.tool,
+            injectInputTypes: [AiWorkflowNodeConnectionType.Tools],
+            placeholder: "Provide Agent tools",
+            allowMulti: true,
+          },
+        },
+        outputs: [
+          {
+            id: `${AiWorkflowNodeType.ChatOutput}-agent-output`,
+            name: "Response",
             outputTypes: [AiWorkflowNodeConnectionType.Message],
           },
         ],

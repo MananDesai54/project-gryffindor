@@ -3,8 +3,8 @@ import {
   AiWorkflowNodeType,
 } from "@gryffindor/client/common/types/ai-workflow/ai-workflow.type";
 import {
+  Bot,
   BrainCircuit,
-  BrainCog,
   Cable,
   Database,
   LucideProps,
@@ -15,8 +15,8 @@ import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 export const WorkflowCategoryVsIcon = {
   [AiWorkflowNodeCategory.IO]: Cable,
-  [AiWorkflowNodeCategory.Agent]: BrainCircuit,
-  [AiWorkflowNodeCategory.LLM]: BrainCog,
+  [AiWorkflowNodeCategory.Agent]: Bot,
+  [AiWorkflowNodeCategory.LLM]: BrainCircuit,
   [AiWorkflowNodeCategory.Data]: Database,
 } as Record<
   AiWorkflowNodeCategory,
@@ -30,6 +30,8 @@ export const WorkflowNodeVsIcon = {
   [AiWorkflowNodeType.ChatOutput]: MessagesSquare,
   [AiWorkflowNodeType.TextInput]: Type,
   [AiWorkflowNodeType.TextOutput]: Type,
+  [AiWorkflowNodeType.Agent]: Bot,
+  [AiWorkflowNodeType.LLM]: BrainCircuit,
 } as Record<
   AiWorkflowNodeType,
   ForwardRefExoticComponent<

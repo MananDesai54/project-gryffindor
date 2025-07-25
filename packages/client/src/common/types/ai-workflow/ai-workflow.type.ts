@@ -27,26 +27,24 @@ export enum AiWorkflowNodeInputFieldValueType {
   string = "string",
   number = "number",
   boolean = "boolean",
-  array = "array",
-  object = "object",
-  connection = "connection",
+  tool = "tool",
 }
 
 export enum AiWorkflowNodeConnectionType {
   Message = "message",
-  Tool = "tool",
+  Tools = "tools",
 }
 
 export interface AiWorkflowNodeInputField {
   id: string;
-  type: AiWorkflowNodeConnectionType;
-  valueType?: AiWorkflowNodeInputFieldValueType;
+  type: AiWorkflowNodeInputFieldValueType;
   name: string;
   description?: string;
   defaultValue?: any;
   injectInputTypes?: AiWorkflowNodeConnectionType[];
   options?: string[];
   value?: any;
+  allowMulti?: boolean;
   toolMode?: boolean;
   placeholder?: string;
   required?: boolean;
