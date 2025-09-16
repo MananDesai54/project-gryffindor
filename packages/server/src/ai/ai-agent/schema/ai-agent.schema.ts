@@ -20,6 +20,8 @@ class AiAgentConfiguration {
   maxTokens?: number;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'KnowledgeBase' })
   knowledgeBase?: string[];
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'MCPServer' })
+  mcpServerIds?: string[];
   @Prop()
   builtInTools?: string[];
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'AiTool' })

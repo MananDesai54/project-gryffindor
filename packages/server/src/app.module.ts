@@ -23,6 +23,7 @@ import { InfraModule } from './infra/infra.module';
 import { InfraService } from './infra/infra.service';
 import { UserModule } from './user/user.module';
 import { AiWorkflowModule } from './ai-workflow/ai-workflow.module';
+import { McpServerModule } from './ai/mcp-server/mcp-server.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AiWorkflowModule } from './ai-workflow/ai-workflow.module';
     InternalModule,
     DummyApiModule,
     AiWorkflowModule,
+    McpServerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

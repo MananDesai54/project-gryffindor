@@ -102,24 +102,24 @@ services:
       - messaging
       - database
 
-  client:
-    build:
-      dockerfile: packages/client/Dockerfile
-    container_name: gryffindor-client
-    environment:
-      - NODE_ENV=development
-      - PORT=3001
-    ports:
-      - "3001:3001"
-    develop:
-      watch:
-        - path: ./packages/client
-          action: rebuild
-    depends_on:
-      server:
-        condition: service_started
-    networks:
-      - default
+  # client:
+  #   build:
+  #     dockerfile: packages/client/Dockerfile
+  #   container_name: gryffindor-client
+  #   environment:
+  #     - NODE_ENV=development
+  #     - PORT=3001
+  #   ports:
+  #     - "3001:3001"
+  #   develop:
+  #     watch:
+  #       - path: ./packages/client
+  #         action: rebuild
+  #   depends_on:
+  #     server:
+  #       condition: service_started
+  #   networks:
+  #     - default
 
 volumes:
   mongo_data:
