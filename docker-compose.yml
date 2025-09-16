@@ -22,14 +22,14 @@ services:
     image: chromadb/chroma:1.0.16.dev45
     container_name: chroma
     ports:
-      - "8000:8000"
+      - '8000:8000'
     volumes:
       - chroma_data:/data
     environment:
       - CHROMA_DB_IMPL=duckdb # Default in-memory or persistent DuckDB
     healthcheck:
       test:
-        ["CMD", "/bin/bash", "-c", "cat < /dev/null > /dev/tcp/localhost/8000"]
+        ['CMD', '/bin/bash', '-c', 'cat < /dev/null > /dev/tcp/localhost/8000']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -63,8 +63,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          "/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --list",
+          'CMD-SHELL',
+          '/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --list',
         ]
       interval: 5s
       timeout: 5s
@@ -90,7 +90,7 @@ services:
       kafka:
         condition: service_healthy
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - ./packages/server/secret:/mnt/gryffindor/secret
     develop:

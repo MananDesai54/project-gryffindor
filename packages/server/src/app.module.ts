@@ -5,6 +5,7 @@ import {
   OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
+import { AiWorkflowModule } from './ai-workflow/ai-workflow.module';
 import { AiAgentModule } from './ai/ai-agent/ai-agent.module';
 import { AiToolModule } from './ai/ai-tool/ai-tool.module';
 import { IndexingModule } from './ai/indexing/indexing.module';
@@ -12,6 +13,7 @@ import { InferenceModule } from './ai/inference/inference.module';
 import { InternalModule } from './ai/internal/internal.module';
 import { KnowledgeBaseModule } from './ai/knowledge-base/knowledge-base.module';
 import { LlmModule } from './ai/llm/llm.module';
+import { McpServerModule } from './ai/mcp-server/mcp-server.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -22,8 +24,6 @@ import { FileModule } from './file/file.module';
 import { InfraModule } from './infra/infra.module';
 import { InfraService } from './infra/infra.service';
 import { UserModule } from './user/user.module';
-import { AiWorkflowModule } from './ai-workflow/ai-workflow.module';
-import { McpServerModule } from './ai/mcp-server/mcp-server.module';
 
 @Module({
   imports: [
