@@ -1,71 +1,72 @@
-import AppCard from "@gryffindor/client/common/components/app/appCard/appCard";
-import { Input } from "@gryffindor/client/common/components/shadcn/components/ui/input";
-import { Slider } from "@gryffindor/client/common/components/shadcn/components/ui/slider";
-import { Agent } from "@gryffindor/client/common/types/agent/agent.type";
-import { isUndefined, keys, reduce } from "lodash";
-import { useCallback, useMemo } from "react";
-import AddedVariables from "./addVariable/addedVariables";
-import { extractVariables } from "./addVariable/util/addVariable.util";
-import FirstMessage from "./firstMessage";
-import AddKnowledgeBase from "./knowledgeBase/knowledgeBaseConfig";
-import LlmSelection from "./llmSelection/llmSelection";
-import SystemPrompt from "./systemPrompt";
-import ToolsConfig from "./tools/toolsConfig";
+import AppCard from '@gryffindor/client/common/components/app/appCard/appCard';
+import { Input } from '@gryffindor/client/common/components/shadcn/components/ui/input';
+import { Slider } from '@gryffindor/client/common/components/shadcn/components/ui/slider';
+import { Agent } from '@gryffindor/client/common/types/agent/agent.type';
+import { isUndefined, keys, reduce } from 'lodash';
+import { useCallback, useMemo } from 'react';
+import AddedVariables from './addVariable/addedVariables';
+import { extractVariables } from './addVariable/util/addVariable.util';
+import FirstMessage from './firstMessage';
+import AddKnowledgeBase from './knowledgeBase/knowledgeBaseConfig';
+import LlmSelection from './llmSelection/llmSelection';
+import McpServerConfig from './mcpServer/mcpServerConfig';
+import SystemPrompt from './systemPrompt';
+import ToolsConfig from './tools/toolsConfig';
 
 type Props = {
   agent: Agent;
-  onChange: (agent: Partial<Agent["configuration"]>) => void;
+  onChange: (agent: Partial<Agent['configuration']>) => void;
 };
 
 export default function AgentConfigurations({ agent, onChange }: Props) {
   const addedVariables = useMemo(
     () => keys(agent?.configuration?.dynamicVariables),
-    [agent?.configuration?.dynamicVariables],
+    [agent?.configuration?.dynamicVariables]
   );
 
   const getUpdatedDynamicVariables = useCallback(
     (firstMessage: string, systemPrompt: string) => {
       const allVariables = [
-        ...extractVariables(firstMessage || ""),
-        ...extractVariables(systemPrompt || ""),
+        ...extractVariables(firstMessage || ''),
+        ...extractVariables(systemPrompt || ''),
       ];
       return reduce(
         allVariables,
         (acc, variable) => {
           acc[variable.label] =
-            agent?.configuration?.dynamicVariables?.[variable.label] || "";
+            agent?.configuration?.dynamicVariables?.[variable.label] || '';
           return acc;
         },
-        {} as Record<string, string>,
+        {} as Record<string, string>
       );
     },
-    [agent?.configuration?.dynamicVariables],
+    [agent?.configuration?.dynamicVariables]
   );
 
   const onChangeFirstMessage = useCallback(
-    (update: Partial<Agent["configuration"]>) => {
+    (update: Partial<Agent['configuration']>) => {
       onChange({
         ...update,
         dynamicVariables: getUpdatedDynamicVariables(
-          update?.firstMessage || "",
-          agent?.configuration?.systemPrompt || "",
+          update?.firstMessage || '',
+          agent?.configuration?.systemPrompt || ''
         ),
       });
     },
-    [agent?.configuration?.systemPrompt, onChange, getUpdatedDynamicVariables],
+    [agent?.configuration?.systemPrompt, onChange, getUpdatedDynamicVariables]
   );
 
   const onChangeSystemPrompt = useCallback(
-    (update: Partial<Agent["configuration"]>) => {
+    (update: Partial<Agent['configuration']>) => {
       onChange({
         ...update,
         dynamicVariables: getUpdatedDynamicVariables(
-          agent.configuration?.firstMessage || "",
-          update?.systemPrompt || "",
+          agent.configuration?.firstMessage || '',
+          update?.systemPrompt || ''
         ),
       });
     },
-    [onChange, getUpdatedDynamicVariables, agent.configuration?.firstMessage],
+    [onChange, getUpdatedDynamicVariables, agent.configuration?.firstMessage]
   );
 
   return (
@@ -121,6 +122,7 @@ export default function AgentConfigurations({ agent, onChange }: Props) {
       />
       <AddKnowledgeBase onChange={onChange} agent={agent} />
       <ToolsConfig agent={agent} onChange={onChange} />
+      <McpServerConfig agent={agent} onChange={onChange} />
     </div>
   );
 }

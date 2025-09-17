@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
+import { ApiParamsValueSchema } from 'src/ai/ai-tool/schema/ai-tool.schema';
 import { MCPServerApprovalPolicy } from '../types/mcp-server.type';
 
 @Schema({ timestamps: true })
@@ -21,8 +22,8 @@ export class MCPServer {
   @Prop({ required: true, default: 'SSE' })
   transport: string;
 
-  @Prop({ type: mongoose.Schema.Types.Mixed })
-  requestHeaders?: Record<string, string>;
+  @Prop({ type: [ApiParamsValueSchema] })
+  requestHeaders?: ApiParamsValueSchema[];
 
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   creator: string;

@@ -1,11 +1,14 @@
+import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsEnum,
   IsNotEmpty,
-  IsObject,
   IsOptional,
   IsString,
   IsUrl,
+  ValidateNested,
 } from 'class-validator';
+import { ApiParamsValueSchema } from 'src/ai/ai-tool/dto/ai-tool.dto';
 import { MCPServerApprovalPolicy } from '../types/mcp-server.type';
 
 export class CreateMCPServerDto {
@@ -29,7 +32,9 @@ export class CreateMCPServerDto {
   @IsNotEmpty()
   transport: string;
 
-  @IsObject()
   @IsOptional()
-  requestHeaders?: Record<string, string>;
+  @IsArray()
+  @ValidateNested()
+  @Type(() => ApiParamsValueSchema)
+  requestHeaders?: ApiParamsValueSchema[];
 }

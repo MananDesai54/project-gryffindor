@@ -1,4 +1,4 @@
-import { DbDocument } from "../dbDocument.type";
+import { DbDocument } from '../dbDocument.type';
 
 interface AiAgentConfiguration {
   firstMessage?: string;
@@ -9,6 +9,7 @@ interface AiAgentConfiguration {
   knowledgeBase?: string[];
   builtInTools?: string[];
   customTools?: string[];
+  mcpServerIds?: string[];
   llm?: string;
 }
 

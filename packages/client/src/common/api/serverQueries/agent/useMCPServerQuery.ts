@@ -1,5 +1,5 @@
 import { ServerPrimaryKeys } from '@gryffindor/client/common/constants/serverQueries/primaryKeys';
-import { KnowledgeBase } from '@gryffindor/client/common/types/agent/knowledgeBase.type';
+import { McpServer } from '@gryffindor/client/common/types/agent/mcpServer.type';
 import {
   SearchRequest,
   SearchResponse,
@@ -10,7 +10,7 @@ import {
 } from '@gryffindor/client/common/types/serverQueryKey.type';
 import { ServerQueryKeyBuilder } from '@gryffindor/client/common/utils/serverQueries/serverQueryKeyBuilder';
 import { useQuery } from '@tanstack/react-query';
-import { knowledgeBaseServiceInstance } from '../../services/agent/knowledgeBaseService';
+import { mcpServerInstance } from '../../services/agent/mcpServerService';
 
 type QueryParam = SearchRequest;
 
@@ -18,19 +18,17 @@ const kbListFn: FetchQueryFunctionType<QueryParam> = async (ctx) => {
   const { queryKey } = ctx;
   const { otherParams } = queryKey[0];
 
-  return knowledgeBaseServiceInstance.search(otherParams || {});
+  return mcpServerInstance.search(otherParams || {});
 };
 
-export const useKnowledgeBaseQuery = (
-  options: ServerQueryParams<QueryParam>
-) => {
+export const useMCPServerQuery = (options: ServerQueryParams<QueryParam>) => {
   const { reactQueryOptions, queryParams } = options;
   const queryKey = ServerQueryKeyBuilder()
-    .primaryKey(ServerPrimaryKeys.KNOWLEDGE_BASE)
+    .primaryKey(ServerPrimaryKeys.MCP_SERVER)
     .otherParams(queryParams)
     .build();
 
-  return useQuery<TSAny, Error, SearchResponse<KnowledgeBase>>({
+  return useQuery<TSAny, Error, SearchResponse<McpServer>>({
     queryKey: [queryKey],
     queryFn: kbListFn as TSAny,
     ...reactQueryOptions,
